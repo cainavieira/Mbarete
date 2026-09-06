@@ -1,0 +1,24 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# Sistema operacional
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Ferramental local
+.claude/

@@ -100,7 +100,8 @@ Uma tarefa está pronta quando as seis linhas abaixo são verdade.
    Postgres, ou nenhum se for tela que apenas desenha.
 4. `ruff`, `mypy` e os testes passam local e na integração contínua.
 5. Se houve decisão com alternativa recusada, existe ADR novo. Se a decisão
-   substitui uma anterior, o ADR novo diz qual supera, e o antigo não é editado.
+   substitui uma anterior, o ADR novo diz qual supera, e no superado muda apenas
+   a linha de situação.
 6. Se houve migração de esquema, a restauração do backup foi testada (RNF-08).
 
 ## Quando cada documento muda
@@ -113,6 +114,20 @@ Uma tarefa está pronta quando as seis linhas abaixo são verdade.
 | Rota nova ou alterada | `endpoints.md` |
 | Contêiner novo, ou caminho da requisição mudou | `arquitetura.md` |
 | Antipadrão descoberto na prática | a convenção do lado correspondente |
+
+### Mexer numa regra exige ler quem a cita
+
+Ao alterar ou aposentar uma regra, leia **todos** os documentos que a citam,
+contra ela. O comando é literal:
+
+    grep -rn "RN-24" --include="*.md" .
+
+Isso não é zelo, é o que funciona. Duas regras corretas separadas produzem um
+sistema errado juntas, e o documento que está errado raramente é o que você
+acabou de mudar.
+
+Depois de mexer, confira duas coisas: que nenhuma citação ficou pendurada, e que
+nenhuma regra aposentada continua sendo citada fora da tabela de aposentadoria.
 
 Documento datado que uma descoberta posterior contradiz **não estava errado**:
 registrava o que se sabia. O teste, antes de reescrever, é se a informação nova

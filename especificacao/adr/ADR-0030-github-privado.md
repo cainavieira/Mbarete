@@ -1,7 +1,7 @@
 # ADR-0030 GitHub privado com Actions em runners hospedados
 
 - **Data:** 07-09-2026
-- **Situação:** aceito
+- **Situação:** superado por ADR-0032
 
 ## Contexto
 

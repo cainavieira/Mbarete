@@ -70,6 +70,24 @@ Quando o código é escrito por assistência, a revisão é do interessado. Quan
 escrito pelo interessado, a assistência aponta o defeito e explica o mecanismo,
 sem reescrever o arquivo sem pedido.
 
+### Artefatos da integração contínua
+
+Rastro de teste e relatório de build sobem como artefato **apenas quando o job
+falha**, com retenção curta.
+
+O motivo é cota e retenção. Artefato divide a mesma cota que pacotes, 500 MB no
+plano gratuito, e um rastro do Playwright tem alguns megabytes porque carrega
+imagem e vídeo. A documentação do GitHub afirma isenção de cota para **pacote**
+público, e não afirma o mesmo para **artefato**, então não se conta com isenção.
+Somado a isso, desde 1º de outubro de 2026 a retenção padrão de execuções passou
+a 90 dias.
+
+Execução que passou não gera pergunta, então o rastro dela não serve e ocupa o
+espaço do rastro que serviria. O que serve é o de falha: linha do tempo, captura
+de tela de cada passo, estado do DOM e requisições de rede. É o que permite
+depurar teste que falha na integração contínua e passa na máquina de quem
+escreveu, que é a situação mais difícil de investigar sem ele.
+
 ## Definição de pronto
 
 Uma tarefa está pronta quando as seis linhas abaixo são verdade.
@@ -100,6 +118,11 @@ Documento datado que uma descoberta posterior contradiz **não estava errado**:
 registrava o que se sabia. O teste, antes de reescrever, é se a informação nova
 muda o que deve ser feito ou apenas o que se acreditava. Só a primeira justifica
 mexer. ADR nunca é reescrito: é superado.
+
+A **única** edição permitida num ADR superado é a linha de situação, que passa a
+apontar o ADR que o substituiu. Sem isso, quem abrir o antigo sozinho não
+descobre que ele morreu, e pode agir em cima de decisão que não vale mais. O
+texto do raciocínio continua intacto, que é o que a regra protege.
 
 ## `especificacao/` é versionada
 

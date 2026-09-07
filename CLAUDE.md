@@ -11,9 +11,6 @@ script de origem em `backend/pytho.py` está preservado e inalterado.
 
 `especificacao/` é a fonte. Nenhum comportamento se decide fora dela.
 
-Comece por `instrucao.md`: ele diz o que ler e em que ordem, o que construir e
-em que ordem, e as armadilhas já conhecidas.
-
 Os identificadores são estáveis e se citam entre documentos: `RN-15`, `RF-07`,
 `RNF-22`, `UC-02`, `ADR-0009`. **Número aposentado nunca volta**, e cada
 documento tem seção listando os seus aposentados com o motivo.

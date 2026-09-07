@@ -6,8 +6,8 @@
 ## Contexto
 
 O sistema tem regras de valor escritas: faixa de peso de 20,0 a 400,0 (RN-03),
-faixa de cintura (RN-11), data não futura (RN-05), coerência do peso alvo com o
-tipo da fase (RN-65).
+faixa de cintura (RN-11), data não futura no registro (RN-05), proibição de
+sobreposição de fase (RN-19), encerramento em data não futura (RN-67).
 
 O backend precisa validar de qualquer forma, porque o navegador pode ser
 contornado. A pergunta é se o frontend repete essas regras para dar resposta
@@ -19,8 +19,8 @@ Divisão por natureza, não por conveniência.
 
 - **O frontend valida forma**: campo obrigatório, é número, no máximo uma casa
   decimal, aceita vírgula (RN-62). É sobre digitação e precisa ser instantâneo.
-- **O backend valida regra de negócio**: faixas, data futura, coerência de
-  alvo. O frontend exibe a recusa que ele devolve.
+- **O backend valida regra de negócio**: faixas, data futura, sobreposição de
+  fase. O frontend exibe a recusa que ele devolve.
 
 ## Consequências
 

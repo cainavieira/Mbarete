@@ -33,10 +33,11 @@ documento está datado.
 | `POST` | `/registros` | cria registro | RF-07, RF-08, RF-09 |
 | `PATCH` | `/registros/{data}` | edita peso, cintura ou a própria data | RF-11 |
 | `DELETE` | `/registros/{data}` | apaga registro | RF-12 |
-| `GET` | `/fases` | lista todas, com a corrente marcada | RF-23 |
-| `POST` | `/fases` | cria fase e encerra a corrente | RF-15, RF-19 |
-| `PATCH` | `/fases/{id}` | edita tipo, nível, taxa alvo, peso alvo, início | RF-20 |
-| `DELETE` | `/fases/{id}` | apaga fase sem registro | RF-22 |
+| `GET` | `/fases` | lista todas, marcando a corrente quando existir | RF-23 |
+| `POST` | `/fases` | cria fase, encerrando a fase em aberto se houver invasão | RF-15, RF-19 |
+| `PATCH` | `/fases/{id}` | edita tipo, nível, taxa alvo, peso alvo, início e fim | RF-20 |
+| `POST` | `/fases/{id}/encerramento` | encerra a fase em aberto | RF-45 |
+| `DELETE` | `/fases/{id}` | apaga a fase; os registros permanecem sem fase | RF-22 |
 | `GET` | `/acompanhamento` | tudo da tela principal, numa resposta | UC-08 |
 | `POST` | `/importacao/previsualizacao` | valida o arquivo e relata, sem gravar | RF-37, RF-38 |
 | `POST` | `/importacao` | grava o arquivo inteiro ou nada | RF-40 |
@@ -50,9 +51,10 @@ O registro tem chave natural: um por usuário por data (RN-01). Como cada usuár
 só alcança os próprios dados (RN-50), a data identifica sem ambiguidade, e usá-la
 dispensa expor identificador interno.
 
-A fase não tem chave natural. A data de início pareceria servir, e não serve: a
-primeira fase da conta **não tem** data de início, porque cobre todo o passado
-(RN-64). Por isso ela é endereçada pelo próprio identificador, sequencial.
+A fase não tem chave natural utilizável. A data de início pareceria servir, e
+não serve: ela é editável (RN-24), e identificador que muda quando o usuário
+corrige uma data quebra toda referência já guardada. Por isso a fase é
+endereçada pelo próprio identificador, sequencial.
 
 Sequencial e não opaco, apesar do argumento de contagem que o ADR-0012 usa para
 o registro. A diferença é de peso: o sistema é fechado por convite (RN-48),
@@ -132,6 +134,14 @@ veredito vem com estado de dados insuficientes, em vez de o campo desaparecer
 (RN-16, RN-39). Campo ausente e campo nulo são coisas diferentes para quem
 consome.
 
+**A fase corrente pode não existir** (RN-27), e nesse caso ela vem nula, e vêm
+nulos com ela o veredito, a taxa alvo, o progresso e a faixa de tolerância.
+Peso semanal, variações e cintura continuam preenchidos, porque nenhum dos três
+depende de fase (RN-66). Isso não é estado de erro: é o que acontece em conta
+nova, depois de encerrar uma fase, e em todo o passado importado.
+
+Fase futura cadastrada não aparece aqui, apenas em `/fases` (RN-69).
+
 ### A importação são duas chamadas sem estado entre elas
 
 A primeira recebe o arquivo e devolve o relatório: linhas válidas, linhas
@@ -167,8 +177,8 @@ comando de linha executado no servidor (RF-44, ADR-0011).
 | 200 | leitura bem-sucedida |
 | 201 | registro ou fase criados |
 | 204 | exclusão bem-sucedida |
-| 400 | valor recusado por regra (faixa, data futura, alvo incoerente) |
+| 400 | valor recusado por regra (faixa, data futura no registro, encerramento em data futura) |
 | 401 | sem sessão válida |
 | 403 | e-mail não consta na lista de convidados |
-| 409 | conflito de data em registro, ou fase em estado que impede a operação |
+| 409 | conflito de data em registro, ou sobreposição de fase com fase que tem data de fim |
 | 422 | corpo malformado, antes de chegar a regra de negócio |

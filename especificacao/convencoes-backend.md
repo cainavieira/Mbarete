@@ -77,12 +77,9 @@ Derivado das regras. Todo código novo entra aqui junto com a regra que o gera.
 | `CINTURA_FORA_DE_FAIXA` | cintura fora de 40,0 a 200,0 | RN-11 |
 | `DATA_FUTURA` | data do registro no futuro | RN-05 |
 | `REGISTRO_JA_EXISTE` | já há registro na data | RN-01 |
-| `PESO_ALVO_INCOERENTE` | alvo contradiz o tipo da fase | RN-65 |
 | `PESO_ALVO_AUSENTE` | cutting ou bulking sem peso alvo | RN-41 |
-| `FASE_COM_REGISTRO` | tentativa de apagar fase que tem registro | RN-25 |
-| `FASE_UNICA` | tentativa de apagar a única fase | RN-26 |
-| `FASE_INICIO_FUTURO` | data de início da fase no futuro | RN-20 |
-| `FASE_INICIO_EM_FASE_ENCERRADA` | início cai dentro de fase encerrada | UC-05 |
+| `FASE_SOBREPOSTA` | a fase invade outra que já tem data de fim | RN-19 |
+| `ENCERRAMENTO_EM_DATA_FUTURA` | data de encerramento no futuro | RN-67 |
 | `NAO_CONVIDADO` | e-mail fora da lista de convidados | RN-48 |
 | `CSV_COLUNA_AUSENTE` | falta coluna obrigatória | RN-53 |
 | `CSV_SEPARADOR_DESCONHECIDO` | separador não reconhecido | RN-54 |
@@ -97,9 +94,9 @@ ou verificação prévia) é decidido em `endpoints.md`.
 **Validação de forma e de campo isolado** fica no esquema Pydantic: tipo,
 obrigatoriedade, casas decimais, faixa de peso e de cintura.
 
-**Validação que depende de outro dado** fica em `regras/`: a coerência do peso
-alvo com o tipo da fase (RN-65) precisa do peso corrente, e o esquema de um
-campo não conhece o resto do sistema.
+**Validação que depende de outro dado** fica em `regras/`: a proibição de
+sobreposição de fase (RN-19) precisa das outras fases do usuário, e o esquema de
+um campo não conhece o resto do sistema.
 
 **Transação** é aberta e fechada na rota, por dependência do FastAPI. Função de
 regra nunca recebe sessão de banco (ADR-0019).

@@ -22,8 +22,9 @@ usuários de teste do AT-03.
 3. O sistema confere o e-mail na lista de convidados. (RF-02, RN-48)
 4. Existindo conta, o sistema abre a sessão e apresenta a tela de
    acompanhamento.
-5. Não existindo conta, o sistema a cria junto com a primeira fase, de
-   manutenção e sem data de início. (RF-03, RN-21, RN-64)
+5. Não existindo conta, o sistema a cria. A conta nasce **sem fase alguma**, e
+   o primeiro peso pode ser registrado antes de qualquer decisão de ciclo.
+   (RF-03, RN-20, RN-66)
 
 **Fluxos alternativos**
 
@@ -59,8 +60,9 @@ usuários de teste do AT-03.
 - **1a** O usuário troca para uma data passada: aceito sem restrição de
   janela. (RF-08, RN-06)
 - **1b** O usuário troca para data futura: recusado. (RN-05)
-- **1c** A data escolhida é anterior a qualquer fase existente: nada de
-  especial acontece, porque a primeira fase cobre todo o passado. (RN-64)
+- **1c** A data escolhida não pertence a fase alguma: o registro é gravado
+  normalmente. Ele conta para o peso semanal e para as variações, e não recebe
+  veredito nem progresso. (RN-20, RN-66)
 - **2a** Peso fora de 20,0 a 400,0 kg: recusado, informando o campo e o
   limite. (RF-13, RN-03)
 - **3a** Cintura fora de 40,0 a 200,0 cm: recusada do mesmo modo. (RN-11)
@@ -85,8 +87,9 @@ usuários de teste do AT-03.
 
 - **2a** A nova data já tem registro: cai na confirmação de substituição do
   UC-02, e aceitar significa que dois registros passam a ser um.
-- **2b** A nova data pertence a outra fase: o registro passa a pertencer à
-  fase daquela data, porque a fase é derivada e não guardada. (RN-23)
+- **2b** A nova data pertence a outra fase, ou a nenhuma: o registro passa a
+  pertencer à fase que cobre a nova data, ou a nenhuma, porque a fase é
+  derivada e não guardada. (RN-20, RN-23)
 - **2c** Valor fora de faixa ou data futura: recusado. (RF-13)
 
 ## UC-04 Apagar registro
@@ -102,8 +105,8 @@ usuários de teste do AT-03.
 
 - **2a** A remoção derruba a janela para menos de 4 registros: o peso semanal
   passa a informar dados insuficientes em vez de exibir número. (RN-16)
-- **2b** A remoção derruba a fase para menos de 8 registros: o veredito volta
-  a dados insuficientes. (RN-39)
+- **2b** A remoção derruba uma das duas janelas comparadas para menos de 4
+  registros: o veredito volta a dados insuficientes. (RN-36, RN-39)
 
 ## UC-05 Criar fase
 
@@ -112,32 +115,33 @@ usuários de teste do AT-03.
 **Fluxo principal**
 
 1. O usuário escolhe o tipo: cutting, bulking ou manutenção. (RN-18)
-2. Informa a data de início.
+2. Informa a data de início, que pode ser passada, hoje ou futura. (RN-69)
 3. Escolhe o nível, e o sistema preenche a taxa alvo sugerida. (RF-16, RN-31,
    RN-32)
 4. Informa o peso alvo. (RN-41)
-5. Confirma. O sistema encerra a fase corrente na véspera e a nova passa a ser
-   a corrente. (RF-19, RN-22)
+5. Confirma.
 
 **Fluxos alternativos**
 
 - **1a** O tipo é manutenção: o sistema não pede nível nem peso alvo, e usa
   taxa alvo zero com tolerância de 0,5%. (RF-24, RN-33)
-- **2a** A data de início é passada e cai dentro da fase corrente: aceito, e a
-  fase corrente é recortada. É o caso comum, quando a pessoa começou o ciclo
-  antes de cadastrar.
-- **2b** A data de início cai dentro de fase já encerrada: recusado. Para
-  reclassificar histórico, o caminho é mover a fronteira das fases
-  existentes. (UC-06)
-- **2c** A data de início é futura: recusada, porque deixaria o intervalo
-  entre hoje e ela sem fase. (RN-20)
+- **2a** A data de início é passada e cai dentro da fase **em aberto**: aceito,
+  e a fase em aberto é encerrada na véspera. É o caso comum, de quem começou o
+  ciclo antes de cadastrar. (RF-19, RN-19, RN-22)
+- **2b** A data de início cai dentro de fase que já tem data de fim: recusado
+  por sobreposição. (RF-46, RN-19)
+- **2c** A data de início cai num período **sem fase**: aceito, e é assim que
+  se classifica histórico importado depois do fato. (RN-57)
+- **2d** A data de início é futura: aceito. A fase aparece na lista de fases e
+  não entra no acompanhamento até começar. (RN-69)
 - **3a** O usuário edita o valor da taxa alvo: o nível passa a personalizado.
   (RF-18, RN-30)
-- **4a** O peso alvo é incoerente com o tipo, como cutting com alvo acima do
-  peso corrente: recusado. (RF-25, RN-65)
+- **5a** O peso alvo já está do lado errado da base no momento da criação: a
+  fase é criada e a barra de progresso não é exibida, em vez de nascer em 100%.
+  (RN-44)
 
-**Pós-condição:** exatamente uma fase corrente, sem sobreposição e sem
-intervalo descoberto. (RN-19, RN-20)
+**Pós-condição:** nenhuma sobreposição entre fases. Pode haver período sem
+fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
 
 ## UC-06 Editar fase
 
@@ -146,17 +150,16 @@ intervalo descoberto. (RN-19, RN-20)
 **Fluxo principal**
 
 1. O usuário abre uma fase.
-2. Altera tipo, nível, taxa alvo, peso alvo ou a data de início.
+2. Altera tipo, nível, taxa alvo, peso alvo, data de início ou data de fim.
 3. Confirma.
 
 **Fluxos alternativos**
 
-- **2a** A data de início é alterada: a fronteira se move e a fase anterior
-  tem o fim ajustado no mesmo ato. Os registros do intervalo passam a
-  pertencer à fase que agora cobre suas datas. (RF-20, RN-24)
-- **2b** A fase é a primeira da conta: ela não tem data de início editável,
-  porque cobre todo o passado. O que se move é a fronteira dela com a
-  seguinte. (RN-64)
+- **2a** Uma das datas é alterada: os registros que entraram ou saíram do
+  intervalo mudam de fase, porque a fase é derivada da data. Registro que saiu
+  e não caiu em outra fase passa a não ter fase. (RF-20, RN-20, RN-23, RN-24)
+- **2b** A alteração criaria sobreposição com fase que já tem data de fim:
+  recusada. (RF-46, RN-19)
 - **2c** O tipo muda para manutenção: peso alvo e nível deixam de existir para
   aquela fase e seus valores são descartados. (RF-24)
 - **2d** O tipo muda de manutenção para cutting ou bulking: o sistema passa a
@@ -164,6 +167,8 @@ intervalo descoberto. (RN-19, RN-20)
 - **2e** A taxa alvo muda de unidade: o valor é reinterpretado na nova
   unidade, sem conversão automática, porque 0,5% e 0,5 kg são alvos
   diferentes e adivinhar qual a pessoa quis é pior que perguntar.
+- **2f** A data de início é alterada: a base do progresso e da tolerância é
+  recalculada, porque o intervalo da fase passou a ser outro. (RN-68)
 
 ## UC-07 Apagar fase
 
@@ -171,15 +176,22 @@ intervalo descoberto. (RN-19, RN-20)
 
 **Fluxo principal**
 
-1. O usuário escolhe apagar uma fase sem registros e confirma. (RF-22, RN-26)
-2. A fronteira desaparece e a fase anterior absorve o intervalo.
+1. O usuário escolhe apagar uma fase.
+2. O sistema informa quantos registros pertencem a ela e vão perder o rótulo do
+   período, e pede confirmação. (RF-22, RN-70)
+3. Confirmada, a fase é removida. Os registros permanecem e passam a não ter
+   fase.
 
 **Fluxos alternativos**
 
-- **1a** A fase contém registro: recusado, informando que o caminho é corrigir
-  tipo, nível, alvo ou fronteira. (RF-21, RN-25)
-- **1b** É a única fase da conta: recusado, porque deixaria registros sem
-  fase possível. (RN-26)
+- **2a** A fase não tem registro: a confirmação é pedida do mesmo jeito, sem
+  número para informar.
+- **3a** A fase apagada era a corrente: passa a não haver fase corrente, e o
+  acompanhamento deixa de exibir veredito, taxa alvo, barra e tolerância.
+  (RN-27, RN-66)
+
+**Pós-condição:** nenhum registro é perdido. A operação é reversível criando
+fase sobre o mesmo intervalo. (RN-70)
 
 ## UC-08 Acompanhar o ciclo corrente
 
@@ -202,13 +214,21 @@ intervalo descoberto. (RN-19, RN-20)
 
 - **1a** A janela tem menos de 4 registros: dados insuficientes no lugar do
   peso semanal, e sem peso semanal não há veredito nem barra. (RN-16)
-- **4a** A fase tem menos de 14 dias ou menos de 8 registros: dados
-  insuficientes no lugar do veredito, mas o peso semanal e as variações
-  continuam sendo exibidos. (RN-39)
+- **4a** A fase tem menos de 14 dias, ou uma das duas janelas comparadas tem
+  menos de 4 registros: dados insuficientes no lugar do veredito, mas o peso
+  semanal e as variações continuam sendo exibidos. (RN-36, RN-39)
 - **4b** A fase corrente é manutenção: o veredito compara contra a tolerância
   de 0,5% em vez de contra uma taxa alvo. (RN-33)
+- **4c** **Não existe fase corrente**: veredito, taxa alvo, barra de progresso
+  e faixa de tolerância não são exibidos. Peso semanal, variações e cintura
+  continuam, e é o comportamento esperado, não estado de erro. (RN-27, RN-66)
+- **4d** Existe fase futura cadastrada: ela não entra no acompanhamento, apenas
+  na lista de fases. (RN-69)
 - **5a** A fase corrente é manutenção: não existe barra de progresso, porque
   não existe peso alvo. (RN-41)
+- **5c** A base do progresso ainda não existe, porque nenhum peso semanal
+  ocorreu dentro da fase: a barra informa dados insuficientes em vez de
+  aparecer vazia. (RN-68)
 - **5b** O peso alvo foi atingido: o sistema avisa, a barra trava em 100%, e a
   fase continua aberta. (RF-34, RN-44, RN-45)
 - **6a** Nunca houve medição de cintura: a seção não aparece.
@@ -240,13 +260,12 @@ intervalo descoberto. (RN-19, RN-20)
 **Fluxo principal**
 
 1. O usuário envia o arquivo. (RF-37)
-2. Escolhe o tipo de fase para o período importado, com manutenção como
-   padrão. (RF-39, RN-56)
-3. O sistema lê, valida e apresenta a pré-visualização: linhas válidas, linhas
+2. O sistema lê, valida e apresenta a pré-visualização: linhas válidas, linhas
    recusadas com número e motivo, e datas já existentes que serão
    substituídas. (RF-38, RN-58)
-4. O usuário confirma.
-5. O sistema grava tudo em uma única operação. (RF-40, RN-59)
+3. O usuário confirma.
+4. O sistema grava tudo em uma única operação, **sem criar fase**. As datas
+   importadas ficam sem fase. (RF-40, RN-57, RN-59)
 
 **Fluxos alternativos**
 
@@ -254,12 +273,15 @@ intervalo descoberto. (RN-19, RN-20)
   pré-visualização, porque nem dá para começar a ler. (RN-53)
 - **1b** O separador não é reconhecido: mesma recusa, dizendo quais são
   aceitos. (RN-54)
-- **3a** Algumas linhas são inválidas: elas aparecem na pré-visualização com
+- **2a** Algumas linhas são inválidas: elas aparecem na pré-visualização com
   linha e motivo, e as válidas seguem disponíveis para gravação. (RN-60)
-- **3b** Nenhuma linha é válida: a confirmação fica indisponível.
-- **4a** O usuário abandona: nada é gravado. (RF-41)
-- **5a** A gravação falha no meio: nada é gravado, e o histórico continua como
+- **2b** Nenhuma linha é válida: a confirmação fica indisponível.
+- **3a** O usuário abandona: nada é gravado. (RF-41)
+- **4a** A gravação falha no meio: nada é gravado, e o histórico continua como
   estava antes do envio. (RN-59)
+- **4b** Depois de importar, o usuário quer classificar o período: cria fase
+  sobre o intervalo importado, que é operação normal do UC-05, porque aquelas
+  datas estão sem fase. (RN-57)
 
 **Pós-condição:** todas as linhas gravadas, ou nenhuma.
 
@@ -325,3 +347,26 @@ anonimização. (RN-51)
 serviço de e-mail no desenho, e adicioná-lo custaria domínio verificado e
 configuração de DNS para entregar uma mensagem que o operador manda em
 segundos para um grupo pequeno.
+
+## UC-14 Encerrar fase
+
+**Ator:** AT-01
+**Pré-condição:** existe fase em aberto.
+
+**Fluxo principal**
+
+1. O usuário escolhe encerrar a fase em aberto.
+2. Informa a data de encerramento, com hoje como padrão.
+3. Confirma. A fase passa a ter data de fim, e a partir do dia seguinte não há
+   fase. (RF-45, RN-67)
+
+**Fluxos alternativos**
+
+- **2a** A data informada é futura: recusada. Para que a fase termine numa data
+  futura, o caminho é criar a fase seguinte começando no dia seguinte, e a
+  RN-22 encerra esta sozinha. (RN-67)
+- **2b** A data informada é anterior ao início da fase: recusada.
+- **3a** Existem registros depois da data de encerramento: eles permanecem e
+  passam a não ter fase. (RN-20)
+
+**Pós-condição:** não há fase corrente, até que outra seja criada. (RN-27)

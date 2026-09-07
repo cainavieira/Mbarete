@@ -8,7 +8,7 @@
 O backend é consumido exclusivamente por um frontend React (ADR-0002), então
 não há renderização de página no servidor. As regras de negócio são em boa
 parte validação de valor: faixa de peso (RN-03), faixa de cintura (RN-11),
-data não futura (RN-05), coerência do peso alvo (RN-65).
+data não futura (RN-05), unidade da taxa alvo (RN-29).
 
 O projeto também precisa de um documento de endpoints que não envelheça.
 

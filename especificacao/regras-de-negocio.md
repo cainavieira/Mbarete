@@ -52,8 +52,9 @@ reaproveitado por outra regra.
 
 ## Fase
 
-- **RN-18** Uma fase tem tipo, data de início, data de fim, nível e taxa alvo.
-  Os tipos são cutting, bulking e manutenção.
+- **RN-18** Uma fase tem tipo, data de início, nível e taxa alvo. Os tipos são
+  cutting, bulking e manutenção. A data de fim não é campo próprio: ela é
+  sempre a véspera do início da fase seguinte.
 - **RN-19** Existe no máximo uma fase ativa por usuário. Fases não se
   sobrepõem.
 - **RN-20** Toda data com registro pertence a uma fase. Não existe registro
@@ -64,14 +65,24 @@ reaproveitado por outra regra.
   data de início da nova.
 - **RN-23** A fase de um registro é derivada da data do registro. A fase não é
   gravada dentro do registro.
-- **RN-24** As datas de uma fase são editáveis. Editá-las reclassifica
-  automaticamente os registros do intervalo afetado.
+- **RN-24** A data de início de uma fase é a fronteira entre ela e a fase
+  anterior, e é editável. Mover a fronteira ajusta as duas fases ao mesmo
+  tempo e reclassifica os registros do intervalo afetado. Como a fronteira é
+  um valor único, não existe edição capaz de deixar intervalo sem fase nem de
+  criar sobreposição.
 - **RN-25** Fase que contenha registro não pode ser apagada. Erro de criação
   se corrige alterando tipo, nível, taxa alvo, peso alvo ou datas.
 - **RN-26** Fase sem nenhum registro pode ser apagada, exceto quando for a
   única fase da conta.
-- **RN-27** Fase não tem data de fim planejada. A data de fim registra quando
-  a fase efetivamente encerrou.
+- **RN-27** Fase não tem data de fim planejada nem data de fim editável
+  diretamente. A fase corrente é a última da linha e não tem fim.
+- **RN-64** A primeira fase da conta não tem data de início: ela cobre todo o
+  passado. As fases formam uma linha contínua, aberta nas duas pontas, para
+  que registro retroativo e importação de histórico antigo tenham fase sem
+  exigir ação do usuário. (RN-06, RN-20, RN-21)
+- **RN-65** O peso alvo deve ser coerente com o tipo da fase: em cutting,
+  menor que o peso corrente; em bulking, maior. Valor incoerente é recusado.
+  (RN-42)
 
 ## Nível e taxa alvo
 

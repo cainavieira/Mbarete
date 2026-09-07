@@ -1,43 +1,73 @@
 # Acompanhamento de peso
 
-Evolução do script original `backend/pytho.py` (le `comprovante.csv`, tira
-media por blocos de 7 linhas) para uma aplicacao web: backend Python e
-frontend React, registro diario de peso com acompanhamento diario e semanal.
-Armazenamento por enquanto em CSV; banco de dados fica para uma fase
-posterior.
+Sistema de acompanhamento de peso para ciclos de treino. Cada pessoa registra o
+próprio peso, declara em que fase está (cutting, bulking ou manutenção) com uma
+taxa alvo por semana, e o sistema responde a única pergunta que importa: **estou
+no ritmo do meu ciclo?**
 
-## Estado atual (parcial, nao funcional ainda)
+A unidade de decisão é o **peso semanal**, não o peso do dia. O peso diário
+existe para alimentar a média; é o semanal que recalcula o alvo, mede o
+progresso e dá o veredito. Peso corporal oscila um a dois quilos entre um dia e
+outro, e decisão tomada em cima disso é decisão tomada em cima de ruído.
 
-Nada roda de ponta a ponta ainda. O que existe e o scaffold e o contrato
-entre as duas camadas, para o trabalho continuar depois sem redecidir forma.
+## Estado atual
 
-**`backend/`**
-- `pytho.py`: o script original, inalterado.
-- `.venv/`: ambiente virtual criado com Python 3.14.6, ja com `fastapi`,
-  `uvicorn[standard]`, `pydantic`, `pytest` e `httpx` instalados.
+**A especificação está completa. Não há código de aplicação ainda.**
 
-**`frontend/`**
-- React 19.2, Vite 8.2, TypeScript 6.0.
-Nenhum dos dois lados foi commitado: nao ha repositorio git na pasta ainda.
+Isso é deliberado. O projeto começou como um script que lia um CSV e tirava
+média a cada sete linhas, e a primeira tentativa foi escolher tecnologia antes de
+modelar requisito. Isso foi desfeito: o script original foi preservado, tudo o
+mais foi apagado, e o levantamento recomeçou por atores, regras e casos de uso.
 
-## O que falta para a versao funcional
+O que existe hoje:
 
-**Backend**
-- Camada de armazenamento em CSV (`app/storage.py` ou similar): ler/escrever
-  `backend/data/comprovante.csv` com um registro por dia (o script original
-  nao tinha essa restricao; a API vai impor).
-- Regras de agregacao: serie diaria com media movel, fechamento por semana
-  ISO (segunda a domingo), variacao 7/30 dias e total, progresso ate a meta, sequencia de dias seguidos
-  registrando.
-- Rotas FastAPI: CRUD de registros, perfil (altura, peso-meta),
-  estatisticas, series diaria e semanal, importacao de CSV externo
-  (`ImportRequest`/`ImportResult` ja modelam isso), health check.
-- Testes com pytest + httpx cobrindo as regras de agregacao e as rotas.
+- `especificacao/`: 65 regras de negócio, 44 requisitos funcionais, 13 casos de
+  uso, 29 requisitos não funcionais, 31 ADR, arquitetura e convenções.
+- `backend/pytho.py`: o script de origem, inalterado, preservado como ponto de
+  partida.
 
-**Frontend**
-- Cliente HTTP para a API (`src/lib/`).
-- Telas: formulario de registro diario, grafico de evolucao (diario e
-  semanal), cartoes de estatisticas, tela de perfil/meta, import de CSV.
-- Estado de carregamento/erro tratando o formato de erro que o backend vai
-  devolver (`ErrorDetail`).
+## Onde ler o quê
 
+| Se você quer saber | Abra |
+|:--|:--|
+| quem usa o sistema | [especificacao/atores.md](especificacao/atores.md) |
+| o que é permitido, recusado e por quê | [especificacao/regras-de-negocio.md](especificacao/regras-de-negocio.md) |
+| o que o sistema faz | [especificacao/requisitos-funcionais.md](especificacao/requisitos-funcionais.md) |
+| como cada interação acontece, inclusive quando dá errado | [especificacao/casos-de-uso.md](especificacao/casos-de-uso.md) |
+| o que o sistema tem que ser (custo, backup, privacidade) | [especificacao/requisitos-nao-funcionais.md](especificacao/requisitos-nao-funcionais.md) |
+| por que cada tecnologia foi escolhida, e o que perdeu | [especificacao/adr/](especificacao/adr/) |
+| o que roda onde, e por onde a requisição passa | [especificacao/arquitetura.md](especificacao/arquitetura.md) |
+| como se escreve código aqui | [convenções do backend](especificacao/convencoes-backend.md) e [do frontend](especificacao/convencoes-frontend.md) |
+| o contrato da API | [especificacao/endpoints.md](especificacao/endpoints.md) |
+| como o trabalho entra no repositório | [especificacao/fluxo-de-trabalho.md](especificacao/fluxo-de-trabalho.md) |
+
+Cada documento cita os outros por identificador (`RN-15`, `RF-07`, `UC-02`,
+`ADR-0009`) em vez de repetir texto. Identificador é estável: número aposentado
+nunca volta.
+
+A seção de **decisões recusadas** do documento de regras e a **alternativa
+recusada** de cada ADR não são enfeite: são a parte que impede a mesma discussão
+de recomeçar daqui a seis meses com o argumento já gasto.
+
+## Stack
+
+Decidida com alternativa registrada em cada caso. Um ADR por decisão.
+
+- **Backend:** Python com FastAPI, SQLAlchemy 2.0, Pydantic, Alembic, Authlib
+- **Frontend:** React com Vite e TypeScript, TanStack Query, React Router 8,
+  Tailwind com shadcn/ui, Recharts
+- **Banco:** PostgreSQL
+- **Identidade:** Google, sem senha própria, entrada por convite
+- **Hospedagem:** servidor próprio, exposto por Cloudflare Tunnel
+- **Qualidade:** ruff, mypy, pytest, Vitest, Playwright, tudo em integração
+  contínua
+
+## O que falta
+
+Nesta ordem: esquema do banco e primeira migração, camada de regras com os
+testes que as cobrem, rotas, cliente HTTP com tipos gerados do OpenAPI, telas,
+e por fim o Compose de produção com o túnel.
+
+O escopo da primeira versão é **tudo o que a especificação descreve**. Foi
+proposta uma versão reduzida e recusada de propósito: import e export de CSV,
+cintura e barra de progresso ficam dentro.

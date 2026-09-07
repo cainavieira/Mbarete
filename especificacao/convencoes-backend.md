@@ -103,6 +103,11 @@ regra nunca recebe sessão de banco (ADR-0019).
 
 **Cálculo** nunca fica na rota. A rota recebe, chama, devolve.
 
+**Restrição que o banco consegue impor** vai para o banco **também**, e não em
+vez de: a verificação na aplicação existe para devolver mensagem que o usuário
+entende, e a restrição no banco existe para pegar o caminho que alguém esqueceu
+de validar (ADR-0033).
+
 ## Antipadrões proibidos
 
 1. `except Exception` largo que não re-levanta. É o defeito do script de
@@ -127,4 +132,6 @@ regra nunca recebe sessão de banco (ADR-0019).
 - Renomeação de coluna é corrigida à mão: o autogenerate gera remoção mais
   criação, o que apagaria dado.
 - A reversão é escrita, e não é plano de recuperação. O plano é o backup.
+- A primeira migração habilita a extensão `btree_gist`, exigida pela restrição
+  de exclusão que impede sobreposição de fase (ADR-0033).
 - Depois de aplicar, testar a restauração (RNF-08).

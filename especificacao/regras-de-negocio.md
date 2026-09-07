@@ -127,7 +127,10 @@ motivo.
   condição de cálculo: sem os dois pesos semanais não existe taxa real.
 - **RN-40** O veredito existe apenas para a fase corrente. Fase encerrada
   apresenta variação total, duração e se o peso alvo foi atingido, sem receber
-  veredito.
+  veredito. Quando a variação total dessa fase foi calculada sobre menos pontos
+  que o mínimo da RN-16, o número é exibido com indicação disso, em vez de
+  omitido: variação sobre poucos pontos informa mais que variação ausente, desde
+  que a pessoa saiba qual das duas está olhando.
 
 ## Peso alvo e progresso
 
@@ -141,8 +144,10 @@ motivo.
   acima de 100%. E ela não é exibida quando o peso alvo já estava do lado
   errado da base no momento em que a fase foi criada, porque ali nasceria em
   100% anunciando progresso completo sem nada ter acontecido.
-- **RN-45** Ao atingir o peso alvo o sistema avisa o usuário. A fase nunca é
-  encerrada automaticamente.
+- **RN-45** Ao atingir o peso alvo o sistema avisa o usuário. Atingir se mede
+  pelo peso semanal e nunca pelo peso bruto de um dia, por coerência com a
+  RN-17: aviso disparado por peso bruto desaparece no dia seguinte e perde
+  crédito. A fase nunca é encerrada automaticamente.
 - **RN-68** A base do progresso e da tolerância é o peso semanal do dia de
   início da fase. Quando aquele dia não tinha peso semanal (RN-16), a base
   passa a ser o primeiro peso semanal que existir dentro da fase, fixado na

@@ -73,7 +73,10 @@ quê. RNF sem número é adjetivo.
   que o sistema tem permissão de ver.
 - **RNF-22** A sessão dura 30 dias e renova a cada uso, com encerramento
   explícito disponível. Sessão curta é atrito que faz a pessoa parar de
-  registrar, que é o único jeito real de este produto falhar.
+  registrar, que é o único jeito real de este produto falhar. Sessão expirada é
+  removida diariamente, pelo mesmo script agendado que faz o dump do backup, em
+  vez de acumular linha morta na tabela. Nenhum agendamento novo: o que existe
+  já roda todo dia.
 - **RNF-23** A recusa de acesso não informa se um e-mail existe no sistema.
 
 ## Idioma

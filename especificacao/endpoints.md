@@ -68,8 +68,17 @@ quantas fases um usuário já teve não é informação sensível, e `uuid` cobr
 resposta é a mesma do conflito descrito abaixo. Não há caso especial: mover para
 data ocupada e criar em data ocupada são o mesmo problema.
 
-Mudando a data, o registro passa a pertencer à fase daquela data, porque a fase
-é derivada e não gravada (RN-23).
+O `PATCH` aceita o campo `substituir` com a mesma semântica do `POST`: sem ele,
+data ocupada responde 409; com `"substituir": true`, a substituição acontece.
+Sem isso o conflito não teria saída neste caminho, e o frontend ficaria
+repetindo a mesma requisição a cada confirmação.
+
+A consequência surpreende, e por isso está escrita: no `POST` a substituição
+apaga um registro, e no `PATCH` ela apaga um e move o outro, então a contagem
+total de registros do usuário cai em um (UC-03).
+
+Mudando a data, o registro passa a pertencer à fase daquela data, ou a nenhuma,
+porque a fase é derivada e não gravada (RN-20, RN-23).
 
 ### A confirmação de substituição acontece por conflito
 

@@ -6,8 +6,12 @@ quê. RNF sem número é adjetivo.
 
 ## Custo
 
-- **RNF-01** O custo de operação não excede R$40 por ano, correspondentes ao
-  domínio. Servidor, banco e túnel custam zero por rodarem em hardware próprio.
+- **RNF-01** O custo de operação tem duas partes. A primeira é R$40 por ano de
+  domínio. A segunda é a energia do servidor próprio ligado sem interrupção,
+  estimada em R$29 por mês para um desktop consumindo por volta de 45 W. Esse
+  segundo valor é estimativa e não medição: um medidor de tomada resolve.
+  Servidor, banco e túnel não têm mensalidade, e a energia é justamente o custo
+  que não aparece em fatura de serviço nenhuma.
 
 ## Disponibilidade
 

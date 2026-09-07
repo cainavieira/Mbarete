@@ -16,7 +16,8 @@ documento está datado.
 - Toda resposta de erro usa o formato único de `convencoes-backend.md`, com
   `codigo`, `campo`, `mensagem` e `regra`.
 - Datas em `AAAA-MM-DD`, números com ponto decimal (RN-62, RN-63).
-- Nenhum identificador interno sequencial aparece em resposta ou em URL.
+- O registro é endereçado pela data, não por identificador. A fase é endereçada
+  por identificador sequencial. O motivo de cada um está abaixo.
 
 ## Lista
 
@@ -43,16 +44,20 @@ documento está datado.
 
 ## As decisões que não se leem na lista
 
-### O registro é identificado pela data, a fase por identificador opaco
+### O registro é identificado pela data, a fase por identificador sequencial
 
 O registro tem chave natural: um por usuário por data (RN-01). Como cada usuário
 só alcança os próprios dados (RN-50), a data identifica sem ambiguidade, e usá-la
-evita expor identificador sequencial.
+dispensa expor identificador interno.
 
 A fase não tem chave natural. A data de início pareceria servir, e não serve: a
 primeira fase da conta **não tem** data de início, porque cobre todo o passado
-(RN-64). Por isso a fase carrega um identificador opaco, do tipo `uuid`,
-gerado pelo banco. Opaco e não sequencial pelo mesmo motivo de antes.
+(RN-64). Por isso ela é endereçada pelo próprio identificador, sequencial.
+
+Sequencial e não opaco, apesar do argumento de contagem que o ADR-0012 usa para
+o registro. A diferença é de peso: o sistema é fechado por convite (RN-48),
+quantas fases um usuário já teve não é informação sensível, e `uuid` cobraria
+índice maior e URL ilegível sem comprar nada aqui.
 
 ### Editar a data de um registro é mover o recurso
 

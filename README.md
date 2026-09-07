@@ -40,6 +40,7 @@ O que existe hoje:
 | como se escreve código aqui | [convenções do backend](especificacao/convencoes-backend.md) e [do frontend](especificacao/convencoes-frontend.md) |
 | o contrato da API | [especificacao/endpoints.md](especificacao/endpoints.md) |
 | como o trabalho entra no repositório | [especificacao/fluxo-de-trabalho.md](especificacao/fluxo-de-trabalho.md) |
+| **o que construir, em que ordem, e como saber que acabou** | [instrucao.md](instrucao.md) |
 
 Cada documento cita os outros por identificador (`RN-15`, `RF-07`, `UC-02`,
 `ADR-0009`) em vez de repetir texto. Identificador é estável: número aposentado
@@ -64,9 +65,11 @@ Decidida com alternativa registrada em cada caso. Um ADR por decisão.
 
 ## O que falta
 
-Nesta ordem: esquema do banco e primeira migração, camada de regras com os
-testes que as cobrem, rotas, cliente HTTP com tipos gerados do OpenAPI, telas,
-e por fim o Compose de produção com o túnel.
+O código. A ordem de construção está em [instrucao.md](instrucao.md), em onze
+etapas, cada uma com o que criar, como verificar que acabou, e quais ADR ler
+antes: ambiente, esquema e migração, camada de regras com os testes,
+autenticação, rotas, acompanhamento, importação, base do frontend, telas, e
+produção com túnel e backup.
 
 O escopo da primeira versão é **tudo o que a especificação descreve**. Foi
 proposta uma versão reduzida e recusada de propósito: import e export de CSV,

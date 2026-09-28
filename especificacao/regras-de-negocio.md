@@ -141,22 +141,28 @@ motivo.
 - **RN-43** A barra de progresso vai da base da RN-68 até o peso alvo.
 - **RN-44** A barra trava em 100% quando o alvo é atingido ou ultrapassado, e
   em 0% quando o movimento é na direção oposta. Não exibe valor negativo nem
-  acima de 100%. E ela não é exibida quando o peso alvo já estava do lado
-  errado da base no momento em que a fase foi criada, porque ali nasceria em
-  100% anunciando progresso completo sem nada ter acontecido.
+  acima de 100%. E ela não é exibida enquanto o peso alvo estiver do lado
+  errado da base, porque ali apareceria em 100% anunciando progresso completo
+  sem nada ter acontecido; pelo mesmo motivo, nesse estado não há o aviso da
+  RN-45. A comparação é refeita a cada exibição, e não num momento só, porque
+  o peso alvo é editável e a base acompanha a correção de registro (RN-68).
 - **RN-45** Ao atingir o peso alvo o sistema avisa o usuário. Atingir se mede
   pelo peso semanal e nunca pelo peso bruto de um dia, por coerência com a
   RN-17: aviso disparado por peso bruto desaparece no dia seguinte e perde
   crédito. A fase nunca é encerrada automaticamente.
-- **RN-68** A base do progresso e da tolerância é o peso semanal do dia de
-  início da fase. Quando aquele dia não tinha peso semanal (RN-16), a base
-  passa a ser o primeiro peso semanal que existir dentro da fase, fixado na
-  primeira vez e nunca recalculado depois. Enquanto nenhum existir, não há
-  barra nem faixa de tolerância, e o sistema informa dados insuficientes.
-  Recalcular a base conforme chegam registros novos faria a barra andar para
-  trás sem o peso ter mudado, e por isso não se recalcula. A exceção é editar
-  as datas da fase (RN-24): ali o intervalo passou a ser outro, e a base é
-  determinada de novo sobre o intervalo novo.
+- **RN-68** A base do progresso e da tolerância é o peso semanal do **dia da
+  base**. O dia da base é o dia de início da fase ou, quando aquele dia não
+  tinha peso semanal (RN-16), o primeiro dia dentro da fase que tiver. Ele é
+  fixado na primeira vez e nunca muda depois: escolher de novo conforme chegam
+  registros retroativos faria a base saltar para outra semana, e a barra andar
+  para trás sem o peso ter mudado. O valor, ao contrário, acompanha os
+  registros da janela daquele dia, e corrigir um peso digitado errado corrige
+  a base. Enquanto nenhum dia da fase tiver peso semanal, ou quando a janela do
+  dia da base deixar de ter os 4 registros da RN-16, não há barra nem faixa de
+  tolerância, e o sistema informa dados insuficientes, sem repetir o último
+  valor conhecido (RN-09). A exceção é editar as datas da fase (RN-24): ali o
+  intervalo passou a ser outro, e o dia da base é determinado de novo sobre o
+  intervalo novo.
 
 ## Variações exibidas
 

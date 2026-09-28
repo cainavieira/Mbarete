@@ -143,6 +143,12 @@ veredito vem com estado de dados insuficientes, em vez de o campo desaparecer
 (RN-16, RN-39). Campo ausente e campo nulo são coisas diferentes para quem
 consome.
 
+O progresso segue o mesmo princípio, com dois estados além do número, que a
+tela trata de forma diferente: dados insuficientes, quando a base da RN-68 não
+existe (UC-08 5c), e não exibido, quando o peso alvo está do lado errado da
+base (UC-08 5d). A faixa de tolerância da manutenção depende da mesma base:
+sem ela, o veredito da manutenção também vem com dados insuficientes.
+
 **A fase corrente pode não existir** (RN-27), e nesse caso ela vem nula, e vêm
 nulos com ela o veredito, a taxa alvo, o progresso e a faixa de tolerância.
 Peso semanal, variações e cintura continuam preenchidos, porque nenhum dos três

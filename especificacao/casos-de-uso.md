@@ -136,9 +136,10 @@ usuários de teste do AT-03.
   não entra no acompanhamento até começar. (RN-69)
 - **3a** O usuário edita o valor da taxa alvo: o nível passa a personalizado.
   (RF-18, RN-30)
-- **5a** O peso alvo já está do lado errado da base no momento da criação: a
-  fase é criada e a barra de progresso não é exibida, em vez de nascer em 100%.
-  (RN-44)
+- **5a** O peso alvo está do lado errado da base: a fase é criada, e a barra
+  de progresso não é exibida enquanto isso durar, em vez de aparecer em 100%.
+  Se a base ainda não existe, a comparação acontece quando ela existir.
+  (RN-44, RN-68)
 
 **Pós-condição:** nenhuma sobreposição entre fases. Pode haver período sem
 fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
@@ -167,8 +168,11 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
 - **2e** A taxa alvo muda de unidade: o valor é reinterpretado na nova
   unidade, sem conversão automática, porque 0,5% e 0,5 kg são alvos
   diferentes e adivinhar qual a pessoa quis é pior que perguntar.
-- **2f** A data de início é alterada: a base do progresso e da tolerância é
-  recalculada, porque o intervalo da fase passou a ser outro. (RN-68)
+- **2f** Uma das datas é alterada: o dia da base do progresso e da tolerância
+  é determinado de novo, porque o intervalo da fase passou a ser outro.
+  (RN-68)
+- **2g** O peso alvo passa para o lado errado da base: a alteração é aceita, e
+  a barra deixa de ser exibida enquanto isso durar. (RN-44)
 
 ## UC-07 Apagar fase
 
@@ -226,11 +230,14 @@ fase sobre o mesmo intervalo. (RN-70)
   na lista de fases. (RN-69)
 - **5a** A fase corrente é manutenção: não existe barra de progresso, porque
   não existe peso alvo. (RN-41)
-- **5c** A base do progresso ainda não existe, porque nenhum peso semanal
-  ocorreu dentro da fase: a barra informa dados insuficientes em vez de
-  aparecer vazia. (RN-68)
+- **5c** A base do progresso não existe, porque nenhum peso semanal ocorreu
+  dentro da fase, ou porque a janela do dia da base deixou de ter 4
+  registros: a barra informa dados insuficientes em vez de aparecer vazia.
+  (RN-68)
 - **5b** O peso alvo foi atingido: o sistema avisa, a barra trava em 100%, e a
   fase continua aberta. (RF-34, RN-44, RN-45)
+- **5d** O peso alvo está do lado errado da base: a barra não é exibida, e o
+  aviso de alvo atingido não dispara. (RN-44)
 - **6a** Nunca houve medição de cintura: a seção não aparece.
 - **1b** A conta não tem nenhum registro: a tela convida ao primeiro registro
   em vez de exibir estrutura vazia.

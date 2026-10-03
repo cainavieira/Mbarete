@@ -178,7 +178,7 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
 - **2c** O tipo muda para manutenção: peso alvo e nível deixam de existir para
   aquela fase e seus valores são descartados. (RF-24)
 - **2d** O tipo muda de manutenção para cutting ou bulking: o sistema passa a
-  exigir nível e peso alvo antes de aceitar. (RN-41)
+  exigir nível e peso alvo antes de aceitar. (RN-28, RN-41)
 - **2e** A taxa alvo muda de unidade: o valor é reinterpretado na nova
   unidade, sem conversão automática, porque 0,5% e 0,5 kg são alvos
   diferentes e adivinhar qual a pessoa quis é pior que perguntar.
@@ -378,11 +378,11 @@ segundos para um grupo pequeno.
 ## UC-14 Encerrar fase
 
 **Ator:** AT-01
-**Pré-condição:** existe fase em aberto.
+**Pré-condição:** existe fase corrente. (RN-27)
 
 **Fluxo principal**
 
-1. O usuário escolhe encerrar a fase em aberto.
+1. O usuário escolhe encerrar a fase corrente.
 2. Informa a data de encerramento, com hoje como padrão.
 3. Confirma. A fase passa a ter data de fim, e a partir do dia seguinte não há
    fase. (RF-45, RN-67)
@@ -396,4 +396,5 @@ segundos para um grupo pequeno.
 - **3a** Existem registros depois da data de encerramento: eles permanecem e
   passam a não ter fase. (RN-20)
 
-**Pós-condição:** não há fase corrente, até que outra seja criada. (RN-27)
+**Pós-condição:** não há fase corrente, até que outra seja criada ou que a
+fase agendada comece. (RN-27, RN-69)

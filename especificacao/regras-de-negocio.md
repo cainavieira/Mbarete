@@ -82,7 +82,10 @@ motivo.
   proibição de data de fim futura da RN-67. Editá-las reclassifica os
   registros dos intervalos afetados, porque a fase é derivada da data.
 - **RN-27** Fase corrente é a que cobre a data de hoje, e **pode não existir**.
-  Ela não tem data de fim enquanto não for encerrada.
+  Ela não se confunde com a fase **em aberto**, a que não tem data de fim
+  (RN-18): as duas costumam ser a mesma, e deixam de ser quando a próxima fase
+  já está agendada. Aí a corrente tem data de fim, posta pela RN-22, e a em
+  aberto é a futura (RN-69).
 - **RN-66** Data sem fase exibe peso semanal, as três variações e a cintura
   medida, e nada além disso. Não há taxa alvo, veredito de ritmo, barra de
   progresso nem faixa de tolerância, porque os quatro dependem de um plano
@@ -102,8 +105,8 @@ motivo.
 
 ## Nível e taxa alvo
 
-- **RN-28** O nível é conservador, moderado, agressivo ou personalizado, e
-  determina a taxa alvo padrão da fase.
+- **RN-28** O nível é conservador, moderado, agressivo ou personalizado, é
+  obrigatório em cutting e bulking, e determina a taxa alvo padrão da fase.
 - **RN-29** A taxa alvo tem valor e unidade, e ambos são editáveis pelo
   usuário. As unidades possíveis são porcentagem do peso corporal por semana e
   quilogramas por semana.

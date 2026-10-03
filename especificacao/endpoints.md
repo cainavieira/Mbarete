@@ -38,7 +38,7 @@ documento está datado.
 | `GET` | `/fases` | lista todas, marcando a corrente quando existir | RF-23 |
 | `POST` | `/fases` | cria fase, com data de fim opcional; sem ela, encerra a fase em aberto que começou antes da nova | RF-15, RF-19 |
 | `PATCH` | `/fases/{id}` | edita tipo, nível, taxa alvo, peso alvo, início e fim | RF-20 |
-| `POST` | `/fases/{id}/encerramento` | encerra a fase em aberto | RF-45 |
+| `POST` | `/fases/{id}/encerramento` | encerra a fase corrente | RF-45 |
 | `DELETE` | `/fases/{id}` | apaga a fase; os registros permanecem sem fase | RF-22 |
 | `GET` | `/acompanhamento` | tudo da tela principal, numa resposta | UC-08 |
 | `POST` | `/importacao/previsualizacao` | valida o arquivo e relata, sem gravar | RF-37, RF-38 |
@@ -245,5 +245,5 @@ comando de linha executado no servidor (RF-44, ADR-0011).
 | 401 | sem sessão válida |
 | 403 | e-mail não consta na lista de convidados |
 | 404 | registro ou fase que não existe, ou que é de outro usuário, sem distinguir os dois |
-| 409 | conflito de data em registro, ou sobreposição de fase que a RN-19 recusa |
+| 409 | conflito de data em registro, sobreposição de fase que a RN-19 recusa, ou encerramento de fase que não é a corrente |
 | 422 | corpo malformado, antes de chegar a regra de negócio |

@@ -67,7 +67,10 @@ motivo.
   em aberto, e quem quer adiantar o início de um ciclo edita a data da fase
   existente (RN-24). Criar fase **com data de fim** que invada a fase em aberto
   é recusado: ela classifica um período, não começa um ciclo, e encerrar a fase
-  em aberto seria efeito que a pessoa não pediu.
+  em aberto seria efeito que a pessoa não pediu. Editar fase nunca encerra
+  outra: a edição que criaria sobreposição com qualquer fase, em aberto ou não,
+  é recusada, porque recusa é reversível e encerrar a fase que a pessoa está
+  vivendo, por efeito de corrigir outra, não é.
 - **RN-20** Data pode não pertencer a fase nenhuma. Período sem fase é estado
   válido e esperado, não defeito a corrigir.
 - **RN-22** Iniciar uma fase nova sem data de fim, começando depois da fase em

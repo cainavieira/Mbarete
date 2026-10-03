@@ -172,8 +172,9 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
 - **2a** Uma das datas é alterada: os registros que entraram ou saíram do
   intervalo mudam de fase, porque a fase é derivada da data. Registro que saiu
   e não caiu em outra fase passa a não ter fase. (RF-20, RN-20, RN-23, RN-24)
-- **2b** A alteração criaria sobreposição com fase que já tem data de fim:
-  recusada. (RF-46, RN-19)
+- **2b** A alteração criaria sobreposição com outra fase, em aberto ou não:
+  recusada, sem encerrar nenhuma fase. Para adiantar o início de uma fase
+  colada na anterior, encurta-se antes a anterior. (RF-46, RN-19)
 - **2c** O tipo muda para manutenção: peso alvo e nível deixam de existir para
   aquela fase e seus valores são descartados. (RF-24)
 - **2d** O tipo muda de manutenção para cutting ou bulking: o sistema passa a

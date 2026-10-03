@@ -65,9 +65,10 @@ aposentados estão listados no fim.
   manutenção. (RN-33, RN-41)
 - **RF-45** O sistema deve permitir que o AT-01 encerre a fase corrente, com
   data de encerramento não futura. (RN-67)
-- **RF-46** O sistema deve recusar criação ou edição de fase que sobreponha
-  outra fase que já tenha data de fim, e criação de fase que sobreponha a fase
-  em aberto quando a nova tem data de fim ou não começa depois dela. (RN-19)
+- **RF-46** O sistema deve recusar edição de fase que sobreponha qualquer outra
+  fase, e criação de fase que sobreponha outra que já tenha data de fim, ou
+  que sobreponha a fase em aberto quando a nova tem data de fim ou não começa
+  depois dela. (RN-19)
 
 ## Acompanhamento
 

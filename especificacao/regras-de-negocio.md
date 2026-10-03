@@ -60,15 +60,18 @@ motivo.
 - **RN-19** Fases do mesmo usuário não se sobrepõem, e a reação à tentativa de
   sobreposição depende de com quem ela colide. Criar fase que invada o
   intervalo de uma fase **com data de fim** é recusado. Criar fase **sem data
-  de fim** que invada a fase **em aberto** encerra essa fase na véspera do
-  novo início, em vez de recusar: é o caso de quem começou o ciclo antes de
-  cadastrar. Criar fase **com data de fim** que invada a fase em aberto é
-  recusado: ela classifica um período, não começa um ciclo, e encerrar a fase
+  de fim** que invada a fase **em aberto**, começando depois dela, encerra essa
+  fase na véspera do novo início, em vez de recusar: é o caso de quem começou o
+  ciclo antes de cadastrar. Se a fase nova começa no mesmo dia da fase em
+  aberto, ou antes dela, é recusado: a véspera cairia antes do início da fase
+  em aberto, e quem quer adiantar o início de um ciclo edita a data da fase
+  existente (RN-24). Criar fase **com data de fim** que invada a fase em aberto
+  é recusado: ela classifica um período, não começa um ciclo, e encerrar a fase
   em aberto seria efeito que a pessoa não pediu.
 - **RN-20** Data pode não pertencer a fase nenhuma. Período sem fase é estado
   válido e esperado, não defeito a corrigir.
-- **RN-22** Iniciar uma fase nova sem data de fim encerra a fase em aberto no
-  dia anterior à data de início da nova.
+- **RN-22** Iniciar uma fase nova sem data de fim, começando depois da fase em
+  aberto, encerra a fase em aberto no dia anterior à data de início da nova.
 - **RN-23** A fase de um registro é derivada da data do registro. A fase não é
   gravada dentro do registro.
 - **RN-24** As datas de início e de fim de uma fase são editáveis, sujeitas à

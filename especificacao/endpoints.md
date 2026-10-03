@@ -34,7 +34,7 @@ documento está datado.
 | `PATCH` | `/registros/{data}` | edita peso, cintura ou a própria data | RF-11 |
 | `DELETE` | `/registros/{data}` | apaga registro | RF-12 |
 | `GET` | `/fases` | lista todas, marcando a corrente quando existir | RF-23 |
-| `POST` | `/fases` | cria fase, com data de fim opcional; sem ela, encerra a fase em aberto se houver invasão | RF-15, RF-19 |
+| `POST` | `/fases` | cria fase, com data de fim opcional; sem ela, encerra a fase em aberto que começou antes da nova | RF-15, RF-19 |
 | `PATCH` | `/fases/{id}` | edita tipo, nível, taxa alvo, peso alvo, início e fim | RF-20 |
 | `POST` | `/fases/{id}/encerramento` | encerra a fase em aberto | RF-45 |
 | `DELETE` | `/fases/{id}` | apaga a fase; os registros permanecem sem fase | RF-22 |

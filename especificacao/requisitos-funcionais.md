@@ -75,6 +75,9 @@ aposentados estão listados no fim.
   pontos e o peso semanal como linha. (RN-09, RN-17)
 - **RF-47** O sistema deve distinguir no gráfico os períodos cobertos por fase
   dos períodos sem fase. (RN-66)
+- **RF-49** O sistema deve apresentar o gráfico dos últimos 120 dias, com
+  escolha de 30, 60, 90 ou 120. Quando o primeiro registro é mais recente que
+  o período escolhido, o gráfico começa nele, sem trecho em branco antes.
 - **RF-29** O sistema deve apresentar as três variações de peso, calculadas
   sobre peso semanal, com o intervalo das janelas usadas em cada uma. (RN-46,
   RN-47)

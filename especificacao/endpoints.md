@@ -127,8 +127,9 @@ pensa "março". Paginação é o desenho errado para série temporal.
 `GET /acompanhamento` devolve, de uma vez: peso semanal e a contagem de
 registros da janela, as três variações com o intervalo de datas de cada uma
 (RN-47), a fase corrente inteira, o veredito de ritmo com a taxa alvo já
-convertida em quilogramas da semana (RN-35), o progresso até o peso alvo, e o
-último valor de cintura com as duas variações dela (RN-12).
+convertida em quilogramas da semana (RN-35), o progresso até o peso alvo, o
+último valor de cintura com as duas variações dela (RN-12), e a série do
+gráfico.
 
 O motivo é consistência, não desempenho. Tudo ali deriva do mesmo peso semanal
 (RN-17). Em seis endpoints separados, seis respostas chegam em momentos
@@ -137,6 +138,19 @@ diferente do que aparece ao lado. Ninguém percebe, e está errado.
 
 Uma resposta significa uma chave de cache e uma invalidação depois de gravar
 (ADR-0023).
+
+A série do gráfico é uma entrada por dia, dos últimos 120 dias até hoje, com
+a data, o peso (nulo onde não houve registro), o peso semanal (nulo onde a
+janela não teve os 4 registros) e o identificador da fase que cobre o dia
+(nulo onde não há fase). Se o primeiro registro da conta é mais recente que
+isso, a série começa nele (RF-49). Os botões de período recortam a série na
+tela, sem nova chamada.
+
+Uma entrada por dia, inclusive o dia sem dado, porque a linha só se
+interrompe onde existe ponto nulo: dia omitido faria o gráfico ligar os
+vizinhos e desenhar uma trajetória que não aconteceu (RN-09, ADR-0029). E a
+fase vem em cada ponto, em vez de vir do `GET /fases`, para a tela continuar
+montada por uma chamada só.
 
 Onde a janela não tem os 4 registros mínimos, o peso semanal vem nulo e o
 veredito vem com estado de dados insuficientes, em vez de o campo desaparecer

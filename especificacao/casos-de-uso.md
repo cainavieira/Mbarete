@@ -205,8 +205,9 @@ fase sobre o mesmo intervalo. (RN-70)
 **Fluxo principal**
 
 1. O sistema apresenta o peso semanal. (RF-26, RN-15)
-2. Apresenta o gráfico com os pesos diários como pontos e o peso semanal como
-   linha. (RF-28)
+2. Apresenta o gráfico dos últimos 120 dias, com os pesos diários como pontos,
+   o peso semanal como linha, e os trechos com fase distintos dos trechos sem
+   fase. (RF-28, RF-47, RF-49)
 3. Apresenta as três variações, cada uma com o intervalo de datas usado.
    (RF-29, RN-47)
 4. Apresenta o veredito de ritmo da fase corrente e a taxa alvo convertida em
@@ -218,6 +219,11 @@ fase sobre o mesmo intervalo. (RN-70)
 
 - **1a** A janela tem menos de 4 registros: dados insuficientes no lugar do
   peso semanal, e sem peso semanal não há veredito nem barra. (RN-16)
+- **2a** O usuário escolhe outro período, de 30, 60 ou 90 dias: o gráfico
+  passa a mostrar só esse trecho. (RF-49)
+- **2b** O primeiro registro é mais recente que o período escolhido: o gráfico
+  começa no primeiro registro e se alarga conforme os dias passam, em vez de
+  mostrar trecho em branco. (RF-49)
 - **4a** A fase tem menos de 14 dias, ou uma das duas janelas comparadas tem
   menos de 4 registros: dados insuficientes no lugar do veredito, mas o peso
   semanal e as variações continuam sendo exibidos. (RN-36, RN-39)

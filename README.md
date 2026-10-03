@@ -40,7 +40,7 @@ O que existe hoje:
 | como se escreve código aqui | [convenções do backend](especificacao/convencoes-backend.md) e [do frontend](especificacao/convencoes-frontend.md) |
 | o contrato da API | [especificacao/endpoints.md](especificacao/endpoints.md) |
 | como o trabalho entra no repositório | [especificacao/fluxo-de-trabalho.md](especificacao/fluxo-de-trabalho.md) |
-| **o que construir, em que ordem, e como saber que acabou** | [instrucao.md](instrucao.md) |
+| **como começar a implementar: armadilhas, recusas e o desenho do esquema** | [instrucao.md](instrucao.md) |
 
 Cada documento cita os outros por identificador (`RN-15`, `RF-07`, `UC-02`,
 `ADR-0009`) em vez de repetir texto. Identificador é estável: número aposentado
@@ -56,7 +56,7 @@ Decidida com alternativa registrada em cada caso. Um ADR por decisão.
 
 - **Backend:** Python com FastAPI, SQLAlchemy 2.0, Pydantic, Alembic, Authlib
 - **Frontend:** React com Vite e TypeScript, TanStack Query, React Router 8,
-  Tailwind com shadcn/ui, Recharts
+  Tailwind com shadcn/ui, React Hook Form com Zod, Recharts
 - **Banco:** PostgreSQL
 - **Identidade:** Google, sem senha própria, entrada por convite
 - **Hospedagem:** servidor próprio, exposto por Cloudflare Tunnel
@@ -65,11 +65,10 @@ Decidida com alternativa registrada em cada caso. Um ADR por decisão.
 
 ## O que falta
 
-O código. A ordem de construção está em [instrucao.md](instrucao.md), em onze
-etapas, cada uma com o que criar, como verificar que acabou, e quais ADR ler
-antes: ambiente, esquema e migração, camada de regras com os testes,
-autenticação, rotas, acompanhamento, importação, base do frontend, telas, e
-produção com túnel e backup.
+O código. O ponto de partida para implementar está no
+[instrucao.md](instrucao.md): ordem de leitura da especificação, o que já foi
+recusado, armadilhas conhecidas, e o desenho do esquema e da camada de regras.
+A ordem de construção, em macro tarefas, fica num documento de trabalho local.
 
 O escopo da primeira versão é **tudo o que a especificação descreve**. Foi
 proposta uma versão reduzida e recusada de propósito: import e export de CSV,

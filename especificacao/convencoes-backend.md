@@ -135,6 +135,9 @@ alcança o dado de outro.
    aquele arquivo; alterá-lo faz o histórico do Alembic mentir sobre o estado
    real. Correção entra como migração nova.
 10. Consulta dentro de laço. No volume da RNF-25 não dói, e o hábito dói depois.
+11. Peso ou cintura em linha de log (RNF-13), inclusive pelo caminho
+    indireto: mensagem de exceção que carrega o corpo da requisição, erro de
+    validação do Pydantic com o valor recebido, ou objeto inteiro registrado.
 
 ## Migração de esquema
 

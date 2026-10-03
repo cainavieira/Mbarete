@@ -45,9 +45,9 @@ documento (ADR-0023).
 
 | Tipo de estado | Onde mora | Exemplos |
 |:--|:--|:--|
-| Estado de servidor | TanStack Query | lista de registros, fase corrente, peso semanal, variações |
+| Estado de servidor | TanStack Query | lista de registros, fase corrente, peso semanal, variações, veredito, progresso |
 | Estado de tela | `useState` no componente | diálogo aberto, aba selecionada, campo em digitação |
-| Estado derivado | **em lugar nenhum** | o veredito, o progresso: calcula na renderização |
+| Estado derivado | **em lugar nenhum** | o trecho da série do período escolhido (RF-49), se o formulário pode ser enviado: calcula na renderização |
 
 Depois de gravar, invalida-se a chave da consulta e os consumidores se
 atualizam. Não se atualiza tela na mão.

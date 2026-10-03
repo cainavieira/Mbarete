@@ -25,6 +25,10 @@ src/
   lib/           utilidades sem dominio
 ```
 
+O cliente HTTP em `api/` é o único lugar que monta requisição. É ele que põe
+o cabeçalho `Data-Local`, com a data do dispositivo, em toda chamada (RN-04),
+para nenhuma rota nova nascer sem ela.
+
 ## TypeScript
 
 - `strict` ligado no `tsconfig`.

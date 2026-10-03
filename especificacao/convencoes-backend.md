@@ -76,6 +76,7 @@ Derivado das regras. Todo código novo entra aqui junto com a regra que o gera.
 | `PESO_FORA_DE_FAIXA` | peso fora de 20,0 a 400,0 | RN-03 |
 | `CINTURA_FORA_DE_FAIXA` | cintura fora de 40,0 a 200,0 | RN-11 |
 | `DATA_FUTURA` | data do registro no futuro | RN-05 |
+| `DATA_LOCAL_INVALIDA` | cabeçalho `Data-Local` ausente, malformado ou a mais de um dia da data do servidor | RN-04 |
 | `REGISTRO_JA_EXISTE` | já há registro na data | RN-01 |
 | `PESO_ALVO_AUSENTE` | cutting ou bulking sem peso alvo | RN-41 |
 | `FASE_SOBREPOSTA` | a fase invade outra num caso que a RN-19 recusa | RN-19 |

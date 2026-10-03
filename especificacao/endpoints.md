@@ -16,6 +16,8 @@ documento está datado.
 - Toda resposta de erro usa o formato único de `convencoes-backend.md`, com
   `codigo`, `campo`, `mensagem` e `regra`.
 - Datas em `AAAA-MM-DD`, números com ponto decimal (RN-62, RN-63).
+- O dia corrente é o do dispositivo (RN-04) e chega no cabeçalho `Data-Local`,
+  em `AAAA-MM-DD`, em toda requisição. O motivo está abaixo.
 - O registro é endereçado pela data, não por identificador. A fase é endereçada
   por identificador sequencial. O motivo de cada um está abaixo.
 
@@ -71,6 +73,28 @@ Responder 403 exigiria ler a linha alheia para saber que ela existe, que é
 justamente a consulta sem filtro que o isolamento proíbe. Esconder a
 existência não é o motivo: o identificador sequencial já deixa estimar quantas
 fases existem, e isso foi aceito acima.
+
+### O dia corrente chega em cabeçalho
+
+A RN-04 manda usar o dia do dispositivo, não o do servidor. O frontend põe a
+data local no cabeçalho `Data-Local`, em `AAAA-MM-DD`, em toda requisição, a
+partir de um lugar só (`convencoes-frontend.md`).
+
+Cabeçalho, e não parâmetro de URL nem campo de corpo: URL entra no log de
+acesso (RNF-17), leitura não tem corpo, e um mecanismo único no cliente faz
+com que nenhuma rota nova nasça sem a data.
+
+A rota que depende de hoje (data futura no registro e na importação, data de
+fim de fase, fase corrente, janela do acompanhamento e da lista de registros)
+recusa com 400 e `DATA_LOCAL_INVALIDA` quando o cabeçalho falta ou vem
+malformado. Cair para a data do servidor seria o mesmo defeito com outra
+cara: passa em todo teste, porque servidor e máquina de teste estão no mesmo
+fuso, e aparece em viagem ou na virada do dia.
+
+A data também é recusada quando está a mais de um dia da data do servidor em
+UTC. Os fusos vão de 12 horas antes a 14 horas depois do UTC, então relógio
+certo nunca passa de um dia de distância; além disso é relógio errado, e
+aceitar deixaria registrar peso no futuro pela porta do dispositivo (RN-05).
 
 ### Editar a data de um registro é mover o recurso
 
@@ -217,7 +241,7 @@ comando de linha executado no servidor (RF-44, ADR-0011).
 | 200 | leitura bem-sucedida |
 | 201 | registro ou fase criados |
 | 204 | exclusão bem-sucedida |
-| 400 | valor recusado por regra (faixa, data futura no registro, data de fim futura ou anterior ao início) |
+| 400 | valor recusado por regra (faixa, data futura no registro, data de fim futura ou anterior ao início, data local ausente ou inválida) |
 | 401 | sem sessão válida |
 | 403 | e-mail não consta na lista de convidados |
 | 404 | registro ou fase que não existe, ou que é de outro usuário, sem distinguir os dois |

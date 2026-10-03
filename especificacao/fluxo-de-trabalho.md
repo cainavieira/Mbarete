@@ -52,6 +52,38 @@ Dois testes antes de escrever a frase do corpo:
 Mensagem de commit **sem acento**: ela vai para terminal, log e ferramenta de
 terceiro, onde codificação errada aparece como lixo.
 
+## Testes
+
+Todo teste passa por uma pergunta antes de ser proposto: **que defeito real ele
+pega?** Sem resposta concreta, o teste não entra.
+
+- Nada de teste tautológico: o que só repete o código, ou confere o que a
+  linguagem ou a biblioteca já garantem.
+- Nada de teste duplicado: se outro teste já pega o mesmo defeito, um dos dois
+  sai.
+- O que o teste espera sai do próprio teste, nunca importado do código
+  testado.
+- Ao propor um teste, dizer em uma linha o defeito que ele pega.
+
+A camada de cada teste está no ADR-0020.
+
+### TDD
+
+Nas partes críticas do código, o teste vem antes do código: a camada de regras
+(`app/regras/`, RNF-27), e as recusas e o isolamento das rotas (ADR-0034). Nas
+outras partes, o TDD pode ficar de lado por ponderação de quem escreve.
+
+O ciclo:
+
+1. **Vermelho:** escrever o teste do comportamento novo e ver ele falhar. Se
+   passar de primeira, ou o comportamento já existe, ou o teste não testa
+   nada.
+2. **Verde:** escrever o mínimo de código para o teste passar.
+3. **Refatorar:** melhorar o código com o teste protegendo.
+
+O teste do vermelho passa pela mesma pergunta do começo desta seção: parte
+crítica não dispensa dizer que defeito ele pega.
+
 ## Antes de integrar
 
 Roda local e roda na integração contínua (ADR-0030), e os dois têm que passar:

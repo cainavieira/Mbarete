@@ -188,6 +188,8 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   (RN-68)
 - **2g** O peso alvo passa para o lado errado da base: a alteração é aceita, e
   a barra deixa de ser exibida enquanto isso durar. (RN-44)
+- **2h** O valor da taxa alvo é editado: o nível passa a personalizado.
+  (RF-18, RN-30)
 
 ## UC-07 Apagar fase
 

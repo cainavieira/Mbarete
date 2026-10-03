@@ -189,5 +189,7 @@ Manual, por script que para no primeiro erro (ADR-0031). A ordem importa:
 2. `alembic upgrade head`
 3. testar a restauração do backup, se houve migração (RNF-08)
 4. `docker compose up -d --build`
+5. conferir que `GET /saude` responde, para o deploy não terminar em silêncio
+   com a api caída
 
 Push para o remoto é sempre ação do interessado, nunca automática.

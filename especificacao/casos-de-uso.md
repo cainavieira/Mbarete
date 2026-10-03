@@ -28,8 +28,9 @@ usuários de teste do AT-03.
 
 **Fluxos alternativos**
 
-- **1a** O e-mail não está na lista de convidados: o sistema recusa dizendo
-  que o acesso é por convite, sem informar se aquele e-mail existe no sistema.
+- **1a** O e-mail não está na lista de convidados: o sistema volta para a
+  tela de entrada dizendo que o acesso é por convite, sem informar se aquele
+  e-mail existe no sistema. (RF-02, RNF-23)
 - **1b** O e-mail não está na lista de usuários de teste do AT-03: a recusa
   acontece no Google, antes de o sistema ser alcançado, e a pessoa vê a tela
   do Google dizendo que o aplicativo não está autorizado. O sistema não tem

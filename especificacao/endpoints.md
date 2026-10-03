@@ -14,7 +14,8 @@ documento está datado.
 - Autenticação por cookie de sessão (ADR-0009) em todas as rotas, exceto as de
   `auth/` e `saude`.
 - Toda resposta de erro usa o formato único de `convencoes-backend.md`, com
-  `codigo`, `campo`, `mensagem` e `regra`.
+  `codigo`, `campo`, `mensagem` e `regra`. A exceção é a recusa por convite no
+  callback, explicada abaixo.
 - Datas em `AAAA-MM-DD`, números com ponto decimal (RN-62, RN-63).
 - O dia corrente é o do dispositivo (RN-04) e chega no cabeçalho `Data-Local`,
   em `AAAA-MM-DD`, em toda requisição. O motivo está abaixo.
@@ -26,7 +27,7 @@ documento está datado.
 | Método | Caminho | Faz | Requisito |
 |:--|:--|:--|:--|
 | `GET` | `/auth/login` | redireciona para o Google | RF-01 |
-| `GET` | `/auth/callback` | recebe o código, cria sessão, redireciona para a aplicação | RF-01, RF-03 |
+| `GET` | `/auth/callback` | recebe o código, cria sessão e redireciona para a aplicação; na recusa por convite, redireciona para a tela de entrada com o motivo | RF-01, RF-02, RF-03 |
 | `POST` | `/auth/logout` | apaga a sessão e expira o cookie | RF-04 |
 | `GET` | `/conta` | nome, e-mail e foto vindos do Google | UC-12 |
 | `POST` | `/conta/exclusao` | apaga a conta e todos os dados | RF-06 |
@@ -43,7 +44,7 @@ documento está datado.
 | `GET` | `/acompanhamento` | tudo da tela principal, numa resposta | UC-08 |
 | `POST` | `/importacao/previsualizacao` | valida o arquivo e relata, sem gravar | RF-37, RF-38 |
 | `POST` | `/importacao` | grava o arquivo inteiro ou nada | RF-40 |
-| `GET` | `/saude` | responde se o serviço está no ar | RNF-09 |
+| `GET` | `/saude` | responde se a api está no ar; o script de deploy confere por ela | ADR-0031 |
 
 ## As decisões que não se leem na lista
 
@@ -224,6 +225,18 @@ memória, então o reenvio não custa nada ao usuário.
 Convidar é ação do AT-02, que não tem interface no sistema (`atores.md`). É
 comando de linha executado no servidor (RF-44, ADR-0011).
 
+### A recusa de convite volta como redirecionamento
+
+O `GET /auth/callback` não é chamado pela aplicação: o navegador chega nele
+vindo do Google, numa navegação de página inteira, e um erro em JSON ali
+apareceria cru na tela. Por isso, na recusa por convite (UC-01 1a), o callback
+redireciona para a tela de entrada com `motivo=NAO_CONVIDADO` na URL, e a tela
+explica que o acesso é por convite. É o mesmo mecanismo do caminho feliz, que
+já termina em redirecionamento.
+
+O motivo não leva o e-mail e só diz que o acesso é por convite, sem revelar se
+aquele e-mail existe no sistema (RNF-23).
+
 ## O que não tem endpoint, e por quê
 
 | O quê | Por quê |
@@ -243,7 +256,6 @@ comando de linha executado no servidor (RF-44, ADR-0011).
 | 204 | exclusão bem-sucedida |
 | 400 | valor recusado por regra (faixa, data futura no registro, data de fim futura ou anterior ao início, data local ausente ou inválida) |
 | 401 | sem sessão válida |
-| 403 | e-mail não consta na lista de convidados |
 | 404 | registro ou fase que não existe, ou que é de outro usuário, sem distinguir os dois |
 | 409 | conflito de data em registro, sobreposição de fase que a RN-19 recusa, ou encerramento de fase que não é a corrente |
 | 422 | corpo malformado, antes de chegar a regra de negócio |

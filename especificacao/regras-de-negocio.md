@@ -56,20 +56,24 @@ motivo.
 
 - **RN-18** Uma fase tem tipo, data de início, data de fim, nível e taxa alvo.
   Os tipos são cutting, bulking e manutenção. Data de fim vazia significa fase
-  em aberto.
+  em aberto, e data de fim preenchida nunca é anterior à de início.
 - **RN-19** Fases do mesmo usuário não se sobrepõem, e a reação à tentativa de
   sobreposição depende de com quem ela colide. Criar fase que invada o
-  intervalo de uma fase **com data de fim** é recusado. Criar fase que invada a
-  fase **em aberto** encerra essa fase na véspera do novo início, em vez de
-  recusar: é o caso de quem começou o ciclo antes de cadastrar.
+  intervalo de uma fase **com data de fim** é recusado. Criar fase **sem data
+  de fim** que invada a fase **em aberto** encerra essa fase na véspera do
+  novo início, em vez de recusar: é o caso de quem começou o ciclo antes de
+  cadastrar. Criar fase **com data de fim** que invada a fase em aberto é
+  recusado: ela classifica um período, não começa um ciclo, e encerrar a fase
+  em aberto seria efeito que a pessoa não pediu.
 - **RN-20** Data pode não pertencer a fase nenhuma. Período sem fase é estado
   válido e esperado, não defeito a corrigir.
-- **RN-22** Iniciar uma fase nova encerra a fase em aberto no dia anterior à
-  data de início da nova.
+- **RN-22** Iniciar uma fase nova sem data de fim encerra a fase em aberto no
+  dia anterior à data de início da nova.
 - **RN-23** A fase de um registro é derivada da data do registro. A fase não é
   gravada dentro do registro.
-- **RN-24** As datas de início e de fim de uma fase são editáveis, sujeitas
-  apenas à proibição de sobreposição da RN-19. Editá-las reclassifica os
+- **RN-24** As datas de início e de fim de uma fase são editáveis, sujeitas à
+  proibição de sobreposição da RN-19, à ordem entre as datas da RN-18 e à
+  proibição de data de fim futura da RN-67. Editá-las reclassifica os
   registros dos intervalos afetados, porque a fase é derivada da data.
 - **RN-27** Fase corrente é a que cobre a data de hoje, e **pode não existir**.
   Ela não tem data de fim enquanto não for encerrada.
@@ -192,8 +196,8 @@ motivo.
   partir do conteúdo do arquivo.
 - **RN-55** A data aceita os formatos AAAA-MM-DD e DD/MM/AAAA.
 - **RN-57** A importação não cria fase. As datas importadas ficam sem fase
-  (RN-20), e classificar o histórico depois se faz criando fase sobre o
-  intervalo, que é operação normal pela RN-19. Isso evita que um período
+  (RN-20), e classificar o histórico depois se faz criando fase com início e
+  fim sobre o intervalo, que é operação normal pela RN-19. Isso evita que um período
   importado antigo se torne a fase corrente por não ter nada depois dele.
 - **RN-58** A gravação exige pré-visualização prévia, que informa quantas
   linhas são válidas, quantas foram recusadas com número da linha e motivo, e

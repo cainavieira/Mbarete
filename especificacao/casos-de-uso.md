@@ -115,7 +115,8 @@ usuários de teste do AT-03.
 **Fluxo principal**
 
 1. O usuário escolhe o tipo: cutting, bulking ou manutenção. (RN-18)
-2. Informa a data de início, que pode ser passada, hoje ou futura. (RN-69)
+2. Informa a data de início, que pode ser passada, hoje ou futura, e a data de
+   fim, se a fase já terminou. (RF-15, RN-69)
 3. Escolhe o nível, e o sistema preenche a taxa alvo sugerida. (RF-16, RN-31,
    RN-32)
 4. Informa o peso alvo. (RN-41)
@@ -125,15 +126,22 @@ usuários de teste do AT-03.
 
 - **1a** O tipo é manutenção: o sistema não pede nível nem peso alvo, e usa
   taxa alvo zero com tolerância de 0,5%. (RF-24, RN-33)
-- **2a** A data de início é passada e cai dentro da fase **em aberto**: aceito,
-  e a fase em aberto é encerrada na véspera. É o caso comum, de quem começou o
-  ciclo antes de cadastrar. (RF-19, RN-19, RN-22)
+- **2a** A data de início é passada e cai dentro da fase **em aberto**, e a
+  fase nova não tem data de fim: aceito, e a fase em aberto é encerrada na
+  véspera. É o caso comum, de quem começou o ciclo antes de cadastrar. (RF-19,
+  RN-19, RN-22)
 - **2b** A data de início cai dentro de fase que já tem data de fim: recusado
   por sobreposição. (RF-46, RN-19)
 - **2c** A data de início cai num período **sem fase**: aceito, e é assim que
-  se classifica histórico importado depois do fato. (RN-57)
+  se classifica histórico importado depois do fato, informando também a data
+  de fim. (RN-57)
 - **2d** A data de início é futura: aceito. A fase aparece na lista de fases e
   não entra no acompanhamento até começar. (RN-69)
+- **2e** A data de fim é informada e a fase invade a fase em aberto: recusado.
+  Para classificar um período dentro do ciclo atual, a pessoa encerra a fase
+  em aberto antes. (RF-46, RN-19)
+- **2f** A data de fim é futura, ou anterior à data de início: recusado.
+  (RF-15, RN-18, RN-67)
 - **3a** O usuário edita o valor da taxa alvo: o nível passa a personalizado.
   (RF-18, RN-30)
 - **5a** O peso alvo está do lado errado da base: a fase é criada, e a barra
@@ -293,8 +301,8 @@ fase sobre o mesmo intervalo. (RN-70)
 - **4a** A gravação falha no meio: nada é gravado, e o histórico continua como
   estava antes do envio. (RN-59)
 - **4b** Depois de importar, o usuário quer classificar o período: cria fase
-  sobre o intervalo importado, que é operação normal do UC-05, porque aquelas
-  datas estão sem fase. (RN-57)
+  com início e fim sobre o intervalo importado, que é operação normal do
+  UC-05, porque aquelas datas estão sem fase. (RN-57)
 
 **Pós-condição:** todas as linhas gravadas, ou nenhuma.
 
@@ -378,7 +386,7 @@ segundos para um grupo pequeno.
 - **2a** A data informada é futura: recusada. Para que a fase termine numa data
   futura, o caminho é criar a fase seguinte começando no dia seguinte, e a
   RN-22 encerra esta sozinha. (RN-67)
-- **2b** A data informada é anterior ao início da fase: recusada.
+- **2b** A data informada é anterior ao início da fase: recusada. (RN-18)
 - **3a** Existem registros depois da data de encerramento: eles permanecem e
   passam a não ter fase. (RN-20)
 

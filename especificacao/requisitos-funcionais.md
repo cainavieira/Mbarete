@@ -42,8 +42,10 @@ aposentados estão listados no fim.
 ## Fase
 
 - **RF-15** O sistema deve permitir que o AT-01 crie uma fase informando tipo,
-  data de início, nível e peso alvo. A data de início pode ser passada ou
-  futura. (RN-18, RN-41, RN-69)
+  data de início, nível e peso alvo, e a data de fim quando a fase já
+  terminou. A data de início pode ser passada ou futura; a de fim, quando
+  informada, não pode ser futura nem anterior à de início. (RN-18, RN-41,
+  RN-67, RN-69)
 - **RF-16** O sistema deve sugerir a taxa alvo a partir do tipo e do nível
   escolhidos. (RN-31, RN-32, RN-33)
 - **RF-17** O sistema deve permitir que o AT-01 edite o valor e a unidade da
@@ -51,7 +53,7 @@ aposentados estão listados no fim.
 - **RF-18** O sistema deve marcar o nível como personalizado quando o valor da
   taxa alvo for editado. (RN-30)
 - **RF-19** O sistema deve encerrar a fase em aberto na véspera do início de
-  uma fase nova que a invada. (RN-19, RN-22)
+  uma fase nova, sem data de fim, que a invada. (RN-19, RN-22)
 - **RF-20** O sistema deve permitir que o AT-01 edite as datas de início e de
   fim de uma fase. (RN-24)
 - **RF-22** O sistema deve permitir que o AT-01 apague qualquer fase,
@@ -63,7 +65,8 @@ aposentados estão listados no fim.
 - **RF-45** O sistema deve permitir que o AT-01 encerre a fase corrente, com
   data de encerramento não futura. (RN-67)
 - **RF-46** O sistema deve recusar criação ou edição de fase que sobreponha
-  outra fase que já tenha data de fim. (RN-19)
+  outra fase que já tenha data de fim, e criação de fase com data de fim que
+  sobreponha a fase em aberto. (RN-19)
 
 ## Acompanhamento
 

@@ -21,8 +21,8 @@ mais foi apagado, e o levantamento recomeçou por atores, regras e casos de uso.
 
 O que existe hoje:
 
-- `especificacao/`: 64 regras de negócio, 45 requisitos funcionais, 14 casos de
-  uso, 29 requisitos não funcionais, 33 ADR, arquitetura e convenções.
+- `especificacao/`: 64 regras de negócio, 46 requisitos funcionais, 14 casos de
+  uso, 29 requisitos não funcionais, 34 ADR, arquitetura e convenções.
 - `backend/pytho.py`: o script de origem, inalterado, preservado como ponto de
   partida.
 

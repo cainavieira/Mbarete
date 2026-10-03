@@ -81,6 +81,7 @@ Derivado das regras. Todo código novo entra aqui junto com a regra que o gera.
 | `FASE_SOBREPOSTA` | a fase invade outra que já tem data de fim | RN-19 |
 | `ENCERRAMENTO_EM_DATA_FUTURA` | data de encerramento no futuro | RN-67 |
 | `NAO_CONVIDADO` | e-mail fora da lista de convidados | RN-48 |
+| `NAO_ENCONTRADO` | registro ou fase inexistente, ou de outro usuário, sem distinguir os dois | RN-50 |
 | `CSV_COLUNA_AUSENTE` | falta coluna obrigatória | RN-53 |
 | `CSV_SEPARADOR_DESCONHECIDO` | separador não reconhecido | RN-54 |
 | `CSV_LINHA_INVALIDA` | linha recusada na pré-visualização | RN-60 |
@@ -103,10 +104,15 @@ regra nunca recebe sessão de banco (ADR-0019).
 
 **Cálculo** nunca fica na rota. A rota recebe, chama, devolve.
 
-**Restrição que o banco consegue impor** vai para o banco **também**, e não em
-vez de: a verificação na aplicação existe para devolver mensagem que o usuário
-entende, e a restrição no banco existe para pegar o caminho que alguém esqueceu
-de validar (ADR-0033).
+**Restrição de integridade que o banco consegue impor** vai para o banco
+**também**, e não em vez de: a verificação na aplicação existe para devolver
+mensagem que o usuário entende, e a restrição no banco existe para pegar o
+caminho que alguém esqueceu de validar (ADR-0033).
+
+**Isolamento entre usuários** fica na aplicação, e só nela (ADR-0034): toda
+consulta a `registro` e `fase` recebe o `usuario_id` da sessão, e nenhuma rota
+consulta essas tabelas sem ele. Cada rota tem teste de que um usuário não
+alcança o dado de outro.
 
 ## Antipadrões proibidos
 

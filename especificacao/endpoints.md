@@ -61,6 +61,17 @@ o registro. A diferença é de peso: o sistema é fechado por convite (RN-48),
 quantas fases um usuário já teve não é informação sensível, e `uuid` cobraria
 índice maior e URL ilegível sem comprar nada aqui.
 
+### Dado de outro usuário responde 404
+
+Toda consulta carrega o usuário da sessão (ADR-0034), então pedir a fase de
+outra pessoa e pedir uma fase que não existe dão o mesmo resultado: nada. A
+resposta é a mesma, 404, com `NAO_ENCONTRADO`.
+
+Responder 403 exigiria ler a linha alheia para saber que ela existe, que é
+justamente a consulta sem filtro que o isolamento proíbe. Esconder a
+existência não é o motivo: o identificador sequencial já deixa estimar quantas
+fases existem, e isso foi aceito acima.
+
 ### Editar a data de um registro é mover o recurso
 
 `PATCH /registros/{data}` aceita `peso`, `cintura` e também `data`. Alterar a
@@ -209,5 +220,6 @@ comando de linha executado no servidor (RF-44, ADR-0011).
 | 400 | valor recusado por regra (faixa, data futura no registro, encerramento em data futura) |
 | 401 | sem sessão válida |
 | 403 | e-mail não consta na lista de convidados |
+| 404 | registro ou fase que não existe, ou que é de outro usuário, sem distinguir os dois |
 | 409 | conflito de data em registro, ou sobreposição de fase com fase que tem data de fim |
 | 422 | corpo malformado, antes de chegar a regra de negócio |

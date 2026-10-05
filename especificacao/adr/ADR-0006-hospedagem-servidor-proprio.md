@@ -11,8 +11,9 @@ porta inviável. Não há compromisso de disponibilidade (RNF-02).
 
 ## Decisão
 
-Backend, banco e nginx rodam em LXC no Proxmox doméstico, expostos por
-Cloudflare Tunnel, com domínio `.com.br` próprio a R$40 por ano.
+Backend, banco e nginx rodam numa VM no Proxmox doméstico, no cluster do
+ADR-0037, expostos por Cloudflare Tunnel, com domínio `.com.br` próprio a R$40
+por ano.
 
 ## Consequências
 

@@ -1,7 +1,7 @@
 # ADR-0031 Deploy manual por script que para no primeiro erro
 
 - **Data:** 07-09-2026
-- **Situação:** aceito
+- **Situação:** superado por ADR-0037
 
 ## Contexto
 

@@ -1,7 +1,7 @@
 # ADR-0015 ruff para lint e formatação
 
 - **Data:** 07-09-2026
-- **Situação:** aceito
+- **Situação:** superado por ADR-0042
 
 ## Contexto
 

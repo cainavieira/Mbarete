@@ -17,7 +17,7 @@ documento tem seção listando os seus aposentados com o motivo.
 
 ## Antes de propor qualquer coisa
 
-`especificacao/adr/` tem 41 decisões, cada uma com a alternativa que perdeu e o
+`especificacao/adr/` tem 42 decisões, cada uma com a alternativa que perdeu e o
 motivo. A seção **Decisões recusadas** do `regras-de-negocio.md` faz o mesmo
 para regra de produto.
 

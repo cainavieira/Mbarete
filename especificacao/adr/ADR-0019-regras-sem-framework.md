@@ -1,4 +1,4 @@
-# ADR-0019 Regras de agregação não importam FastAPI nem SQLAlchemy
+# ADR-0019 Regras de agregação não importam Spring nem JPA
 
 - **Data:** 07-09-2026
 - **Situação:** aceito
@@ -15,19 +15,19 @@ entidades, casos de uso, adaptadores e infraestrutura.
 ## Decisão
 
 Uma regra só, em vez de camadas: o módulo que contém as regras de agregação não
-importa FastAPI nem SQLAlchemy. Ele recebe listas de dados e devolve valores.
+importa Spring nem JPA. Ele recebe listas de dados e devolve valores.
 
-Da mesma família, duas regras concretas de responsabilidade: a rota não calcula
-nada, ela chama quem calcula; e a função de regra recebe dados, não a sessão do
-banco.
+Da mesma família, duas regras concretas de responsabilidade: o controller não
+calcula nada, ele chama quem calcula; e a função de regra recebe dados, não o
+repositório.
 
 ## Consequências
 
 O teste das regras roda sem banco e sem servidor, em milissegundos, que é o que
 torna a RNF-27 barata em vez de cerimonial (ADR-0020).
 
-O módulo de regras é o único lugar com mypy estrito (ADR-0016), o que é
-possível justamente porque ele não toca em tipo de biblioteca de terceiro.
+O módulo de regras é o único lugar com o NullAway (ADR-0042), o que é possível
+justamente porque ele não toca em tipo de biblioteca de terceiro.
 
 ## Alternativa recusada: camadas completas de Clean Architecture
 

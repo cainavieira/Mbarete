@@ -1,7 +1,7 @@
 # ADR-0016 mypy, estrito apenas no módulo de regras
 
 - **Data:** 07-09-2026
-- **Situação:** aceito
+- **Situação:** superado por ADR-0042
 
 ## Contexto
 

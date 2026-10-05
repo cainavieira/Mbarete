@@ -244,10 +244,12 @@ revelar se aquele e-mail existe no sistema (RNF-23).
 
 ### A renovação tem rota própria
 
-O token de renovação só viaja para `/auth/renovacao`: o cookie dele vale só
-para esse caminho. Quando uma chamada volta 401, o cliente HTTP do frontend
-chama a renovação uma vez e repete a chamada. Se a renovação também voltar
-401, a pessoa vai para a tela de entrada.
+O token de renovação só viaja para as rotas de `auth/`: o cookie dele vale
+para `/api/v1/auth`, e nunca chega ao resto da api. A renovação o troca por um
+token de acesso novo, e o logout o usa para achar a linha no banco e apagá-la.
+Quando uma chamada volta 401, o cliente HTTP do frontend chama a renovação uma
+vez e repete a chamada. Se a renovação também voltar 401, a pessoa vai para a
+tela de entrada.
 
 ## O que não tem endpoint, e por quê
 

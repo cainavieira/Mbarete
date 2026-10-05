@@ -32,8 +32,9 @@ Para a pessoa convidada, o sistema emite dois tokens, cada um num cookie
 - um **token de acesso**, JWT assinado com RS256, válido por 15 minutos e
   conferido só pela assinatura, sem consultar o banco;
 - um **token de renovação**, aleatório, válido por 30 dias, guardado no banco
-  como hash e enviado só para a rota de renovação. Cada uso empurra a validade
-  para mais 30 dias, e ele não é trocado a cada uso.
+  como hash e enviado só para as rotas de autenticação, onde a renovação o usa
+  e o logout o apaga. Cada uso empurra a validade para mais 30 dias, e ele não
+  é trocado a cada uso.
 
 Quando o token de acesso vence, o frontend usa o de renovação para pedir outro.
 Sair apaga o token de renovação e expira os dois cookies.

@@ -31,9 +31,12 @@ quê. RNF sem número é adjetivo.
 - **RNF-06** A perda máxima aceitável é de 24 horas de dado.
 - **RNF-07** Retenção: 30 dias no disco lento, 90 dias na cópia externa, e uma
   cópia mensal guardada por 12 meses.
-- **RNF-08** A restauração é testada a cada migração de esquema do banco, não
-  por calendário. Dump antigo deixa de restaurar exatamente quando o esquema
-  muda, e teste trimestral pode passar semanas depois da quebra.
+- **RNF-08** A restauração é testada a cada migração de esquema, antes de a
+  migração chegar ao banco de produção: o backup mais recente é restaurado num
+  banco descartável e recebe as migrações novas, e o deploy para se uma das
+  duas etapas falhar. Não por calendário: dump antigo deixa de restaurar
+  exatamente quando o esquema muda, e teste trimestral pode passar semanas
+  depois da quebra.
 - **RNF-09** Backup que não executou gera alerta, por interruptor de homem
   morto: o script avisa um serviço externo ao terminar, e o silêncio no
   horário esperado dispara o aviso. O verificador fica fora da casa do AT-02,

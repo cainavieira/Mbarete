@@ -1,7 +1,7 @@
 # ADR-0013 Alembic aplicado por comando explícito
 
 - **Data:** 07-09-2026
-- **Situação:** aceito
+- **Situação:** superado por ADR-0040
 
 ## Contexto
 

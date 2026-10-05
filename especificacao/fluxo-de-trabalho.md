@@ -131,9 +131,9 @@ Uma tarefa está pronta quando as seis linhas abaixo são verdade.
 3. Existe teste na camada certa (ADR-0020): regra pura sem banco, rota contra
    Postgres, ou nenhum se for tela que apenas desenha.
 4. `ruff`, `mypy` e os testes passam local e na integração contínua.
-5. Se houve decisão com alternativa recusada, existe ADR novo. Se a decisão
-   substitui uma anterior, o ADR novo diz qual supera, e no superado muda apenas
-   a linha de situação.
+5. Se houve decisão com alternativa recusada, existe ADR novo, no formato do
+   `modelo-adr.md`. Se a decisão substitui uma anterior, o ADR novo diz qual
+   supera, e no superado muda apenas a linha de situação.
 6. Se houve migração de esquema, a restauração do backup foi testada (RNF-08).
 
 ## Quando cada documento muda
@@ -142,7 +142,7 @@ Uma tarefa está pronta quando as seis linhas abaixo são verdade.
 |:--|:--|
 | Regra de negócio nova ou alterada | `regras-de-negocio.md`, e o requisito que a cita |
 | Comportamento novo visível ao usuário | `requisitos-funcionais.md` e `casos-de-uso.md` |
-| Decisão de tecnologia com alternativa recusada | ADR novo em `especificacao/adr/` |
+| Decisão de tecnologia com alternativa recusada | ADR novo em `especificacao/adr/`, no formato do `modelo-adr.md` |
 | Rota nova ou alterada | `endpoints.md` |
 | Contêiner novo, ou caminho da requisição mudou | `arquitetura.md` |
 | Antipadrão descoberto na prática | a convenção do lado correspondente |

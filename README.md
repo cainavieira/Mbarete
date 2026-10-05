@@ -36,6 +36,7 @@ O que existe hoje:
 | como cada interação acontece, inclusive quando dá errado | [especificacao/casos-de-uso.md](especificacao/casos-de-uso.md) |
 | o que o sistema tem que ser (custo, backup, privacidade) | [especificacao/requisitos-nao-funcionais.md](especificacao/requisitos-nao-funcionais.md) |
 | por que cada tecnologia foi escolhida, e o que perdeu | [especificacao/adr/](especificacao/adr/) |
+| como se escreve um ADR novo | [especificacao/modelo-adr.md](especificacao/modelo-adr.md) |
 | o que roda onde, e por onde a requisição passa | [especificacao/arquitetura.md](especificacao/arquitetura.md) |
 | como se escreve código aqui | [convenções do backend](especificacao/convencoes-backend.md) e [do frontend](especificacao/convencoes-frontend.md) |
 | o contrato da API | [especificacao/endpoints.md](especificacao/endpoints.md) |

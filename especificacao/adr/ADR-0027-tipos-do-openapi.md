@@ -5,8 +5,8 @@
 
 ## Contexto
 
-O FastAPI publica a especificação OpenAPI a partir do código que roda
-(ADR-0001), e o frontend é TypeScript (ADR-0002). O contrato entre as duas
+O springdoc publica a especificação OpenAPI a partir do código que roda
+(ADR-0035), e o frontend é TypeScript (ADR-0002). O contrato entre as duas
 camadas é a única coisa que as duas precisam concordar.
 
 ## Decisão

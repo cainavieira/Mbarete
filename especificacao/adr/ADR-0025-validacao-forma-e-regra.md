@@ -36,6 +36,6 @@ tem valor real.
 ## Alternativa recusada: duplicar as faixas nos dois lados
 
 Daria resposta imediata para tudo. Recusado porque a duplicação de regra de
-negócio entre Pydantic e o esquema do frontend é garantia de divergência
-futura, e divergência de faixa é o tipo de defeito que se manifesta como recusa
-inexplicável para o usuário.
+negócio entre o Bean Validation e o esquema do frontend é garantia de
+divergência futura, e divergência de faixa é o tipo de defeito que se manifesta
+como recusa inexplicável para o usuário.

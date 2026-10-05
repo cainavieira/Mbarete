@@ -1,4 +1,4 @@
-# ADR-0017 Peso como Decimal e numeric(4,1)
+# ADR-0017 Peso como BigDecimal e numeric(4,1)
 
 - **Data:** 07-09-2026
 - **Situação:** aceito
@@ -13,7 +13,7 @@ Número de ponto flutuante binário não representa 0,1 exatamente.
 
 ## Decisão
 
-`Decimal` no Python, `numeric(4,1)` no Postgres. A cintura segue a mesma regra.
+`BigDecimal` no Java, `numeric(4,1)` no Postgres. A cintura segue a mesma regra.
 
 ## Consequências
 
@@ -21,14 +21,15 @@ A média de sete pesos não produz valores como `82.40000000000001`, e a
 comparação com a tolerância da RN-38 depende da regra e não de erro de
 arredondamento.
 
-Cuidado que morde na primeira vez: `Decimal` só é exato se construído a partir
-de texto ou de inteiro. `Decimal("82.4")` vale 82,4; `Decimal(82.4)` carrega o
-erro do ponto flutuante para dentro e vale 82,400000000000005684341886080801486968994140625.
+Cuidado que morde na primeira vez: `BigDecimal` só é exato se construído a
+partir de texto, de inteiro ou por `BigDecimal.valueOf`. `new BigDecimal("82.4")`
+vale 82,4; `new BigDecimal(82.4)` carrega o erro do ponto flutuante para dentro
+e vale 82,400000000000005684341886080801486968994140625.
 
 Consequência ligada: SQLite não reproduz esse arredondamento, o que reforça a
 recusa dele no ADR-0004 e no ADR-0020.
 
-## Alternativa recusada: float
+## Alternativa recusada: double
 
 Mais simples e sem conversão. Recusado pelo motivo do contexto: o erro não
 aparece no valor gravado, aparece na média e na comparação, que é onde o

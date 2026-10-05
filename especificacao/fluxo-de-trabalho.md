@@ -14,7 +14,7 @@ Nome do ramo: o mesmo tipo do commit, mais o assunto em poucas palavras.
 **Git Flow foi recusado**, e a recusa vale registro porque muita gente chama
 qualquer uso de ramo de "git flow". O modelo original, de 2010, tem `develop`,
 `release/*` e `hotfix/*`, e existe para produto com versões numeradas e várias
-mantidas em paralelo. Aqui existe uma versão: a que está no ar (ADR-0031).
+mantidas em paralelo. Aqui existe uma versão: a que está no ar (ADR-0037).
 
 Ramo curto significa dias, não semanas. Ramo que vive um mês acumula conflito
 com `main` e vira um segundo projeto.
@@ -70,7 +70,7 @@ A camada de cada teste está no ADR-0020.
 ### TDD
 
 Nas partes críticas do código, o teste vem antes do código: a camada de regras
-(`app/regras/`, RNF-27), e as recusas e o isolamento das rotas (ADR-0034). Nas
+(`regras/`, RNF-27), e as recusas e o isolamento das rotas (ADR-0034). Nas
 outras partes, o TDD pode ficar de lado por ponderação de quem escreve.
 
 O ciclo:
@@ -86,11 +86,12 @@ crítica não dispensa dizer que defeito ele pega.
 
 ## Antes de integrar
 
-Roda local e roda na integração contínua (ADR-0030), e os dois têm que passar:
+Roda local e roda na integração contínua (ADR-0032), e os dois têm que passar:
 
-- `ruff` para lint e formatação
-- `mypy`, estrito no módulo de regras
-- `pytest`, as duas camadas de backend
+- Spotless, que formata e confere a formatação
+- Error Prone, com o NullAway no pacote de regras (ADR-0042)
+- JUnit, as duas camadas de backend, com o ArchUnit conferindo a regra de
+  dependência (`arquitetura.md`)
 - `vitest`, os componentes que decidem
 - o teste de fumaça do Playwright
 
@@ -130,11 +131,13 @@ Uma tarefa está pronta quando as seis linhas abaixo são verdade.
    novo, nunca reaproveitando número aposentado.
 3. Existe teste na camada certa (ADR-0020): regra pura sem banco, rota contra
    Postgres, ou nenhum se for tela que apenas desenha.
-4. `ruff`, `mypy` e os testes passam local e na integração contínua.
+4. As verificações de "Antes de integrar" passam local e na integração
+   contínua.
 5. Se houve decisão com alternativa recusada, existe ADR novo, no formato do
    `modelo-adr.md`. Se a decisão substitui uma anterior, o ADR novo diz qual
    supera, e no superado muda apenas a linha de situação.
-6. Se houve migração de esquema, a restauração do backup foi testada (RNF-08).
+6. Se houve migração de esquema, ela roda nos testes, sobre o banco que o teste
+   cria do zero; o ensaio do deploy a repete sobre o backup (RNF-08, ADR-0040).
 
 ## Quando cada documento muda
 
@@ -178,17 +181,20 @@ documentação fora do versionamento. Aqui a especificação é o artefato mais
 valioso do projeto: ela existe antes do código e é o que impede a discussão de
 recomeçar. Ela entra em commit como qualquer arquivo.
 
-O que **não** entra: `.env`, o `.venv/`, `node_modules/`, e a ferramenta local
-em `.claude/`.
+O que **não** entra: `.env`, `.venv/`, `target/`, `node_modules/`, e a
+ferramenta local em `.claude/`.
 
 ## Deploy
 
-Manual, por script que para no primeiro erro (ADR-0031). A ordem importa:
+Manual, por script que para no primeiro erro (ADR-0037). A ordem importa:
 
-1. `git pull` no servidor
-2. `alembic upgrade head`
-3. testar a restauração do backup, se houve migração (RNF-08)
-4. `docker compose up -d --build`
+1. construir as imagens da api e do frontend e enviá-las ao registro, com a
+   etiqueta da versão
+2. rodar o ensaio: um Job restaura o backup mais recente num banco
+   descartável e aplica nele as migrações novas (RNF-08, ADR-0040)
+3. aplicar os manifestos com a etiqueta nova; o initContainer migra a
+   produção antes de a api nova subir (ADR-0040)
+4. esperar a versão nova ficar pronta (`kubectl rollout status`)
 5. conferir que `GET /saude` responde, para o deploy não terminar em silêncio
    com a api caída
 

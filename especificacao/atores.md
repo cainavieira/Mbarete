@@ -20,9 +20,10 @@ Quem mantém o sistema no ar. Na v1 é uma pessoa só, a mesma que desenvolve.
 - Emite convite. Convidar é ação exclusiva dele: o AT-01 não convida ninguém.
 - Cadastra o e-mail do convidado na lista de usuários de teste do AT-03.
   Passo manual enquanto o aplicativo estiver em modo Testing.
+- Dispara o deploy, que também aplica a migração (ADR-0037, ADR-0040).
 - Executa restauração de backup e manutenção do servidor.
-- Não tem interface no sistema na v1. Age por fora, pelo console do Google e
-  pelo terminal do servidor. Não existe tela de administração.
+- Não tem interface no sistema na v1. Age por fora, pelo console do Google,
+  pelo terminal do servidor e pelo `kubectl`. Não existe tela de administração.
 - Tem acesso técnico ao banco de dados. Isso é consequência do desenho, está
   declarado no RNF de privacidade, e não é prometido de outra forma.
 

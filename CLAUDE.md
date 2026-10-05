@@ -45,5 +45,5 @@ acha nada.
 - Não busque na web sem ele pedir.
 - Sem travessão, em documento, commit ou conversa.
 - Mensagem de commit sem acento; documento com acento.
-- `especificacao/` é versionada de propósito. `.env`, `.venv/`, `node_modules/`
-  e `.claude/` não entram.
+- `especificacao/` é versionada de propósito. `.env`, `.venv/`, `target/`,
+  `node_modules/` e `.claude/` não entram.

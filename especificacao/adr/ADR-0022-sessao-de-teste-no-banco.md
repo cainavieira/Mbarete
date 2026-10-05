@@ -13,8 +13,9 @@ pular o provedor de identidade.
 
 ## Decisão
 
-O preparo do teste insere a linha de sessão direto no banco e injeta o cookie
-correspondente no contexto do navegador. Nenhum código de produção participa.
+O preparo do teste insere um token de renovação direto no banco e injeta o
+cookie correspondente no contexto do navegador. Nenhum código de produção
+participa.
 
 ## Consequências
 
@@ -22,9 +23,9 @@ Não existe superfície de produção para isso: o teste conversa com um banco q
 ele já controla, e o código que vai para o servidor não tem um único desvio de
 teste dentro.
 
-É possível porque a sessão é uma linha de banco (ADR-0009). Com JWT, o teste
-precisaria da chave de assinatura no ambiente de teste, o que empurraria para a
-alternativa recusada abaixo.
+É possível porque o token de renovação é uma linha de banco (ADR-0041). Assinar
+um token de acesso exigiria a chave de assinatura no ambiente de teste; inserir
+o de renovação dispensa a chave e ainda testa a renovação, que é fiação.
 
 Fica descoberto: a verificação da assinatura do `id_token` e a cadeia real de
 redirecionamento. Coberto por teste de integração no backend contra `id_token`

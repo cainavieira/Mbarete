@@ -17,11 +17,11 @@ documento tem seção listando os seus aposentados com o motivo.
 
 ## Antes de propor qualquer coisa
 
-`especificacao/adr/` tem 40 decisões, cada uma com a alternativa que perdeu e o
+`especificacao/adr/` tem 41 decisões, cada uma com a alternativa que perdeu e o
 motivo. A seção **Decisões recusadas** do `regras-de-negocio.md` faz o mesmo
 para regra de produto.
 
-Se você sentir vontade de propor SQLite, JWT, camadas de
+Se você sentir vontade de propor SQLite, camadas de
 Clean Architecture, segurança por linha do Postgres, IMC ou sequência de dias
 registrando, a recusa já está escrita com o motivo. Decisão nova é do
 interessado, nunca sua.

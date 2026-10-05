@@ -1,7 +1,7 @@
 # ADR-0010 Authlib para o fluxo OAuth
 
 - **Data:** 07-09-2026
-- **Situação:** aceito
+- **Situação:** superado por ADR-0041
 
 ## Contexto
 

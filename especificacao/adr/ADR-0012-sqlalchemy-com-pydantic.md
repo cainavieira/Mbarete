@@ -1,7 +1,7 @@
 # ADR-0012 SQLAlchemy 2.0 com Pydantic em camada separada
 
 - **Data:** 07-09-2026
-- **Situação:** aceito
+- **Situação:** superado por ADR-0036
 
 ## Contexto
 

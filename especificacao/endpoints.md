@@ -4,18 +4,18 @@ Contrato da API. Escrito por último de propósito: ele depende dos casos de uso
 e das decisões de stack, e não o contrário.
 
 Este documento é a **intenção**. A verdade executável é a especificação OpenAPI
-que o FastAPI publica a partir do código (ADR-0001), e é dela que saem os tipos
+que o springdoc publica a partir do código (ADR-0035), e é dela que saem os tipos
 do frontend (ADR-0027). Quando os dois divergirem, o OpenAPI está certo e este
 documento está datado.
 
 ## Convenções gerais
 
 - Prefixo `/api/v1`. Toda rota abaixo é relativa a ele.
-- Autenticação por cookie de sessão (ADR-0009) em todas as rotas, exceto as de
-  `auth/` e `saude`.
+- Autenticação pelo token de acesso em cookie (ADR-0041) em todas as rotas,
+  exceto as de `auth/` e `saude`.
 - Toda resposta de erro usa o formato único de `convencoes-backend.md`, com
-  `codigo`, `campo`, `mensagem` e `regra`. A exceção é a recusa por convite no
-  callback, explicada abaixo.
+  `codigo`, `campo`, `mensagem` e `regra`. A exceção é o retorno do login, que
+  volta como redirecionamento, explicado abaixo.
 - Datas em `AAAA-MM-DD`, números com ponto decimal (RN-62, RN-63).
 - O dia corrente é o do dispositivo (RN-04) e chega no cabeçalho `Data-Local`,
   em `AAAA-MM-DD`, em toda requisição. O motivo está abaixo.
@@ -27,8 +27,9 @@ documento está datado.
 | Método | Caminho | Faz | Requisito |
 |:--|:--|:--|:--|
 | `GET` | `/auth/login` | redireciona para o Google | RF-01 |
-| `GET` | `/auth/callback` | recebe o código, cria sessão e redireciona para a aplicação; na recusa por convite, redireciona para a tela de entrada com o motivo | RF-01, RF-02, RF-03 |
-| `POST` | `/auth/logout` | apaga a sessão e expira o cookie | RF-04 |
+| `GET` | `/auth/callback` | recebe o código, emite os tokens e redireciona para a aplicação; em qualquer falha, inclusive a recusa por convite, redireciona para a tela de entrada com o motivo | RF-01, RF-02, RF-03 |
+| `POST` | `/auth/renovacao` | troca o token de renovação por um token de acesso novo, e empurra a validade da renovação | RNF-22 |
+| `POST` | `/auth/logout` | apaga o token de renovação e expira os dois cookies | RF-04 |
 | `GET` | `/conta` | nome, e-mail e foto vindos do Google | UC-12 |
 | `POST` | `/conta/exclusao` | apaga a conta e todos os dados | RF-06 |
 | `GET` | `/conta/exportar` | devolve o histórico completo em CSV | RF-43 |
@@ -44,7 +45,7 @@ documento está datado.
 | `GET` | `/acompanhamento` | tudo da tela principal, numa resposta | UC-08 |
 | `POST` | `/importacao/previsualizacao` | valida o arquivo e relata, sem gravar | RF-37, RF-38 |
 | `POST` | `/importacao` | grava o arquivo inteiro ou nada | RF-40 |
-| `GET` | `/saude` | responde se a api está no ar; o script de deploy confere por ela | ADR-0031 |
+| `GET` | `/saude` | responde se a api está no ar; o script de deploy confere por ela | ADR-0037 |
 
 ## As decisões que não se leem na lista
 
@@ -59,14 +60,14 @@ não serve: ela é editável (RN-24), e identificador que muda quando o usuário
 corrige uma data quebra toda referência já guardada. Por isso a fase é
 endereçada pelo próprio identificador, sequencial.
 
-Sequencial e não opaco, apesar do argumento de contagem que o ADR-0012 usa para
+Sequencial e não opaco, apesar do argumento de contagem que o ADR-0036 usa para
 o registro. A diferença é de peso: o sistema é fechado por convite (RN-48),
 quantas fases um usuário já teve não é informação sensível, e `uuid` cobraria
 índice maior e URL ilegível sem comprar nada aqui.
 
 ### Dado de outro usuário responde 404
 
-Toda consulta carrega o usuário da sessão (ADR-0034), então pedir a fase de
+Toda consulta carrega o usuário autenticado (ADR-0034), então pedir a fase de
 outra pessoa e pedir uma fase que não existe dão o mesmo resultado: nada. A
 resposta é a mesma, 404, com `NAO_ENCONTRADO`.
 
@@ -225,27 +226,38 @@ memória, então o reenvio não custa nada ao usuário.
 Convidar é ação do AT-02, que não tem interface no sistema (`atores.md`). É
 comando de linha executado no servidor (RF-44, ADR-0011).
 
-### A recusa de convite volta como redirecionamento
+### O retorno do login volta como redirecionamento
 
 O `GET /auth/callback` não é chamado pela aplicação: o navegador chega nele
 vindo do Google, numa navegação de página inteira, e um erro em JSON ali
-apareceria cru na tela. Por isso, na recusa por convite (UC-01 1a), o callback
-redireciona para a tela de entrada com `motivo=NAO_CONVIDADO` na URL, e a tela
-explica que o acesso é por convite. É o mesmo mecanismo do caminho feliz, que
-já termina em redirecionamento.
+apareceria cru na tela. Por isso o retorno sempre termina em
+redirecionamento: no caminho feliz, para a aplicação; em qualquer falha, para
+a tela de entrada com o motivo na URL, e a tela explica.
 
-O motivo não leva o e-mail e só diz que o acesso é por convite, sem revelar se
-aquele e-mail existe no sistema (RNF-23).
+| Motivo | Quando | Caso de uso |
+|:--|:--|:--|
+| `NAO_CONVIDADO` | o e-mail não está na lista de convidados | UC-01 1a |
+| `LOGIN_NAO_CONCLUIDO` | a pessoa cancelou no Google, ou a verificação do retorno falhou (`state`, troca do código, `id_token`) | UC-01 1d |
+
+O `NAO_CONVIDADO` não leva o e-mail e só diz que o acesso é por convite, sem
+revelar se aquele e-mail existe no sistema (RNF-23).
+
+### A renovação tem rota própria
+
+O token de renovação só viaja para `/auth/renovacao`: o cookie dele vale só
+para esse caminho. Quando uma chamada volta 401, o cliente HTTP do frontend
+chama a renovação uma vez e repete a chamada. Se a renovação também voltar
+401, a pessoa vai para a tela de entrada.
 
 ## O que não tem endpoint, e por quê
 
 | O quê | Por quê |
 |:--|:--|
 | Convite | ação do operador, por comando de linha |
-| Migração de esquema | comando no deploy (ADR-0013) |
+| Migração de esquema | initContainer no deploy (ADR-0040) |
 | Peso semanal isolado | vem em `/acompanhamento`, e separado permitiria tela inconsistente |
 | Fase corrente isolada | idem |
-| Qualquer rota que emita sessão sem autenticar | recusado no ADR-0022 |
+| Qualquer rota que emita token sem autenticar | recusado no ADR-0022 |
 
 ## Códigos de status
 
@@ -255,7 +267,7 @@ aquele e-mail existe no sistema (RNF-23).
 | 201 | registro ou fase criados |
 | 204 | exclusão bem-sucedida |
 | 400 | valor recusado por regra (faixa, data futura no registro, data de fim futura ou anterior ao início, data local ausente ou inválida) |
-| 401 | sem sessão válida |
+| 401 | sem token de acesso válido; na renovação, sem token de renovação válido |
 | 404 | registro ou fase que não existe, ou que é de outro usuário, sem distinguir os dois |
 | 409 | conflito de data em registro, sobreposição de fase que a RN-19 recusa, ou encerramento de fase que não é a corrente |
 | 422 | corpo malformado, antes de chegar a regra de negócio |

@@ -97,6 +97,7 @@ Derivado das regras. Todo código novo entra aqui junto com a regra que o gera.
 | `DATA_FIM_FUTURA` | data de fim no futuro, ao criar, editar ou encerrar fase | RN-67 |
 | `DATA_FIM_ANTES_DO_INICIO` | data de fim anterior à de início | RN-18 |
 | `NAO_CONVIDADO` | e-mail fora da lista de convidados; vai como `motivo` no redirecionamento do callback, não como corpo de erro | RN-48 |
+| `LOGIN_NAO_CONCLUIDO` | retorno do login cancelado no Google ou com verificação falha; vai como `motivo` no redirecionamento do callback, não como corpo de erro | RN-49 |
 | `NAO_ENCONTRADO` | registro ou fase inexistente, ou de outro usuário, sem distinguir os dois | RN-50 |
 | `CSV_COLUNA_AUSENTE` | falta coluna obrigatória | RN-53 |
 | `CSV_SEPARADOR_DESCONHECIDO` | separador não reconhecido | RN-54 |

@@ -27,7 +27,8 @@ src/
 
 O cliente HTTP em `api/` é o único lugar que monta requisição. É ele que põe
 o cabeçalho `Data-Local`, com a data do dispositivo, em toda chamada (RN-04),
-para nenhuma rota nova nascer sem ela.
+para nenhuma rota nova nascer sem ela. E é ele que, ao receber 401, chama a
+renovação uma vez e repete a chamada (`endpoints.md`).
 
 ## TypeScript
 

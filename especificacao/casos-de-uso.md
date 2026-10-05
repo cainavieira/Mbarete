@@ -38,6 +38,10 @@ usuários de teste do AT-03.
   Testing.
 - **1c** O AT-03 está indisponível: nenhum login novo acontece. Sessão já
   aberta continua válida.
+- **1d** O login não se completa no retorno do Google: a pessoa cancelou na
+  tela de consentimento, ou a verificação do retorno falhou. O sistema volta
+  para a tela de entrada dizendo que o login não foi concluído e que dá para
+  tentar de novo, sem abrir sessão. (RF-01)
 
 **Pós-condição:** sessão aberta, ou nenhuma mudança de estado.
 

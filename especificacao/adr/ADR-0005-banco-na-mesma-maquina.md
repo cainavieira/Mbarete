@@ -10,8 +10,9 @@ backend, ou como serviço gerenciado na nuvem.
 
 ## Decisão
 
-Postgres roda no mesmo servidor do backend, como serviço do Compose, alcançável
-apenas pela rede interna (RNF-20).
+Postgres roda no mesmo servidor do backend, alcançável apenas pela rede interna
+(RNF-20): em produção, dentro do cluster (ADR-0039); em desenvolvimento, como
+serviço do Compose.
 
 ## Consequências
 

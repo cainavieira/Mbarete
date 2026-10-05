@@ -1,7 +1,7 @@
 # ADR-0007 nginx serve o estático e faz proxy reverso
 
 - **Data:** 07-09-2026
-- **Situação:** aceito
+- **Situação:** superado por ADR-0038
 
 ## Contexto
 

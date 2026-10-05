@@ -5,6 +5,9 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 
+# Java
+target/
+
 # Node
 node_modules/
 dist/
@@ -25,3 +28,7 @@ desktop.ini
 
 # Rascunho local, nao versionado
 instrucao.md
+report-dia.md
+tarefas.md
+reports/
+historico/

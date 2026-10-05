@@ -1,7 +1,7 @@
 # ADR-0001 Backend em FastAPI
 
 - **Data:** 07-09-2026
-- **Situação:** aceito
+- **Situação:** superado por ADR-0035
 
 ## Contexto
 

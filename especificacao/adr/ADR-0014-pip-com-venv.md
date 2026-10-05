@@ -1,7 +1,7 @@
 # ADR-0014 pip com venv e requirements.txt
 
 - **Data:** 07-09-2026
-- **Situação:** aceito
+- **Situação:** superado por ADR-0035
 
 ## Contexto
 

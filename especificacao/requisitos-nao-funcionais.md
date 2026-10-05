@@ -51,8 +51,10 @@ quê. RNF sem número é adjetivo.
   que apresente dado alheio. (RN-50)
 - **RNF-12** O sistema não armazena senha. (RN-49)
 - **RNF-13** O log nunca registra valor de peso nem de cintura.
-- **RNF-14** Apagar a conta remove tudo, sem retenção e sem anonimização.
-  (RN-51)
+- **RNF-14** Apagar a conta remove tudo do banco na hora, sem anonimização. As
+  cópias de backup somem no fim da retenção da RNF-07, e a restauração vai
+  sempre ao ponto mais recente possível, para as exclusões feitas antes do
+  problema continuarem valendo. (RN-51)
 - **RNF-15** O usuário pode levar o próprio histórico embora em CSV, para que
   sair do sistema não custe o dado. (RN-52)
 

@@ -341,8 +341,9 @@ fase sobre o mesmo intervalo. (RN-70)
 **Fluxo principal**
 
 1. O usuário escolhe apagar a conta na tela de conta.
-2. O sistema explica o que será removido e exige que o usuário digite o
-   próprio e-mail para confirmar.
+2. O sistema explica o que será removido, avisa que as cópias de backup somem
+   no fim da retenção, e exige que o usuário digite o próprio e-mail para
+   confirmar.
 3. O sistema remove registros, fases e dados de conta, e encerra a sessão.
    (RF-06, RN-51)
 
@@ -353,8 +354,8 @@ fase sobre o mesmo intervalo. (RN-70)
   novamente e receber uma conta nova e vazia. Apagar conta remove dado, não
   revoga convite.
 
-**Pós-condição:** nenhum dado do usuário permanece. Não há retenção nem
-anonimização. (RN-51)
+**Pós-condição:** nenhum dado do usuário permanece no banco, e não há
+anonimização. As cópias de backup somem no fim da retenção. (RN-51)
 
 ## UC-13 Convidar uma pessoa
 

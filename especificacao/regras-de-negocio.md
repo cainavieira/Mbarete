@@ -192,8 +192,10 @@ motivo.
 - **RN-49** A identidade do usuário vem do Google. O sistema não armazena
   senha.
 - **RN-50** Cada usuário acessa exclusivamente os próprios dados.
-- **RN-51** Apagar a conta remove todos os dados do usuário, sem anonimização
-  e sem retenção.
+- **RN-51** Apagar a conta remove do banco, na hora, todos os dados do
+  usuário, sem anonimização. As cópias de backup não são editadas e somem
+  sozinhas no fim da retenção. Restaurar uma cópia anterior à exclusão traz a
+  conta de volta.
 - **RN-52** Exportar o próprio histórico em CSV está disponível ao usuário
   desde a primeira versão.
 
@@ -260,3 +262,4 @@ Registradas para que não voltem como novidade.
 | Janela de tempo para edição | Não há auditoria a proteger, e a janela só gera frustração |
 | Importação parcial silenciosa | Destrói a confiança no histórico: a pessoa não sabe o que entrou |
 | Obrigatoriedade de fase em toda data | Forçava manutenção como preenchimento e produzia fase que a pessoa nunca viveu. Trocado pela RN-20 e pela RN-66 |
+| Lista de contas apagadas, para refazer a exclusão depois de restaurar backup | Guardaria rastro da conta, contra a RN-51, para um caso raro num sistema por convite. A restauração vai ao ponto mais recente (RNF-14) |

@@ -133,9 +133,10 @@ Uma tarefa está pronta quando as seis linhas abaixo são verdade.
    Postgres, ou nenhum se for tela que apenas desenha.
 4. As verificações de "Antes de integrar" passam local e na integração
    contínua.
-5. Se houve decisão com alternativa recusada, existe ADR novo, no formato do
-   `modelo-adr.md`. Se a decisão substitui uma anterior, o ADR novo diz qual
-   supera, e no superado muda apenas a linha de situação.
+5. Se houve decisão de arquitetura ou de stack com alternativa recusada,
+   existe ADR novo, no formato e pelo critério do `modelo-adr.md`. Se a decisão
+   substitui uma anterior, o ADR novo diz qual supera, e no superado muda
+   apenas a linha de situação.
 6. Se houve migração de esquema, ela roda nos testes, sobre o banco que o teste
    cria do zero; o ensaio do deploy a repete sobre o backup (RNF-08, ADR-0040).
 
@@ -146,6 +147,7 @@ Uma tarefa está pronta quando as seis linhas abaixo são verdade.
 | Regra de negócio nova ou alterada | `regras-de-negocio.md`, e o requisito que a cita |
 | Comportamento novo visível ao usuário | `requisitos-funcionais.md` e `casos-de-uso.md` |
 | Decisão de tecnologia com alternativa recusada | ADR novo em `especificacao/adr/`, no formato do `modelo-adr.md` |
+| Detalhe de implementação com alternativa recusada | a convenção do lado correspondente |
 | Rota nova ou alterada | `endpoints.md` |
 | Contêiner novo, ou caminho da requisição mudou | `arquitetura.md` |
 | Antipadrão descoberto na prática | a convenção do lado correspondente |

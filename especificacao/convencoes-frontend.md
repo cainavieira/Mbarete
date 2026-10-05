@@ -72,7 +72,7 @@ O front valida **forma**, o backend valida **regra** (ADR-0025).
 
 - No front: campo obrigatório, é número, no máximo uma casa decimal, aceita
   vírgula.
-- No backend: faixas, data futura, coerência de alvo.
+- No backend: faixas, data futura, sobreposição de fase.
 - A mensagem de recusa de regra **vem do backend** e é exibida como veio. O
   front usa o `codigo` para decidir comportamento e o `campo` para destacar o
   input.

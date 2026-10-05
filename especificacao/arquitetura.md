@@ -70,7 +70,9 @@ flowchart TB
 | db | dado, restrições de integridade, backup | ADR-0004, ADR-0005, ADR-0039 |
 
 Tudo dentro da VM roda no k3s (ADR-0037). O initContainer da migração e o Job
-do ensaio (ADR-0040) não aparecem: rodam só durante o deploy e terminam.
+do ensaio (ADR-0040) não aparecem: são passos que terminam, e não serviços no
+ar. O initContainer roda a cada subida do Pod da api; com a mesma imagem, não
+há migração pendente.
 
 Três propriedades que essa vista fixa, e que valem mais que o desenho:
 

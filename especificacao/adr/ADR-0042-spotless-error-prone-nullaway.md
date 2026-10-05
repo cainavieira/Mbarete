@@ -27,8 +27,8 @@ nulo, com as anotações JSpecify.
 
 - O Spotless formata o código num estilo pronto.
 - O Error Prone roda junto da compilação e acusa defeito, não estilo.
-- O NullAway, extensão do Error Prone, acusa nulo não tratado, só no pacote de
-  regras.
+- O NullAway, extensão do Error Prone, acusa nulo não tratado e `Optional`
+  aberto sem checagem, só no pacote de regras.
 
 Os três rodam na integração contínua (ADR-0032), e a compilação falha quando
 um deles acusa.

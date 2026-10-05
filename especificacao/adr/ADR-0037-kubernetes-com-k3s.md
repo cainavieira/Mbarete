@@ -73,8 +73,8 @@ ensina a mais é administrar o cluster, não operar a aplicação.
 
 ## Alternativa recusada: k3s em LXC
 
-Aproveitaria o desenho do ADR-0006. Recusado porque exige contêiner
-privilegiado e módulos de kernel no Proxmox.
+Aproveitaria o LXC em que a produção rodava antes. Recusado porque exige
+contêiner privilegiado e módulos de kernel no Proxmox.
 
 ## Alternativa recusada: Docker Hub
 

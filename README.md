@@ -53,16 +53,19 @@ de recomeçar daqui a seis meses com o argumento já gasto.
 
 ## Stack
 
-Decidida com alternativa registrada em cada caso. Um ADR por decisão.
+Decidida com alternativa registrada em cada caso. Um ADR por decisão, juntando
+as que só fazem sentido juntas.
 
-- **Backend:** Python com FastAPI, SQLAlchemy 2.0, Pydantic, Alembic, Authlib
+- **Backend:** Java 21 com Spring Boot 4.1 e Maven, Spring Data JPA, Flyway,
+  Spring Security com JWT
 - **Frontend:** React com Vite e TypeScript, TanStack Query, React Router 8,
   Tailwind com shadcn/ui, React Hook Form com Zod, Recharts
-- **Banco:** PostgreSQL
+- **Banco:** PostgreSQL, com CloudNativePG em produção
 - **Identidade:** Google, sem senha própria, entrada por convite
-- **Hospedagem:** servidor próprio, exposto por Cloudflare Tunnel
-- **Qualidade:** ruff, mypy, pytest, Vitest, Playwright, tudo em integração
-  contínua
+- **Hospedagem:** servidor próprio, com k3s numa VM e entrada pelo Traefik,
+  exposto por Cloudflare Tunnel
+- **Qualidade:** Spotless, Error Prone com NullAway, JUnit com Testcontainers e
+  ArchUnit, Vitest, Playwright, tudo em integração contínua
 
 ## O que falta
 

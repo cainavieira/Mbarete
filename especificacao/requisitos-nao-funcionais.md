@@ -25,9 +25,10 @@ quê. RNF sem número é adjetivo.
   de dois anos atrás não se reconstrói e não existe fonte para recuperá-lo.
   Todo o resto é reversível, e é por isso que os requisitos desta seção são os
   mais duros do documento.
-- **RNF-05** O banco tem cópia diária em três lugares, duas mídias, uma fora
-  de casa: banco vivo no SSD, dump no disco lento do mesmo servidor, dump em
-  armazenamento externo gratuito.
+- **RNF-05** O banco tem cópia em três lugares, duas mídias, uma fora de casa:
+  banco vivo no SSD, dump diário no disco lento do mesmo servidor, e backup
+  contínuo em armazenamento externo gratuito. As duas cópias de backup vêm de
+  mecanismos independentes, para a falha de um não levar o outro junto.
 - **RNF-06** A perda máxima aceitável é de 24 horas de dado.
 - **RNF-07** Retenção: 30 dias no disco lento, 90 dias na cópia externa, e uma
   cópia mensal guardada por 12 meses.
@@ -38,8 +39,8 @@ quê. RNF sem número é adjetivo.
   exatamente quando o esquema muda, e teste trimestral pode passar semanas
   depois da quebra.
 - **RNF-09** Backup que não executou gera alerta, por interruptor de homem
-  morto: o script avisa um serviço externo ao terminar, e o silêncio no
-  horário esperado dispara o aviso. O verificador fica fora da casa do AT-02,
+  morto: o agendamento diário confere os dois backups e só então avisa um
+  serviço externo, e o silêncio no horário esperado dispara o aviso. O verificador fica fora da casa do AT-02,
   porque monitor no mesmo servidor cai junto e fica quieto.
 
 ## Privacidade

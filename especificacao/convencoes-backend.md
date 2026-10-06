@@ -92,6 +92,7 @@ Derivado das regras. Todo código novo entra aqui junto com a regra que o gera.
 | `REGISTRO_JA_EXISTE` | já há registro na data | RN-01 |
 | `PESO_ALVO_AUSENTE` | cutting ou bulking sem peso alvo | RN-41 |
 | `NIVEL_AUSENTE` | cutting ou bulking sem nível | RN-28 |
+| `TAXA_ALVO_AUSENTE` | cutting ou bulking sem taxa alvo | RN-29 |
 | `FASE_SOBREPOSTA` | a fase invade outra num caso que a RN-19 recusa | RN-19 |
 | `FASE_NAO_CORRENTE` | encerramento pedido para fase que não é a corrente | RN-27 |
 | `DATA_FIM_FUTURA` | data de fim no futuro, ao criar, editar ou encerrar fase | RN-67 |

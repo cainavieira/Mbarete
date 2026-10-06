@@ -50,8 +50,8 @@ aposentados estão listados no fim.
   escolhidos. (RN-31, RN-32, RN-33)
 - **RF-17** O sistema deve permitir que o AT-01 edite o valor e a unidade da
   taxa alvo. (RN-29)
-- **RF-18** O sistema deve marcar o nível como personalizado quando o valor da
-  taxa alvo for editado. (RN-30)
+- **RF-18** O sistema deve marcar o nível como personalizado quando o valor ou
+  a unidade da taxa alvo mudar. (RN-30)
 - **RF-19** O sistema deve encerrar a fase em aberto na véspera do início de
   uma fase nova, sem data de fim, que a invada começando depois dela. Enquanto
   a nova não começa, esse fim a acompanha: muda com o início dela e some se

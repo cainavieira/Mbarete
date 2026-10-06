@@ -156,8 +156,10 @@ usuários de teste do AT-03.
   início da fase existente (UC-06). (RF-46, RN-19)
 - **2h** A data de início cai num período sem fase, mas a fase nova invade a
   seguinte, que já tem data de fim: recusado por sobreposição. (RF-46, RN-19)
-- **3a** O usuário edita o valor da taxa alvo: o nível passa a personalizado.
-  (RF-18, RN-30)
+- **3a** O usuário edita o valor ou a unidade da taxa alvo: o nível passa a
+  personalizado. (RF-18, RN-30)
+- **3b** O nível escolhido é personalizado: não há taxa sugerida, e o sistema
+  exige o valor antes de aceitar. (RN-29, RN-31, RN-32)
 - **5a** O peso alvo está do lado errado da base: a fase é criada, e a barra
   de progresso não é exibida enquanto isso durar, em vez de aparecer em 100%.
   Se a base ainda não existe, a comparação acontece quando ela existir.
@@ -185,13 +187,14 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   recusada, sem encerrar nenhuma fase, salvo o caso do 2i. Para adiantar o
   início de uma fase colada na anterior, encurta-se antes a anterior. (RF-46,
   RN-19)
-- **2c** O tipo muda para manutenção: peso alvo e nível deixam de existir para
-  aquela fase e seus valores são descartados. (RF-24)
+- **2c** O tipo muda para manutenção: peso alvo, nível e taxa alvo deixam de
+  existir para aquela fase e seus valores são descartados. (RF-24, RN-33)
 - **2d** O tipo muda de manutenção para cutting ou bulking: o sistema passa a
-  exigir nível e peso alvo antes de aceitar. (RN-28, RN-41)
+  exigir nível, taxa alvo e peso alvo antes de aceitar. (RN-28, RN-29, RN-41)
 - **2e** A taxa alvo muda de unidade: o valor é reinterpretado na nova
   unidade, sem conversão automática, porque 0,5% e 0,5 kg são alvos
-  diferentes e adivinhar qual a pessoa quis é pior que perguntar.
+  diferentes e adivinhar qual a pessoa quis é pior que perguntar. O nível
+  passa a personalizado. (RF-18, RN-30)
 - **2f** Uma das datas é alterada: o dia da base do progresso e da tolerância
   é determinado de novo, porque o intervalo da fase passou a ser outro.
   (RN-68)

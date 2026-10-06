@@ -178,8 +178,9 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   intervalo mudam de fase, porque a fase é derivada da data. Registro que saiu
   e não caiu em outra fase passa a não ter fase. (RF-20, RN-20, RN-23, RN-24)
 - **2b** A alteração criaria sobreposição com outra fase, em aberto ou não:
-  recusada, sem encerrar nenhuma fase. Para adiantar o início de uma fase
-  colada na anterior, encurta-se antes a anterior. (RF-46, RN-19)
+  recusada, sem encerrar nenhuma fase, salvo o caso do 2i. Para adiantar o
+  início de uma fase colada na anterior, encurta-se antes a anterior. (RF-46,
+  RN-19)
 - **2c** O tipo muda para manutenção: peso alvo e nível deixam de existir para
   aquela fase e seus valores são descartados. (RF-24)
 - **2d** O tipo muda de manutenção para cutting ou bulking: o sistema passa a
@@ -194,6 +195,10 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   a barra deixa de ser exibida enquanto isso durar. (RN-44)
 - **2h** O valor da taxa alvo é editado: o nível passa a personalizado.
   (RF-18, RN-30)
+- **2i** A fase é a agendada, que ainda não começou, e a data de início muda:
+  o fim da corrente vai para a nova véspera, inclusive quando ela é hoje ou já
+  passou, e os registros desses dias mudam de fase. Antecipar para o início da
+  corrente, ou antes, é recusado. (RF-19, RN-67)
 
 ## UC-07 Apagar fase
 
@@ -214,6 +219,8 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
 - **3a** A fase apagada era a corrente: passa a não haver fase corrente, e o
   acompanhamento deixa de exibir veredito, taxa alvo, barra e tolerância.
   (RN-27, RN-66)
+- **3b** A fase apagada é a agendada, que ainda não começou: a corrente, que
+  terminava na véspera dela, volta a ser a fase em aberto. (RF-19, RN-67)
 
 **Pós-condição:** nenhum registro é perdido. A operação é reversível criando
 fase sobre o mesmo intervalo. (RN-70)

@@ -53,8 +53,9 @@ aposentados estão listados no fim.
 - **RF-18** O sistema deve marcar o nível como personalizado quando o valor da
   taxa alvo for editado. (RN-30)
 - **RF-19** O sistema deve encerrar a fase em aberto na véspera do início de
-  uma fase nova, sem data de fim, que a invada começando depois dela. (RN-19,
-  RN-22)
+  uma fase nova, sem data de fim, que a invada começando depois dela. Enquanto
+  a nova não começa, esse fim a acompanha: muda com o início dela e some se
+  ela for apagada. (RN-19, RN-22, RN-67)
 - **RF-20** O sistema deve permitir que o AT-01 edite as datas de início e de
   fim de uma fase. (RN-24)
 - **RF-22** O sistema deve permitir que o AT-01 apague qualquer fase,
@@ -68,7 +69,8 @@ aposentados estão listados no fim.
 - **RF-46** O sistema deve recusar edição de fase que sobreponha qualquer outra
   fase, e criação de fase que sobreponha outra que já tenha data de fim, ou
   que sobreponha a fase em aberto quando a nova tem data de fim ou não começa
-  depois dela. (RN-19)
+  depois dela. A exceção é antecipar a fase agendada, que move o fim da
+  corrente em vez de ser recusada (RF-19). (RN-19)
 
 ## Acompanhamento
 

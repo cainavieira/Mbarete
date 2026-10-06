@@ -290,8 +290,9 @@ fase sobre o mesmo intervalo. (RN-70)
 **Fluxo principal**
 
 1. O usuário abre o histórico de fases.
-2. O sistema lista as fases encerradas com tipo, período, duração, variação
-   total e se o peso alvo foi atingido. (RF-23, RN-40)
+2. O sistema lista as fases encerradas, as que têm data de fim anterior a
+   hoje, com tipo, período, duração, variação total e se o peso alvo foi
+   atingido. (RF-23, RN-40)
 
 **Fluxos alternativos**
 
@@ -300,6 +301,9 @@ fase sobre o mesmo intervalo. (RN-70)
 - **2b** A fase encerrada tinha menos registros que o mínimo: a variação total
   é exibida com a marca de que foi calculada sobre poucos pontos, em vez de
   omitida.
+- **2c** O peso alvo da fase está do lado errado da base: ela não é marcada
+  como atingida, e a lista indica que o alvo estava do lado errado. (RN-40,
+  RN-44)
 
 ## UC-10 Importar histórico em CSV
 

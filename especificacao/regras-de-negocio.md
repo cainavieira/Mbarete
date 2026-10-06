@@ -143,12 +143,16 @@ motivo.
   4 registros em **cada uma** das duas janelas que a RN-36 compara. Até lá o
   sistema informa dados insuficientes. A condição de liberação é a mesma
   condição de cálculo: sem os dois pesos semanais não existe taxa real.
-- **RN-40** O veredito existe apenas para a fase corrente. Fase encerrada
-  apresenta variação total, duração e se o peso alvo foi atingido, sem receber
-  veredito. Quando a variação total dessa fase foi calculada sobre menos pontos
-  que o mínimo da RN-16, o número é exibido com indicação disso, em vez de
-  omitido: variação sobre poucos pontos informa mais que variação ausente, desde
-  que a pessoa saiba qual das duas está olhando.
+- **RN-40** O veredito existe apenas para a fase corrente. Fase encerrada é a
+  que tem data de fim anterior a hoje; a corrente com fim agendado segue
+  corrente, com veredito, até o último dia. A fase encerrada apresenta
+  variação total, duração e se o peso alvo foi atingido, sem receber veredito.
+  Quando o peso alvo está do lado errado da base, ela não é marcada como
+  atingida, e o histórico indica isso, pelo mesmo motivo da RN-44. Quando a
+  variação total dessa fase foi calculada sobre menos pontos que o mínimo da
+  RN-16, o número é exibido com indicação disso, em vez de omitido: variação
+  sobre poucos pontos informa mais que variação ausente, desde que a pessoa
+  saiba qual das duas está olhando.
 
 ## Peso alvo e progresso
 

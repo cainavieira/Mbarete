@@ -61,7 +61,8 @@ aposentados estão listados no fim.
 - **RF-22** O sistema deve permitir que o AT-01 apague qualquer fase,
   informando antes quantos registros perderão o rótulo do período. (RN-70)
 - **RF-23** O sistema deve apresentar as fases encerradas com variação total,
-  duração e se o peso alvo foi atingido. (RN-40)
+  duração e se o peso alvo foi atingido, salvo quando o alvo está do lado
+  errado da base. (RN-40, RN-44)
 - **RF-24** O sistema deve dispensar peso alvo e nível quando o tipo for
   manutenção. (RN-33, RN-41)
 - **RF-45** O sistema deve permitir que o AT-01 encerre a fase corrente, com

@@ -137,21 +137,25 @@ usuários de teste do AT-03.
   antes de cadastrar. (RF-19, RN-19, RN-22)
 - **2b** A data de início cai dentro de fase que já tem data de fim: recusado
   por sobreposição. (RF-46, RN-19)
-- **2c** A data de início cai num período **sem fase**: aceito, e é assim que
-  se classifica histórico importado depois do fato, informando também a data
-  de fim. (RN-57)
+- **2c** A fase nova cabe inteira num período **sem fase**: aceito, e é assim
+  que se classifica histórico importado depois do fato, informando também a
+  data de fim. (RN-57)
 - **2d** A data de início é futura: aceito. A fase aparece na lista de fases e
   não entra no acompanhamento até começar. Se houver fase em aberto, ela é
   encerrada na véspera, e a tela avisa isso antes da confirmação. (RN-22,
   RN-69)
 - **2e** A data de fim é informada e a fase invade a fase em aberto: recusado.
   Para classificar um período dentro do ciclo atual, a pessoa encerra a fase
-  em aberto antes. (RF-46, RN-19)
+  em aberto antes. Se o período começa no mesmo dia da fase em aberto,
+  encerrá-la antes não é possível (UC-14 2b), e a pessoa adia antes o início
+  dela (UC-06). (RF-46, RN-19)
 - **2f** A data de fim é futura, ou anterior à data de início: recusado.
   (RF-15, RN-18, RN-67)
 - **2g** A fase nova, sem data de fim, começa no mesmo dia da fase em aberto ou
   antes dela: recusado. Para adiantar o início de um ciclo, edita-se a data de
   início da fase existente (UC-06). (RF-46, RN-19)
+- **2h** A data de início cai num período sem fase, mas a fase nova invade a
+  seguinte, que já tem data de fim: recusado por sobreposição. (RF-46, RN-19)
 - **3a** O usuário edita o valor da taxa alvo: o nível passa a personalizado.
   (RF-18, RN-30)
 - **5a** O peso alvo está do lado errado da base: a fase é criada, e a barra

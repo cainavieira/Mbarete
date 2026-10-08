@@ -1,4 +1,4 @@
-# ADR-0035 Backend em Spring Boot com Java 21
+# ADR-0035 Backend em Spring Boot com Java 25
 
 - **Data:** 04-10-2026
 - **Situação:** aceito
@@ -24,12 +24,11 @@ Versões conferidas em 03-10-2026:
 | Spring Boot 4.1 | 31-07-2027; a 4.1.1 é a versão de produção atual |
 
 O Spring Boot 4.1 exige Java 17 ou mais novo e funciona até o Java 26. O Java
-21 é LTS, com suporte da Oracle até setembro de 2028 e do Temurin até pelo
-menos dezembro de 2029.
+25 é LTS, e é o JDK instalado na máquina de desenvolvimento.
 
 ## Decisão
 
-Spring Boot 4.1, em Java 21, com Maven. A camada web é o Spring MVC.
+Spring Boot 4.1, em Java 25, com Maven. A camada web é o Spring MVC.
 
 O contrato de API continua gerado a partir do código que roda, agora pelo
 springdoc-openapi, ligado só em desenvolvimento, onde os tipos do frontend são
@@ -70,6 +69,12 @@ porque o suporte gratuito acabou em 30-06-2026, e começar nela é começar sem
 correção de segurança. O que muda da 3 para a 4 (Spring Framework 7, Jakarta EE
 11, Jackson 3) troca nome de pacote e de dependência, não os conceitos que se
 aprendem.
+
+## Alternativa recusada: Java 21
+
+Também é LTS. Recusado porque o 25 também é, o Spring Boot 4.1 o suporta, e é
+o JDK já instalado: o 21 seria uma instalação a mais sem ganho para este
+projeto.
 
 ## Alternativa recusada: Kotlin
 

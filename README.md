@@ -56,7 +56,7 @@ de recomeçar daqui a seis meses com o argumento já gasto.
 Decidida com alternativa registrada em cada caso. Um ADR por decisão, juntando
 as que só fazem sentido juntas.
 
-- **Backend:** Java 21 com Spring Boot 4.1 e Maven, Spring Data JPA, Flyway,
+- **Backend:** Java 25 com Spring Boot 4.1 e Maven, Spring Data JPA, Flyway,
   Spring Security com JWT
 - **Frontend:** React com Vite e TypeScript, TanStack Query, React Router 8,
   Tailwind com shadcn/ui, React Hook Form com Zod, Recharts

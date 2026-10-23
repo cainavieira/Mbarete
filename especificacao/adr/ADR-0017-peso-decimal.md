@@ -7,7 +7,7 @@
 
 A RN-02 fixa peso em quilogramas com uma casa decimal, faixa de 20,0 a 400,0
 (RN-03). O peso semanal é média de até 7 valores (RN-15), e o veredito compara
-a taxa real com a taxa alvo dentro de uma tolerância de 20% (RN-38).
+a taxa real com a taxa alvo dentro de uma tolerância de 50% (RN-38).
 
 Número de ponto flutuante binário não representa 0,1 exatamente.
 

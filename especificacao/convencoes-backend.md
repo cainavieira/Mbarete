@@ -195,8 +195,11 @@ O mesmo `.jar` tem três modos:
   ser a ordem em que rodam.
 - O arquivo não tem `BEGIN` nem `COMMIT`: o Flyway abre a transação, e a
   anotação no histórico entra dentro dela.
-- Não há reversão: o plano de recuperação é o backup (ADR-0040). Em
-  desenvolvimento, desfazer é recriar o banco.
+- Não há reversão: o plano de recuperação é o backup (ADR-0040). Desfazer uma
+  migração em produção é restaurar o backup e voltar a api para a etiqueta
+  anterior no mesmo passo: com a imagem nova, o initContainer aplicaria a
+  migração de novo no banco restaurado. Em desenvolvimento, desfazer é recriar
+  o banco.
 - A primeira migração habilita a extensão `btree_gist`, exigida pela restrição
   de exclusão que impede sobreposição de fase (ADR-0033).
 - O ensaio do deploy restaura o backup e aplica as migrações antes da produção

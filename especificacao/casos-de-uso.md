@@ -423,5 +423,6 @@ segundos para um grupo pequeno.
 - **3a** Existem registros depois da data de encerramento: eles permanecem e
   passam a não ter fase. (RN-20)
 
-**Pós-condição:** não há fase corrente, até que outra seja criada ou que a
-fase agendada comece. (RN-27, RN-69)
+**Pós-condição:** a partir do dia seguinte à data de encerramento, não há fase
+corrente, até que outra seja criada ou que a fase agendada comece. (RN-27,
+RN-69)

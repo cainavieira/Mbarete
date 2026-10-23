@@ -124,7 +124,8 @@ Atores em `atores.md`, requisitos em `requisitos-funcionais.md`, regras em
 **Fluxos alternativos**
 
 - **1a** O tipo é manutenção: o sistema não pede nível nem peso alvo, e usa
-  taxa alvo zero com tolerância de 0,5%. (RF-24, RN-33)
+  taxa alvo zero, com a faixa de tolerância de 1% em volta da base. (RF-24,
+  RN-33)
 - **2a** A data de início é passada ou hoje, cai dentro da fase **em aberto**
   depois do início dela, e a fase nova não tem data de fim: aceito, e a fase
   em aberto é encerrada na véspera. É o caso comum, de quem começou o ciclo
@@ -254,11 +255,17 @@ fase sobre o mesmo intervalo. (RN-70)
 - **2b** O primeiro registro é mais recente que o período escolhido: o gráfico
   começa no primeiro registro e se alarga conforme os dias passam, em vez de
   mostrar trecho em branco. (RF-49)
-- **4a** A fase tem menos de 14 dias, ou uma das duas janelas comparadas tem
-  menos de 4 registros: dados insuficientes no lugar do veredito, mas o peso
-  semanal e as variações continuam sendo exibidos. (RN-36, RN-39)
-- **4b** A fase corrente é manutenção: o veredito compara contra a tolerância
-  de 0,5% em vez de contra uma taxa alvo. (RN-33)
+- **4a** Em cutting ou bulking, a fase tem menos de 14 dias, ou uma das duas
+  janelas comparadas tem menos de 4 registros: dados insuficientes no lugar do
+  veredito, mas o peso semanal e as variações continuam sendo exibidos.
+  (RN-36, RN-39)
+- **4b** A fase corrente é manutenção: o veredito diz se o peso semanal de
+  hoje está abaixo, dentro ou acima da faixa de tolerância, que vai de 1%
+  abaixo a 1% acima da base. A faixa aparece no gráfico, do início da fase até
+  hoje, e em texto ao lado do veredito, com os dois limites. O veredito sai
+  junto com a faixa, sem a espera de 14 dias, e sem base não há nenhum dos
+  dois: o sistema informa dados insuficientes. (RF-50, RN-33, RN-37, RN-39,
+  RN-68)
 - **4c** **Não existe fase corrente**: veredito, taxa alvo, barra de progresso
   e faixa de tolerância não são exibidos. Peso semanal, variações e cintura
   continuam, e é o comportamento esperado, não estado de erro. (RN-27, RN-66)

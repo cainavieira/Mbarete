@@ -199,7 +199,9 @@ O progresso segue o mesmo princípio, com dois estados além do número, que a
 tela trata de forma diferente: dados insuficientes, quando a base da RN-68 não
 existe (UC-08 5c), e não exibido, quando o peso alvo está do lado errado da
 base (UC-08 5d). A faixa de tolerância da manutenção depende da mesma base:
-sem ela, o veredito da manutenção também vem com dados insuficientes.
+sem ela, o veredito da manutenção também vem com dados insuficientes. Com
+ela, a faixa vem com os dois limites já calculados em quilogramas, e a tela
+desenha e escreve esses números sem conhecer o 1% da RN-33 (ADR-0025).
 
 **A fase corrente pode não existir** (RN-27), e nesse caso ela vem nula, e vêm
 nulos com ela o veredito, a taxa alvo, o progresso e a faixa de tolerância.

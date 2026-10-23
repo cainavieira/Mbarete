@@ -87,11 +87,14 @@ aposentados estão listados no fim.
 - **RF-49** O sistema deve apresentar o gráfico dos últimos 120 dias, com
   escolha de 30, 60, 90 ou 120. Quando o primeiro registro é mais recente que
   o período escolhido, o gráfico começa nele, sem trecho em branco antes.
+- **RF-50** O sistema deve desenhar no gráfico a faixa de tolerância da fase
+  corrente de manutenção, do início da fase até hoje, e apresentá-la também em
+  texto, com os dois limites em quilogramas. (RN-33, RN-68)
 - **RF-29** O sistema deve apresentar as três variações de peso, calculadas
   sobre peso semanal, com o intervalo das janelas usadas em cada uma. (RN-46,
   RN-47)
 - **RF-30** O sistema deve apresentar o veredito de ritmo da fase corrente,
-  quando existir fase corrente. (RN-27, RN-36, RN-37, RN-38)
+  quando existir fase corrente. (RN-27, RN-33, RN-36, RN-37, RN-38)
 - **RF-31** O sistema deve informar dados insuficientes no lugar do veredito
   enquanto a fase não atingir o mínimo de dias e de registros por janela.
   (RN-39)

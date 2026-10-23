@@ -127,8 +127,12 @@ motivo.
   +0,20 kg, moderado +0,30 kg, agressivo +0,40 kg.
 - **RN-33** Manutenção tem taxa alvo zero e não tem nível. O zero é constante
   da regra e não valor gravado, e por isso a taxa alvo de uma fase de
-  manutenção fica vazia. A tolerância é de 0,5% da base da RN-68, para mais ou
-  para menos.
+  manutenção fica vazia. O veredito da manutenção compara a **posição** do
+  peso semanal de hoje com a faixa de tolerância, que vai de 1% abaixo a 1%
+  acima da base da RN-68, com as bordas dentro. Posição, e não taxa, porque
+  manter é segurar o peso: uma taxa pequena a cada semana passaria no veredito
+  enquanto o peso escorrega. E 1%, porque a água e o sal movem o peso semanal
+  o bastante para tirar de uma faixa mais estreita quem mantém o peso à risca.
 - **RN-34** Taxa alvo expressa em porcentagem incide sobre o peso semanal
   corrente e é reconvertida a cada semana. Nunca incide sobre o peso do início
   da fase.
@@ -140,13 +144,23 @@ motivo.
 - **RN-36** A taxa real é a diferença entre o peso semanal de hoje e o peso
   semanal de 7 dias atrás.
 - **RN-37** O veredito tem três estados: abaixo do ritmo, no ritmo e acima do
-  ritmo.
+  ritmo. Em cutting e bulking, ritmo é velocidade na direção do plano: abaixo
+  do ritmo é perder, ou ganhar, mais devagar que a taxa alvo, inclusive andar
+  na direção contrária, e acima do ritmo é mais rápido. Na manutenção, que
+  compara posição (RN-33), os mesmos três estados se exibem como abaixo da
+  faixa, na faixa e acima da faixa, pelo peso. A palavra é ritmo, e não taxa,
+  porque taxa tem sinal: em cutting, -0,30 contra um alvo de -0,50 é número
+  maior e perda mais lenta.
 - **RN-38** Considera-se no ritmo a taxa real que fique dentro de 20% do valor
   da taxa alvo, para mais ou para menos.
 - **RN-39** Não há veredito antes de 14 dias completos de fase com no mínimo
   4 registros em **cada uma** das duas janelas que a RN-36 compara. Até lá o
   sistema informa dados insuficientes. A condição de liberação é a mesma
-  condição de cálculo: sem os dois pesos semanais não existe taxa real.
+  condição de cálculo: sem os dois pesos semanais não existe taxa real. A
+  manutenção é a exceção, porque não compara taxa (RN-33): o veredito dela
+  existe sempre que existem a base e o peso semanal de hoje, que é a mesma
+  condição da faixa de tolerância. Esperar os 14 dias mostraria a linha dentro
+  da faixa, no gráfico, ao lado de um veredito de dados insuficientes.
 - **RN-40** O veredito existe apenas para a fase corrente. Fase encerrada é a
   que tem data de fim anterior a hoje; a corrente com fim agendado segue
   corrente, com veredito, até o último dia. A fase encerrada apresenta
@@ -264,6 +278,8 @@ Registradas para que não voltem como novidade.
 | Medidas além da cintura | Cintura é a única com leitura útil durante cutting. As demais multiplicam campos sem multiplicar decisão |
 | Meta de peso global no perfil | Durante bulking ela anda para trás e acusa falha enquanto o plano funciona |
 | Projeção de data estimada | Extrapola tendência ruidosa e transforma o sistema em promessa que ele não controla |
+| Corredor do plano no gráfico de cutting e bulking, saindo da base | Mede a posição acumulada, e o veredito mede o ritmo recente: depois de um começo lento, o gráfico diria fora enquanto o veredito diz no ritmo |
+| Linha do peso alvo no gráfico | Estica o eixo até o alvo e achata a curva do peso semanal. A barra de progresso já mostra a distância (RF-33) |
 | Fechamento por semana ISO | Duplicaria o peso semanal com número diferente para o mesmo período |
 | Janela dos últimos 7 registros | Com dias em branco a janela estica e faz a taxa parecer mais lenta do que foi |
 | Repetir ou interpolar peso ausente | Inventa medição que não houve e a entrega ao gráfico com aparência de dado real |

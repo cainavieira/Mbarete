@@ -40,10 +40,11 @@ acha nada.
 
 ## Como trabalhar aqui
 
-- Mostre o texto antes de gravar. Commit depois da mensagem aprovada. **Push é
-  sempre dele.**
+- Trabalhe direto, uma tarefa atrás da outra, cada uma no seu ramo, e commite
+  sem pedir aprovação. Pare só para decisão dele ou para o que só ele faz.
+  Push, PR e merge se resolvem com ele no fim da leva. **Push é sempre dele.**
 - Não busque na web sem ele pedir.
 - Sem travessão, em documento, commit ou conversa.
 - Mensagem de commit sem acento; documento com acento.
 - `especificacao/` é versionada de propósito. `.env`, `.venv/`, `target/`,
-  `node_modules/` e `.claude/` não entram.
+  `node_modules/`, `.claude/` e `proximos-passos.md` não entram.

@@ -115,9 +115,10 @@ motivo.
 
 - **RN-28** O nível é conservador, moderado, agressivo ou personalizado, é
   obrigatório em cutting e bulking, e determina a taxa alvo padrão da fase.
-- **RN-29** A taxa alvo é obrigatória em cutting e bulking. Ela tem valor e
-  unidade, e ambos são editáveis pelo usuário. As unidades possíveis são
-  porcentagem do peso corporal por semana e quilogramas por semana.
+- **RN-29** A taxa alvo é obrigatória em cutting e bulking. Ela tem valor, com
+  até duas casas decimais, e unidade, e ambos são editáveis pelo usuário. As
+  unidades possíveis são porcentagem do peso corporal por semana e
+  quilogramas por semana.
 - **RN-30** Editar o valor ou a unidade da taxa alvo muda o nível da fase para
   personalizado.
 - **RN-31** Padrões de cutting, em porcentagem do peso corporal por semana:

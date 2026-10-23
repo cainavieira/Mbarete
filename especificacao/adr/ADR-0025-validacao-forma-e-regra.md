@@ -17,8 +17,9 @@ imediata.
 
 Divisão por natureza, não por conveniência.
 
-- **O frontend valida forma**: campo obrigatório, é número, no máximo uma casa
-  decimal, aceita vírgula (RN-62). É sobre digitação e precisa ser instantâneo.
+- **O frontend valida forma**: campo obrigatório, é número, casas decimais
+  (RN-02, RN-10, RN-29), aceita vírgula (RN-62). É sobre digitação e precisa
+  ser instantâneo.
 - **O backend valida regra de negócio**: faixas, data futura, sobreposição de
   fase. O frontend exibe a recusa que ele devolve.
 

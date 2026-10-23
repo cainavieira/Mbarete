@@ -14,8 +14,10 @@ domínio verificado e configuração de DNS.
 A autenticação é delegada ao Google. O sistema não armazena senha (RN-49). Os
 escopos pedidos limitam-se a identidade: `openid`, e-mail e perfil (RNF-21).
 
-O aplicativo permanece em modo Testing no console do Google, o que restringe o
-login aos e-mails cadastrados manualmente, até 100.
+O aplicativo fica em modo Testing no console do Google, sem lista de usuários
+de teste. Conferido em 10-10-2026 na documentação do Google: o app que pede só
+esses escopos não precisa da lista nem em modo Testing. Quem decide quem entra
+é o convite (ADR-0011).
 
 ## Consequências
 
@@ -28,9 +30,10 @@ Testing o refresh token do Google expira em 7 dias, **exceto** quando os únicos
 escopos pedidos são nome, e-mail e perfil. Como é o caso, a sessão não morre
 semanalmente e o aplicativo não precisa passar por verificação.
 
-Surge um portão duplo: o convite no sistema e a lista de usuários de teste no
-console. Convidar alguém exige as duas ações, e esquecer a segunda produz uma
-recusa do Google que o sistema não consegue explicar (UC-13, fluxo 3a).
+O portão é um só, o convite: o Google autentica qualquer conta, e o sistema
+recusa quem não está na lista de convidados (UC-01, fluxo 1a). Sem a
+verificação do Google, que é opcional, a tela de login dele pode não mostrar o
+nome e o logo do aplicativo.
 
 Indisponibilidade do Google impede login novo. Sessão aberta não cai.
 

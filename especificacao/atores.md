@@ -18,8 +18,6 @@ Pessoa que registra o próprio peso e acompanha o próprio ciclo de treino.
 Quem mantém o sistema no ar. Na v1 é uma pessoa só, a mesma que desenvolve.
 
 - Emite convite. Convidar é ação exclusiva dele: o AT-01 não convida ninguém.
-- Cadastra o e-mail do convidado na lista de usuários de teste do AT-03.
-  Passo manual enquanto o aplicativo estiver em modo Testing.
 - Dispara o deploy, que também aplica a migração (ADR-0037, ADR-0040).
 - Executa restauração de backup e manutenção do servidor.
 - Não tem interface no sistema na v1. Age por fora, pelo console do Google,
@@ -32,7 +30,7 @@ Quem mantém o sistema no ar. Na v1 é uma pessoa só, a mesma que desenvolve.
 Sistema externo. Autentica o AT-01 e devolve nome, e-mail e foto de perfil.
 
 - É a única fonte de identidade do sistema.
-- Em modo Testing, autentica apenas os e-mails cadastrados pelo AT-02, até 100.
+- Autentica qualquer conta Google. Quem decide quem entra é o convite (RN-48).
 - Indisponibilidade dele impede login novo. Sessão já aberta não cai.
 
 ## Quem não é ator, e por quê

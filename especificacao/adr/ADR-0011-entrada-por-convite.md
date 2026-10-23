@@ -21,9 +21,7 @@ O convidado é avisado por fora do sistema.
 Não existe fluxo de convite com estado, expiração e recusa, que seria o custo de
 permitir que usuário convide usuário.
 
-Convidar exige duas ações do operador: o comando de linha e o cadastro do
-e-mail na lista de usuários de teste do Google (UC-13). Esquecer a segunda gera
-recusa que o sistema não consegue explicar.
+Convidar é uma ação só do operador, o comando de linha (UC-13).
 
 A lista de convidados é **dado**, não configuração, porque muda com o sistema no
 ar. Por isso mora no banco e não em variável de ambiente.
@@ -35,9 +33,8 @@ de hospedagem que cresce sozinho, nada disso a serviço do produto.
 
 ## Alternativa recusada: convite emitido por usuário
 
-O modo Testing do Google já força a mão: sem o operador cadastrar o e-mail no
-console, o convite não se completa. Permitir que o usuário convide criaria a
-impressão de autonomia que a plataforma não permite.
+Exigiria o fluxo de convite com estado, expiração e recusa que esta decisão
+evita, num sistema feito para o interessado e alguns amigos.
 
 ## Alternativa recusada: lista de e-mails em variável de ambiente
 

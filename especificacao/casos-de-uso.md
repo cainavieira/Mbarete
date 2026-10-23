@@ -12,8 +12,7 @@ Atores em `atores.md`, requisitos em `requisitos-funcionais.md`, regras em
 ## UC-01 Entrar no sistema
 
 **Ator:** AT-01
-**Pré-condição:** o e-mail consta na lista de convidados e na lista de
-usuários de teste do AT-03.
+**Pré-condição:** o e-mail consta na lista de convidados.
 
 **Fluxo principal**
 
@@ -31,11 +30,6 @@ usuários de teste do AT-03.
 - **1a** O e-mail não está na lista de convidados: o sistema volta para a
   tela de entrada dizendo que o acesso é por convite, sem informar se aquele
   e-mail existe no sistema. (RF-02, RNF-23)
-- **1b** O e-mail não está na lista de usuários de teste do AT-03: a recusa
-  acontece no Google, antes de o sistema ser alcançado, e a pessoa vê a tela
-  do Google dizendo que o aplicativo não está autorizado. O sistema não tem
-  como melhorar essa mensagem, e essa é uma limitação conhecida do modo
-  Testing.
 - **1c** O AT-03 está indisponível: nenhum login novo acontece. Sessão já
   aberta continua válida.
 - **1d** O login não se completa no retorno do Google: a pessoa cancelou na
@@ -386,16 +380,11 @@ anonimização. As cópias de backup somem no fim da retenção. (RN-51)
 1. O operador roda o comando de linha no servidor, informando o e-mail.
    (RF-44)
 2. O comando insere o e-mail na lista de convidados.
-3. O operador adiciona o mesmo e-mail na lista de usuários de teste do AT-03,
-   pelo console do Google.
-4. O operador avisa a pessoa por fora, e passa o endereço do sistema.
+3. O operador avisa a pessoa por fora, e passa o endereço do sistema.
 
 **Fluxos alternativos**
 
 - **2a** O e-mail já está na lista: o comando informa e não duplica.
-- **3a** O passo 3 é esquecido: a pessoa recebe recusa do Google no login, com
-  a mensagem do fluxo 1b do UC-01, e sem pista do motivo. Os dois passos
-  precisam andar juntos, e essa é a limitação conhecida do modo Testing.
 
 **Limitação conhecida:** o sistema não envia e-mail de convite. Não existe
 serviço de e-mail no desenho, e adicioná-lo custaria domínio verificado e

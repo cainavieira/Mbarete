@@ -70,8 +70,9 @@ motivo.
   em aberto seria efeito que a pessoa não pediu. Editar fase nunca encerra
   outra: a edição que criaria sobreposição com qualquer fase, em aberto ou não,
   é recusada, porque recusa é reversível e encerrar a fase que a pessoa está
-  vivendo, por efeito de corrigir outra, não é. A exceção é a fase agendada:
-  mexer nela move um fim que ela mesma já tinha posto na corrente (RN-67).
+  vivendo, por efeito de corrigir outra, não é. A exceção é o fim no futuro
+  da RN-67: mexer na fase seguinte move um fim que ela mesma já tinha posto
+  na anterior.
 - **RN-20** Data pode não pertencer a fase nenhuma. Período sem fase é estado
   válido e esperado, não defeito a corrigir.
 - **RN-22** Iniciar uma fase nova sem data de fim, começando depois da fase em
@@ -95,11 +96,13 @@ motivo.
   ser futura. Para que uma fase termine numa data futura, cria-se a fase
   seguinte começando no dia seguinte, e a RN-22 encerra a atual. Data de fim no
   futuro existe apenas como consequência de outra fase começar, nunca como
-  declaração isolada. Por isso esse fim acompanha a fase agendada enquanto ela
-  não começa: mudar o início dela move o fim da corrente para a nova véspera,
-  como edição de datas da RN-24, inclusive quando a véspera nova é hoje ou já
-  passou; e apagá-la devolve a corrente a fase em aberto. Antecipar a agendada
-  para o início da corrente, ou antes, é recusado pela RN-19.
+  declaração isolada. Por isso, enquanto o fim de uma fase está no futuro, ele
+  é sempre a véspera da fase seguinte e a acompanha: mudar o início da
+  seguinte move esse fim para a nova véspera, como edição de datas da RN-24,
+  inclusive quando a véspera nova é hoje ou já passou; e apagar a seguinte
+  leva o fim para a véspera da próxima fase, ou o tira, se não houver
+  próxima. Antecipar a seguinte para o início da anterior, ou antes, é
+  recusado pela RN-19.
 - **RN-69** A fase pode começar em data futura. Isso difere da RN-05, que
   recusa registro em data futura, e a diferença é deliberada: registro afirma
   uma medição que não aconteceu, fase declara uma intenção que ainda não

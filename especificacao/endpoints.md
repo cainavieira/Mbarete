@@ -39,9 +39,9 @@ documento está datado.
 | `DELETE` | `/registros/{data}` | apaga registro | RF-12 |
 | `GET` | `/fases` | lista todas, marcando a corrente quando existir | RF-23 |
 | `POST` | `/fases` | cria fase, com data de fim opcional; sem ela, encerra a fase em aberto que começou antes da nova | RF-15, RF-19 |
-| `PATCH` | `/fases/{id}` | edita tipo, nível, taxa alvo, peso alvo, início e fim; mudar o início da fase agendada move o fim da corrente | RF-20, RF-19 |
+| `PATCH` | `/fases/{id}` | edita tipo, nível, taxa alvo, peso alvo, início e fim; mudar o início move o fim no futuro da fase anterior | RF-20, RF-19 |
 | `POST` | `/fases/{id}/encerramento` | encerra a fase corrente | RF-45 |
-| `DELETE` | `/fases/{id}` | apaga a fase; os registros permanecem sem fase; apagar a agendada devolve a corrente a fase em aberto | RF-22, RF-19 |
+| `DELETE` | `/fases/{id}` | apaga a fase; os registros permanecem sem fase; o fim no futuro da fase anterior vai para a véspera da próxima, ou some | RF-22, RF-19 |
 | `GET` | `/acompanhamento` | tudo da tela principal, numa resposta | UC-08 |
 | `POST` | `/importacao/previsualizacao` | valida o arquivo e relata, sem gravar | RF-37, RF-38 |
 | `POST` | `/importacao` | grava o arquivo inteiro ou nada | RF-40 |

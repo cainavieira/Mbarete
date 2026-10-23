@@ -202,10 +202,10 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   a barra deixa de ser exibida enquanto isso durar. (RN-44)
 - **2h** O valor da taxa alvo é editado: o nível passa a personalizado.
   (RF-18, RN-30)
-- **2i** A fase é a agendada, que ainda não começou, e a data de início muda:
-  o fim da corrente vai para a nova véspera, inclusive quando ela é hoje ou já
-  passou, e os registros desses dias mudam de fase. Antecipar para o início da
-  corrente, ou antes, é recusado. (RF-19, RN-67)
+- **2i** A data de início muda, e a fase anterior tem fim no futuro, na
+  véspera desta: esse fim vai para a nova véspera, inclusive quando ela é hoje
+  ou já passou, e os registros desses dias mudam de fase. Antecipar para o
+  início da fase anterior, ou antes, é recusado. (RF-19, RN-67)
 
 ## UC-07 Apagar fase
 
@@ -226,8 +226,9 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
 - **3a** A fase apagada era a corrente: passa a não haver fase corrente, e o
   acompanhamento deixa de exibir veredito, taxa alvo, barra e tolerância.
   (RN-27, RN-66)
-- **3b** A fase apagada é a agendada, que ainda não começou: a corrente, que
-  terminava na véspera dela, volta a ser a fase em aberto. (RF-19, RN-67)
+- **3b** A fase anterior à apagada tem fim no futuro, na véspera dela: esse
+  fim vai para a véspera da próxima fase; se não houver próxima, ele some, e a
+  anterior volta a ser a fase em aberto. (RF-19, RN-67)
 
 **Pós-condição:** nenhum registro é perdido. A operação é reversível criando
 fase sobre o mesmo intervalo. (RN-70)

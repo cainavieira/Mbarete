@@ -164,8 +164,9 @@ pensa "março". Paginação é o desenho errado para série temporal.
 
 `GET /acompanhamento` devolve, de uma vez: peso semanal e a contagem de
 registros da janela, as três variações com o intervalo de datas de cada uma
-(RN-47), a fase corrente inteira, o veredito de ritmo com a taxa alvo já
-convertida em quilogramas da semana (RN-35), o progresso até o peso alvo, o
+(RN-47), a fase corrente inteira, o veredito de ritmo com a taxa real e o
+intervalo dela (RN-36) e a taxa alvo já convertida em quilogramas da semana
+(RN-35), o progresso até o peso alvo, o
 último valor de cintura com as duas variações dela (RN-12), e a série do
 gráfico.
 

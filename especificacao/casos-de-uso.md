@@ -190,9 +190,9 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   unidade, sem conversão automática, porque 0,5% e 0,5 kg são alvos
   diferentes e adivinhar qual a pessoa quis é pior que perguntar. O nível
   passa a personalizado. (RF-18, RN-30)
-- **2f** Uma das datas é alterada: o dia da base do progresso e da tolerância
-  é determinado de novo, porque o intervalo da fase passou a ser outro.
-  (RN-68)
+- **2f** Uma das datas é alterada: o dia da base do progresso, da tolerância e
+  da taxa real do primeiro mês é determinado de novo, porque o intervalo da
+  fase passou a ser outro. (RN-36, RN-68)
 - **2g** O peso alvo passa para o lado errado da base: a alteração é aceita, e
   a barra deixa de ser exibida enquanto isso durar. (RN-44)
 - **2h** O valor da taxa alvo é editado: o nível passa a personalizado.
@@ -241,8 +241,9 @@ fase sobre o mesmo intervalo. (RN-70)
    fase. (RF-28, RF-47, RF-49)
 3. Apresenta as três variações, cada uma com o intervalo de datas usado.
    (RF-29, RN-47)
-4. Apresenta o veredito de ritmo da fase corrente e a taxa alvo convertida em
-   quilogramas da semana. (RF-30, RF-32)
+4. Apresenta o veredito de ritmo da fase corrente, a taxa real com o
+   intervalo de datas usado, e a taxa alvo convertida em quilogramas da
+   semana. (RF-30, RF-32)
 5. Apresenta a barra de progresso até o peso alvo. (RF-33)
 6. Apresenta a cintura, se houver alguma medição. (RF-35)
 
@@ -255,22 +256,25 @@ fase sobre o mesmo intervalo. (RN-70)
 - **2b** O primeiro registro é mais recente que o período escolhido: o gráfico
   começa no primeiro registro e se alarga conforme os dias passam, em vez de
   mostrar trecho em branco. (RF-49)
-- **4a** Em cutting ou bulking, a fase tem menos de 14 dias, ou uma das duas
-  janelas comparadas tem menos de 4 registros: dados insuficientes no lugar do
-  veredito, mas o peso semanal e as variações continuam sendo exibidos.
-  (RN-36, RN-39)
+- **4a** Em cutting ou bulking, ainda não se passaram 14 dias desde o dia da
+  base, ou um dos dois pesos semanais comparados não existe: dados
+  insuficientes no lugar do veredito, mas o peso semanal e as variações
+  continuam sendo exibidos. (RN-36, RN-39)
 - **4b** A fase corrente é manutenção: o veredito diz se o peso semanal de
   hoje está abaixo, dentro ou acima da faixa de tolerância, que vai de 1%
   abaixo a 1% acima da base. A faixa aparece no gráfico, do início da fase até
-  hoje, e em texto ao lado do veredito, com os dois limites. O veredito sai
-  junto com a faixa, sem a espera de 14 dias, e sem base não há nenhum dos
-  dois: o sistema informa dados insuficientes. (RF-50, RN-33, RN-37, RN-39,
-  RN-68)
+  hoje, e em texto ao lado do veredito, com os dois limites, no lugar da taxa
+  real, que a manutenção não usa. O veredito sai junto com a faixa, sem a
+  espera de 14 dias, e sem base não há nenhum dos dois: o sistema informa
+  dados insuficientes. (RF-50, RN-33, RN-37, RN-39, RN-68)
 - **4c** **Não existe fase corrente**: veredito, taxa alvo, barra de progresso
   e faixa de tolerância não são exibidos. Peso semanal, variações e cintura
   continuam, e é o comportamento esperado, não estado de erro. (RN-27, RN-66)
 - **4d** Existe fase futura cadastrada: ela não entra no acompanhamento, apenas
   na lista de fases. (RN-69)
+- **4e** Em cutting ou bulking, o dia da base é mais recente que 28 dias
+  atrás: a taxa real é medida contra a base, e o intervalo exibido ao lado
+  dela mostra isso. (RN-36, RN-68)
 - **5a** A fase corrente é manutenção: não existe barra de progresso, porque
   não existe peso alvo. (RN-41)
 - **5c** A base do progresso não existe, porque nenhum peso semanal ocorreu

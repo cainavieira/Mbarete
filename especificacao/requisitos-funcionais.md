@@ -94,9 +94,11 @@ aposentados estão listados no fim.
   sobre peso semanal, com o intervalo das janelas usadas em cada uma. (RN-46,
   RN-47)
 - **RF-30** O sistema deve apresentar o veredito de ritmo da fase corrente,
-  quando existir fase corrente. (RN-27, RN-33, RN-36, RN-37, RN-38)
+  quando existir fase corrente, e, em cutting e bulking, a taxa real ao lado,
+  com o intervalo de datas usado no formato da RN-47. (RN-27, RN-33, RN-36,
+  RN-37, RN-38)
 - **RF-31** O sistema deve informar dados insuficientes no lugar do veredito
-  enquanto a fase não atingir o mínimo de dias e de registros por janela.
+  enquanto faltar o mínimo de dias ou um dos pesos semanais comparados.
   (RN-39)
 - **RF-48** O sistema deve omitir taxa alvo, veredito, barra de progresso e
   faixa de tolerância quando a data não pertencer a fase alguma, mantendo peso

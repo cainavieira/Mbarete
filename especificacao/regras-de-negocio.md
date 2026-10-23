@@ -141,26 +141,40 @@ motivo.
 
 ## Veredito de ritmo
 
-- **RN-36** A taxa real é a diferença entre o peso semanal de hoje e o peso
-  semanal de 7 dias atrás.
+- **RN-36** A taxa real é a variação do peso semanal convertida em
+  quilogramas por semana, medida entre hoje e 28 dias atrás: 78,4 hoje contra
+  80,0 há 28 dias dá -0,40 kg por semana. Enquanto o dia da base da RN-68 for
+  mais recente que 28 dias atrás, a medida é entre hoje e a base. O mês, e não
+  a semana, porque a água e o sal movem o peso semanal tanto quanto o ritmo
+  planejado: comparando com 7 dias atrás, quem segue o plano veria fora do
+  ritmo na maioria das semanas. No mês, a água de uma semana compensa a da
+  outra e o ritmo se acumula; no começo da fase, o veredito fica mais
+  confiável a cada dia, até o mês fechar.
 - **RN-37** O veredito tem três estados: abaixo do ritmo, no ritmo e acima do
   ritmo. Em cutting e bulking, ritmo é velocidade na direção do plano: abaixo
   do ritmo é perder, ou ganhar, mais devagar que a taxa alvo, inclusive andar
   na direção contrária, e acima do ritmo é mais rápido. Na manutenção, que
   compara posição (RN-33), os mesmos três estados se exibem como abaixo da
   faixa, na faixa e acima da faixa, pelo peso. A palavra é ritmo, e não taxa,
-  porque taxa tem sinal: em cutting, -0,30 contra um alvo de -0,50 é número
+  porque taxa tem sinal: em cutting, -0,10 contra um alvo de -0,50 é número
   maior e perda mais lenta.
-- **RN-38** Considera-se no ritmo a taxa real que fique dentro de 20% do valor
-  da taxa alvo, para mais ou para menos.
-- **RN-39** Não há veredito antes de 14 dias completos de fase com no mínimo
-  4 registros em **cada uma** das duas janelas que a RN-36 compara. Até lá o
-  sistema informa dados insuficientes. A condição de liberação é a mesma
-  condição de cálculo: sem os dois pesos semanais não existe taxa real. A
-  manutenção é a exceção, porque não compara taxa (RN-33): o veredito dela
-  existe sempre que existem a base e o peso semanal de hoje, que é a mesma
-  condição da faixa de tolerância. Esperar os 14 dias mostraria a linha dentro
-  da faixa, no gráfico, ao lado de um veredito de dados insuficientes.
+- **RN-38** Em cutting e bulking, considera-se no ritmo a taxa real que fique
+  dentro de 50% do valor da taxa alvo, para mais ou para menos, com as bordas
+  dentro: com alvo de -0,40 kg por semana, está no ritmo a taxa real entre
+  -0,20 e -0,60. A tolerância é larga porque, mesmo medida no mês (RN-36), a
+  taxa real ainda carrega água e sal, e veredito que acusa fora do ritmo quem
+  segue o plano ensina a pessoa a ignorá-lo. Com alvo pequeno, como os
+  conservadores, o veredito oscila mais, e isso é aceito: em um mês, a balança
+  de casa não separa 0,2 kg por semana de peso parado.
+- **RN-39** Em cutting e bulking, não há veredito antes de 14 dias completos
+  desde o dia da base (RN-68), nem sem os dois pesos semanais que a RN-36
+  compara. Até lá o sistema informa dados insuficientes. A condição de
+  liberação é a de cálculo: sem os dois pesos semanais não existe taxa real, e
+  com menos de 14 dias ela ainda é mais água do que ritmo. A manutenção é a
+  exceção, porque não compara taxa (RN-33): o veredito dela existe sempre que
+  existem a base e o peso semanal de hoje, que é a mesma condição da faixa de
+  tolerância. Esperar os 14 dias mostraria a linha dentro da faixa, no
+  gráfico, ao lado de um veredito de dados insuficientes.
 - **RN-40** O veredito existe apenas para a fase corrente. Fase encerrada é a
   que tem data de fim anterior a hoje; a corrente com fim agendado segue
   corrente, com veredito, até o último dia. A fase encerrada apresenta
@@ -190,8 +204,8 @@ motivo.
   pelo peso semanal e nunca pelo peso bruto de um dia, por coerência com a
   RN-17: aviso disparado por peso bruto desaparece no dia seguinte e perde
   crédito. A fase nunca é encerrada automaticamente.
-- **RN-68** A base do progresso e da tolerância é o peso semanal do **dia da
-  base**. O dia da base é o dia de início da fase ou, quando aquele dia não
+- **RN-68** A base do progresso, da faixa de tolerância e da taxa real do
+  primeiro mês (RN-36) é o peso semanal do **dia da base**. O dia da base é o dia de início da fase ou, quando aquele dia não
   tinha peso semanal (RN-16), o primeiro dia dentro da fase que tiver. Ele é
   fixado na primeira vez e nunca muda depois: escolher de novo conforme chegam
   registros retroativos faria a base saltar para outra semana, e a barra andar
@@ -282,6 +296,8 @@ Registradas para que não voltem como novidade.
 | Linha do peso alvo no gráfico | Estica o eixo até o alvo e achata a curva do peso semanal. A barra de progresso já mostra a distância (RF-33) |
 | Fechamento por semana ISO | Duplicaria o peso semanal com número diferente para o mesmo período |
 | Janela dos últimos 7 registros | Com dias em branco a janela estica e faz a taxa parecer mais lenta do que foi |
+| Taxa real sobre a semana, com tolerância de 20% | A água e o sal movem o peso semanal tanto quanto o ritmo planejado: quem seguia o plano via fora do ritmo na maioria das semanas, e quem estava parado via no ritmo quase com a mesma frequência. Trocado pelo mês da RN-36 e pelos 50% da RN-38 |
+| Tolerância mínima em quilos para alvo pequeno | Troca um erro por outro: quem segue o plano passa a ver no ritmo mais vezes, e quem está parado também |
 | Repetir ou interpolar peso ausente | Inventa medição que não houve e a entrega ao gráfico com aparência de dado real |
 | Sequência de dias registrando | Mede constância de registro, não progresso. Quem quebra a sequência para de registrar de vez |
 | Compartilhamento entre usuários | Contradiz privacidade simples e obriga a decidir o que o outro vê e o que acontece ao sair |

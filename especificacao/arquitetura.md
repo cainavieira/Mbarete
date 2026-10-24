@@ -11,7 +11,7 @@ Quem usa o sistema e com que sistema externo ele conversa.
 flowchart LR
     U["Usuario (AT-01)<br/>registra o proprio peso"]
     O["Operador (AT-02)<br/>mantem o sistema no ar"]
-    S["Acompanhamento de peso<br/>ESTE SISTEMA"]
+    S["Mbarete<br/>ESTE SISTEMA"]
     G["Google (AT-03)<br/>provedor de identidade"]
 
     U -->|"registra peso, cria fase,<br/>acompanha o ciclo"| S

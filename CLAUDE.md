@@ -1,8 +1,9 @@
-# Acompanhamento de peso
+# Mbarete Tracking Peso
 
-Sistema de acompanhamento de peso para ciclos de treino (cutting, bulking,
-manutenção). A pergunta que o produto responde é "estou no ritmo do meu ciclo?",
-e a unidade de decisão é o **peso semanal**, nunca o peso de um dia.
+O Mbarete é um sistema de acompanhamento de peso para ciclos de treino
+(cutting, bulking, manutenção). A pergunta que o produto responde é "estou no
+ritmo do meu ciclo?", e a unidade de decisão é o **peso semanal**, nunca o peso
+de um dia.
 
 **Estado: a especificação está completa e não existe código de aplicação.** O
 script de origem em `backend/pytho.py` está preservado e inalterado.

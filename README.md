@@ -1,9 +1,9 @@
-# Acompanhamento de peso
+# Mbarete Tracking Peso
 
-Sistema de acompanhamento de peso para ciclos de treino. Cada pessoa registra o
-próprio peso, declara em que fase está (cutting, bulking ou manutenção) com uma
-taxa alvo por semana, e o sistema responde a única pergunta que importa: **estou
-no ritmo do meu ciclo?**
+O Mbarete é um sistema de acompanhamento de peso para ciclos de treino. Cada
+pessoa registra o próprio peso, declara em que fase está (cutting, bulking ou
+manutenção) com uma taxa alvo por semana, e o sistema responde a única pergunta
+que importa: **estou no ritmo do meu ciclo?**
 
 A unidade de decisão é o **peso semanal**, não o peso do dia. O peso diário
 existe para alimentar a média; é o semanal que recalcula o alvo, mede o

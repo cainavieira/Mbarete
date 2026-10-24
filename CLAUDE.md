@@ -5,8 +5,9 @@ O Mbarete é um sistema de acompanhamento de peso para ciclos de treino
 ritmo do meu ciclo?", e a unidade de decisão é o **peso semanal**, nunca o peso
 de um dia.
 
-**Estado: a especificação está completa e não existe código de aplicação.** O
-script de origem em `backend/pytho.py` está preservado e inalterado.
+**Estado: a especificação está completa, e a construção começou; o andamento
+está no `tarefas.md`.** O script de origem em `backend/pytho.py` está
+preservado e inalterado.
 
 ## Onde está a verdade
 

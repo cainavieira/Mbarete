@@ -19,6 +19,9 @@ aposentados estão listados no fim.
   próprio AT-01 autenticado. (RN-50)
 - **RF-06** O sistema deve permitir que o AT-01 apague a própria conta,
   removendo registros, fases e dados de conta. (RN-51)
+- **RF-51** O sistema deve permitir que o AT-01 escolha o tema entre sistema,
+  claro e escuro, guardando a escolha no navegador. Sem escolha, o tema segue o
+  do sistema operacional.
 
 ## Registro diário
 

@@ -1,0 +1,17 @@
+# Postgres de desenvolvimento (ADR-0039). A api roda fora do Compose, direto na
+# máquina (ADR-0037).
+# Subir: docker compose -f compose.dev.yml --env-file backend/.env up -d
+name: mbarete
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: mbarete
+      POSTGRES_USER: ${MBARETE_DB_USUARIO:?defina MBARETE_DB_USUARIO no backend/.env}
+      POSTGRES_PASSWORD: ${MBARETE_DB_SENHA:?defina MBARETE_DB_SENHA no backend/.env}
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - dados:/var/lib/postgresql
+volumes:
+  dados:

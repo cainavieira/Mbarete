@@ -12,9 +12,10 @@ outro, e decisão tomada em cima disso é decisão tomada em cima de ruído.
 
 ## Estado atual
 
-**A especificação está completa. Não há código de aplicação ainda.**
+**A especificação está completa, e a construção começou pelo ambiente do
+backend.**
 
-Isso é deliberado. O projeto começou como um script que lia um CSV e tirava
+A especificação veio antes do código, de propósito. O projeto começou como um script que lia um CSV e tirava
 média a cada sete linhas, e a primeira tentativa foi escolher tecnologia antes de
 modelar requisito. Isso foi desfeito: o script original foi preservado, tudo o
 mais foi apagado, e o levantamento recomeçou por atores, regras e casos de uso.
@@ -23,6 +24,8 @@ O que existe hoje:
 
 - `especificacao/`: 64 regras de negócio, 48 requisitos funcionais, 14 casos de
   uso, 29 requisitos não funcionais, 42 ADR, arquitetura e convenções.
+- `backend/`: o projeto Maven da api, ainda sem regra nem rota, e o
+  `compose.dev.yml`, na raiz, com o Postgres de desenvolvimento.
 - `backend/pytho.py`: o script de origem, inalterado, preservado como ponto de
   partida.
 
@@ -70,9 +73,10 @@ as que só fazem sentido juntas.
 
 ## O que falta
 
-O código. O ponto de partida para implementar está no
-[instrucao.md](instrucao.md): ordem de leitura da especificação, o que já foi
-recusado, armadilhas conhecidas, e o desenho do esquema e da camada de regras.
+O código, além do ambiente do backend. O ponto de partida para implementar
+está no [instrucao.md](instrucao.md): ordem de leitura da especificação, o que
+já foi recusado, armadilhas conhecidas, e o desenho do esquema e da camada de
+regras.
 A ordem de construção, em macro tarefas, fica num documento de trabalho local.
 
 O escopo da primeira versão é **tudo o que a especificação descreve**. Foi

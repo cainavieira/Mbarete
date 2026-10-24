@@ -232,7 +232,8 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   anterior volta a ser a fase em aberto. (RF-19, RN-67)
 
 **Pós-condição:** nenhum registro é perdido. A operação é reversível criando
-fase sobre o mesmo intervalo. (RN-70)
+fase sobre o mesmo intervalo, salvo quando a fase apagada tinha fim no futuro:
+aí o caminho é o da RN-70. (RN-70)
 
 ## UC-08 Acompanhar o ciclo corrente
 

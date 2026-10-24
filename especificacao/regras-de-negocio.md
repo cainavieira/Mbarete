@@ -110,6 +110,11 @@ motivo.
 - **RN-70** Qualquer fase pode ser apagada, inclusive com registros dentro. Os
   registros permanecem e apenas perdem o rótulo do período. A operação é
   reversível: recriar a fase sobre o mesmo intervalo devolve a classificação.
+  A exceção é a fase com fim no futuro, que não se recria sobre o mesmo
+  intervalo, porque fim no futuro só nasce de outra fase começar (RN-67): a
+  classificação dos registros volta recriando a fase até hoje, e o intervalo
+  inteiro volta apagando as fases agendadas depois dela, recriando-a sem fim e
+  agendando-as de novo.
 
 ## Nível e taxa alvo
 

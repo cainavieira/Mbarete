@@ -117,8 +117,9 @@ vai em minúsculas, Figtree em negrito, na cor da ação.
 
 O símbolo funciona sozinho a partir de 16 px e é o ícone do navegador. No claro,
 vai em verde militar; no escuro, em sálvia; numa cor só, em preto ou branco. Os
-arquivos estão em `marca/`, ao lado deste documento: `simbolo-cor`,
-`simbolo-cor-escuro`, `simbolo-preto` e `simbolo-branco`.
+arquivos estão em `marca/`, ao lado deste documento: `logotipo` (símbolo e
+nome, com o nome convertido em curvas) e `simbolo` (sozinho), cada um em `cor`,
+`cor-escuro`, `preto` e `branco`.
 
 ## Recusado
 

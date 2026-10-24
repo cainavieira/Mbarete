@@ -38,6 +38,7 @@ O que existe hoje:
 | por que cada tecnologia foi escolhida, e o que perdeu | [especificacao/adr/](especificacao/adr/) |
 | como se escreve um ADR novo | [especificacao/modelo-adr.md](especificacao/modelo-adr.md) |
 | o que roda onde, e por onde a requisição passa | [especificacao/arquitetura.md](especificacao/arquitetura.md) |
+| como o sistema se parece: nome, cor, fonte e logotipo | [especificacao/identidade-visual.md](especificacao/identidade-visual.md) |
 | como se escreve código aqui | [convenções do backend](especificacao/convencoes-backend.md) e [do frontend](especificacao/convencoes-frontend.md) |
 | o contrato da API | [especificacao/endpoints.md](especificacao/endpoints.md) |
 | como o trabalho entra no repositório | [especificacao/fluxo-de-trabalho.md](especificacao/fluxo-de-trabalho.md) |

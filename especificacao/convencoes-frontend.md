@@ -80,6 +80,50 @@ O front valida **forma**, o backend valida **regra** (ADR-0025).
 
 Nenhuma faixa numérica de regra de negócio aparece escrita no frontend.
 
+## Identidade visual
+
+Cada cor, fonte e tamanho, com o valor, está no `identidade-visual.md`. Aqui
+fica como isso vira código.
+
+- Cada cor é uma variável CSS com o nome que o shadcn/ui usa, definida duas
+  vezes: no `:root`, com o valor do modo claro, e no bloco `.dark`, com o do
+  escuro. O seletor de tema (RF-51) só põe ou tira a classe `dark` do `<html>`.
+- Componente usa o token, nunca o valor. Trocar uma cor é trocar a variável.
+- As cores que o shadcn/ui não traz entram nos dois blocos e no tema do
+  Tailwind, para virar classe (`bg-destaque`, `text-ritmo`). O gráfico do
+  Recharts recebe a variável, não o valor.
+- Tamanho de fonte e de espaço sai da escala do Tailwind, que é em rem.
+- Número que alinha ou muda no lugar usa a classe `tabular-nums`.
+
+| Cor | Token |
+|:--|:--|
+| fundo | `--background` |
+| superfície | `--card`, `--popover` |
+| borda | `--border` |
+| borda de campo | `--input` |
+| texto | `--foreground` e os pares `-foreground` que não aparecem abaixo |
+| texto suave | `--muted-foreground` |
+| ação | `--primary`, `--ring` |
+| texto sobre a ação | `--primary-foreground` |
+| seleção | `--secondary`, `--accent` |
+| texto sobre a seleção | `--secondary-foreground`, `--accent-foreground` |
+| fase | `--muted` |
+| erro | `--destructive` |
+| texto sobre o erro | `--destructive-foreground` |
+| destaque, número no destaque, texto suave no destaque | `--destaque`, `--destaque-foreground`, `--destaque-suave` |
+| linha, ponto e área do gráfico | `--grafico-linha`, `--grafico-ponto`, `--grafico-area` |
+| trilho | `--trilho` |
+| no ritmo, texto e fundo | `--ritmo`, `--ritmo-fundo` |
+| borda da faixa | `--faixa-borda` |
+| fora do ritmo, texto e fundo | `--fora`, `--fora-fundo` |
+| tracejado de dados insuficientes | `--insuficiente-borda` |
+
+A barra de progresso usa `--grafico-linha`, e a faixa de tolerância usa
+`--ritmo-fundo`: a mesma cor nos dois lugares é decisão do design, não
+coincidência de valor. O canto arredondado é a variável `--radius`. Nome da
+tabela que a versão instalada do shadcn/ui não trouxer entra como as cores
+próprias, nos dois blocos e no tema do Tailwind.
+
 ## Antipadrões proibidos
 
 1. `useEffect` para buscar dado do servidor. É estado de servidor tratado como
@@ -94,15 +138,24 @@ Nenhuma faixa numérica de regra de negócio aparece escrita no frontend.
 8. Repetir no front a mensagem de erro que o backend já devolve.
 9. Diálogo feito à mão. Usa o do shadcn/ui, que trata foco preso, fechamento
    por Escape e retorno de foco (ADR-0028).
+10. Cor escrita no componente, seja o valor ou uma classe de cor do Tailwind
+    (`text-green-700`), fora dos tokens.
+11. Verde ou manteiga em selo de estado, e vermelho no veredito.
+12. Número que alinha sem `tabular-nums`. Os algarismos da Figtree são
+    proporcionais por padrão, e a coluna de pesos desalinha.
+13. Tamanho de fonte ou de espaço em px, fora da espessura de borda, e campo
+    com fonte abaixo de 1rem.
 
 ## Acessibilidade mínima
 
-Não é lista de boas intenções, são quatro itens verificáveis.
+Não é lista de boas intenções, são cinco itens verificáveis.
 
 - Todo campo tem `label` associado, não apenas `placeholder`.
 - Erro de campo é referenciado por `aria-describedby`, para que leitor de tela
   anuncie a recusa junto do campo.
 - Componente interativo vem do shadcn/ui, que traz o comportamento do Radix.
+- O estado nunca é dito só pela cor: o selo do veredito traz a palavra, e o de
+  fora do ritmo, a seta.
 - **O gráfico não é a única forma de ler o dado.** As três variações e a lista
   de registros existem também para quem não consegue ler o gráfico. Isso é
   requisito de leitura, não enfeite: gráfico é imagem, e imagem não se navega

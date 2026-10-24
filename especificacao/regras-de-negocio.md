@@ -115,10 +115,16 @@ motivo.
 
 - **RN-28** O nível é conservador, moderado, agressivo ou personalizado, é
   obrigatório em cutting e bulking, e determina a taxa alvo padrão da fase.
+  Trocar a fase entre cutting e bulking aplica o padrão do mesmo nível no tipo
+  novo, com valor e unidade; no personalizado, que não tem padrão, o valor é
+  pedido de novo.
 - **RN-29** A taxa alvo é obrigatória em cutting e bulking. Ela tem valor, com
   até duas casas decimais, e unidade, e ambos são editáveis pelo usuário. As
   unidades possíveis são porcentagem do peso corporal por semana e
-  quilogramas por semana.
+  quilogramas por semana. O valor é digitado sem sinal, e o sinal vem do tipo:
+  negativo em cutting, positivo em bulking. Zero é recusado. Assim o plano
+  nunca aponta contra o próprio tipo, e o sinal de menos esquecido não inverte
+  o veredito (RN-37).
 - **RN-30** Editar o valor ou a unidade da taxa alvo muda o nível da fase para
   personalizado.
 - **RN-31** Padrões de cutting, em porcentagem do peso corporal por semana:
@@ -151,13 +157,13 @@ motivo.
   outra e o ritmo se acumula; no começo da fase, o veredito fica mais
   confiável a cada dia, até o mês fechar.
 - **RN-37** O veredito tem três estados: abaixo do ritmo, no ritmo e acima do
-  ritmo. Em cutting e bulking, ritmo é velocidade na direção do plano: abaixo
-  do ritmo é perder, ou ganhar, mais devagar que a taxa alvo, inclusive andar
-  na direção contrária, e acima do ritmo é mais rápido. Na manutenção, que
-  compara posição (RN-33), os mesmos três estados se exibem como abaixo da
-  faixa, na faixa e acima da faixa, pelo peso. A palavra é ritmo, e não taxa,
-  porque taxa tem sinal: em cutting, -0,10 contra um alvo de -0,50 é número
-  maior e perda mais lenta.
+  ritmo. Em cutting e bulking, ritmo é velocidade na direção do plano, que é a
+  do tipo (RN-29): abaixo do ritmo é perder, ou ganhar, mais devagar que a
+  taxa alvo, inclusive andar na direção contrária, e acima do ritmo é mais
+  rápido. Na manutenção, que compara posição (RN-33), os mesmos três estados
+  se exibem como abaixo da faixa, na faixa e acima da faixa, pelo peso. A
+  palavra é ritmo, e não taxa, porque taxa tem sinal: em cutting, -0,10 contra
+  um alvo de -0,50 é número maior e perda mais lenta.
 - **RN-38** Em cutting e bulking, considera-se no ritmo a taxa real que fique
   dentro de 50% do valor da taxa alvo, para mais ou para menos, com as bordas
   dentro: com alvo de -0,40 kg por semana, está no ritmo a taxa real entre

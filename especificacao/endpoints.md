@@ -212,6 +212,14 @@ nova, depois de encerrar uma fase, e em todo o passado importado.
 
 Fase futura cadastrada não aparece aqui, apenas em `/fases` (RN-69).
 
+### A taxa alvo trafega sem sinal nas rotas de fase
+
+Em `POST /fases`, `PATCH /fases/{id}`, `GET /fases` e `GET /niveis`, a taxa
+alvo vai e volta como a pessoa a digita e edita, sem sinal, e o backend aplica
+o sinal do tipo (RN-29). O sinal tem uma casa só, e o menos esquecido não tem
+por onde chegar. No acompanhamento ela vem com sinal, porque ali fica ao lado
+da taxa real, que tem sinal (RN-37).
+
 ### A importação são duas chamadas sem estado entre elas
 
 A primeira recebe o arquivo e devolve o relatório: linhas válidas, linhas

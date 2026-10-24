@@ -155,6 +155,8 @@ Atores em `atores.md`, requisitos em `requisitos-funcionais.md`, regras em
   personalizado. (RF-18, RN-30)
 - **3b** O nível escolhido é personalizado: não há taxa sugerida, e o sistema
   exige o valor antes de aceitar. (RN-29, RN-31, RN-32)
+- **3c** O valor da taxa alvo é digitado sem sinal, e o sistema aplica o do
+  tipo; valor zero é recusado. (RN-29)
 - **5a** O peso alvo está do lado errado da base: a fase é criada, e a barra
   de progresso não é exibida enquanto isso durar, em vez de aparecer em 100%.
   Se a base ainda não existe, a comparação acontece quando ela existir.
@@ -201,6 +203,10 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   véspera desta: esse fim vai para a nova véspera, inclusive quando ela é hoje
   ou já passou, e os registros desses dias mudam de fase. Antecipar para o
   início da fase anterior, ou antes, é recusado. (RF-19, RN-67)
+- **2j** O tipo muda entre cutting e bulking: a taxa alvo passa ao padrão do
+  mesmo nível no tipo novo, com valor, unidade e sinal dele; no personalizado,
+  o sistema exige o valor de novo antes de aceitar. O peso alvo continua, e
+  vale o 2g se ele ficar do lado errado da base. (RN-28, RN-29, RN-44)
 
 ## UC-07 Apagar fase
 

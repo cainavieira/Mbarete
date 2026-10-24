@@ -58,7 +58,9 @@ atualizam. Não se atualiza tela na mão.
 Uma função para cada, em `formato/`, e nenhuma formatação solta em componente.
 
 - Peso e cintura: exibidos com vírgula e uma casa decimal (RN-62).
-- Taxa alvo: exibida com vírgula e duas casas decimais (RN-29, RN-62).
+- Taxa alvo: exibida com vírgula e duas casas decimais (RN-29, RN-62). No
+  formulário da fase, sem sinal, como se digita; no acompanhamento, com o
+  sinal do tipo.
 - Entrada aceita vírgula e ponto, e envia com ponto (RN-62).
 - Data: exibida em `DD/MM/AAAA`, trafegada em `AAAA-MM-DD` (RN-63).
 - Variação: sempre acompanhada do intervalo de datas usado, no formato
@@ -72,7 +74,7 @@ componentes divergiu em três deles antes do fim do mês.
 O front valida **forma**, o backend valida **regra** (ADR-0025).
 
 - No front: campo obrigatório, é número, no máximo uma casa decimal no peso e
-  na cintura e duas na taxa alvo, aceita vírgula.
+  na cintura e duas na taxa alvo, sem sinal na taxa alvo, aceita vírgula.
 - No backend: faixas, data futura, sobreposição de fase.
 - A mensagem de recusa de regra **vem do backend** e é exibida como veio. O
   front usa o `codigo` para decidir comportamento e o `campo` para destacar o

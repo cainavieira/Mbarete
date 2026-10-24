@@ -93,6 +93,7 @@ Derivado das regras. Todo código novo entra aqui junto com a regra que o gera.
 | `PESO_ALVO_AUSENTE` | cutting ou bulking sem peso alvo | RN-41 |
 | `NIVEL_AUSENTE` | cutting ou bulking sem nível | RN-28 |
 | `TAXA_ALVO_AUSENTE` | cutting ou bulking sem taxa alvo | RN-29 |
+| `TAXA_ALVO_INVALIDA` | taxa alvo zero ou negativa; o sinal vem do tipo | RN-29 |
 | `FASE_SOBREPOSTA` | a fase invade outra num caso que a RN-19 recusa | RN-19 |
 | `FASE_NAO_CORRENTE` | encerramento pedido para fase que não é a corrente | RN-27 |
 | `DATA_FIM_FUTURA` | data de fim no futuro, ao criar, editar ou encerrar fase | RN-67 |
@@ -111,7 +112,8 @@ ou verificação prévia) é decidido em `endpoints.md`.
 ## Onde mora o quê
 
 **Validação de forma e de campo isolado** fica no DTO, por Bean Validation:
-tipo, obrigatoriedade, casas decimais, faixa de peso e de cintura.
+tipo, obrigatoriedade, casas decimais, faixa de peso e de cintura, taxa alvo
+maior que zero.
 
 **Validação que depende de outro dado** fica em `regras/`: a proibição de
 sobreposição de fase (RN-19) precisa das outras fases do usuário, e a validação

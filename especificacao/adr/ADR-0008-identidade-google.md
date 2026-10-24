@@ -25,10 +25,10 @@ Desaparecem do escopo: guardar senha com hash, recuperação de senha,
 verificação de e-mail, bloqueio por tentativa repetida, e a responsabilidade de
 ter senha de outras pessoas no banco.
 
-Escopo mínimo tem um efeito documentado que decide a viabilidade: em modo
-Testing o refresh token do Google expira em 7 dias, **exceto** quando os únicos
-escopos pedidos são nome, e-mail e perfil. Como é o caso, a sessão não morre
-semanalmente e o aplicativo não precisa passar por verificação.
+Escopo mínimo é também o que dispensa o aplicativo da verificação do Google
+(RNF-21). O sistema não usa o refresh token do Google: depois do login, a
+sessão é o token de renovação próprio (ADR-0041), e as regras do Google sobre a
+validade daquele token não a alcançam.
 
 O portão é um só, o convite: o Google autentica qualquer conta, e o sistema
 recusa quem não está na lista de convidados (UC-01, fluxo 1a). Sem a

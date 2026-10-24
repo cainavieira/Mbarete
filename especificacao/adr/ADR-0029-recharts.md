@@ -27,7 +27,7 @@ Valor nulo quebra a linha de fábrica, que é exatamente o comportamento que a
 RN-09 exige. Não é configuração nem contorno.
 
 Marcar início e fim de fase usa um componente pronto de linha de referência, e
-destacar o trecho sem fase usa área de referência, também pronta.
+destacar o trecho com fase usa área de referência, também pronta.
 
 É declarativo em React: o gráfico é composto de componentes, não desenhado por
 chamadas imperativas.
@@ -36,7 +36,7 @@ chamadas imperativas.
 
 Desenha em canvas e se configura por objeto de opções. Recusado por ficar
 desconfortável assim que se quer anotação sobre o gráfico, que é o caso das
-marcas de início e fim de fase e do destaque do trecho sem fase.
+marcas de início e fim de fase e do destaque do trecho com fase.
 
 ## Alternativa recusada: D3 com visx
 

@@ -129,7 +129,7 @@ nome, com o nome convertido em curvas) e `simbolo` (sozinho), cada um em `cor`,
 | Fundo creme | O interessado preferiu fundo branco e texto quase preto |
 | Preto puro sobre branco puro | 21 para 1 cansa a vista |
 | Ação em quase preto ou em azul-petróleo | O interessado escolheu o verde |
-| Botão amarelo | Manteiga contra o branco dá 1,4 para 1, e o botão some no modo claro |
+| Botão amarelo | Manteiga contra o branco dá 1,1 para 1, e o botão some no modo claro |
 | Texto branco sobre tom claro | Branco sobre verde-claro dá 2,2 para 1, abaixo do mínimo |
 | Verde no veredito | O verde é ação, e selo verde ao lado de botão verde diz "toque aqui" |
 | Uma cor por tipo de fase | Gastaria três tons e colidiria com as cores do veredito; o nome escrito basta |

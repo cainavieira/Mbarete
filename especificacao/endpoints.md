@@ -175,6 +175,12 @@ O motivo é consistência, não desempenho. Tudo ali deriva do mesmo peso semana
 diferentes, e a tela pode exibir um veredito calculado com um peso semanal
 diferente do que aparece ao lado. Ninguém percebe, e está errado.
 
+Pelo mesmo motivo, os números do veredito vêm já arredondados como a tela os
+mostra, os mesmos que o veredito comparou (RN-37): o peso semanal e os limites
+da faixa com uma casa, a taxa real e a taxa alvo em quilogramas com duas. Se a
+tela arredondasse por conta própria, poderia escrever o peso igual à borda ao
+lado de um veredito de fora.
+
 Uma resposta significa uma chave de cache e uma invalidação depois de gravar
 (ADR-0023).
 

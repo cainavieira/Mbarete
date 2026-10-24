@@ -46,6 +46,8 @@ por isso as regras abaixo, com o NullAway no pacote de regras (ADR-0042).
   nunca por `new BigDecimal(double)`.
 - `BigDecimal` se compara com `compareTo`, nunca com `equals`: o `equals`
   considera as casas, e 82.4 e 82.40 dão diferentes.
+- O arredondamento do veredito (RN-37) é `RoundingMode.HALF_UP`, que leva o
+  meio para longe do zero, aplicado só ao resultado, nunca no meio da conta.
 - Data é `LocalDate`, nunca `LocalDateTime` nem `Instant` onde a regra fala de
   data (ADR-0018).
 - Ausência no retorno é `Optional`, como o peso semanal que não existe pela

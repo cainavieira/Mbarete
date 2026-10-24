@@ -61,6 +61,10 @@ Uma função para cada, em `formato/`, e nenhuma formatação solta em component
 - Taxa alvo: exibida com vírgula e duas casas decimais (RN-29, RN-62). No
   formulário da fase, sem sinal, como se digita; no acompanhamento, com o
   sinal do tipo.
+- Taxa real: exibida com vírgula, sinal e duas casas decimais, em quilogramas
+  por semana, com o intervalo de datas usado (RN-36, RN-47). Os números do
+  veredito chegam arredondados do backend, e o formato não arredonda de novo
+  (RN-37).
 - Entrada aceita vírgula e ponto, e envia com ponto (RN-62).
 - Data: exibida em `DD/MM/AAAA`, trafegada em `AAAA-MM-DD` (RN-63).
 - Variação: sempre acompanhada do intervalo de datas usado, no formato

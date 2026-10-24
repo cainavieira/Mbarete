@@ -163,7 +163,12 @@ motivo.
   rápido. Na manutenção, que compara posição (RN-33), os mesmos três estados
   se exibem como abaixo da faixa, na faixa e acima da faixa, pelo peso. A
   palavra é ritmo, e não taxa, porque taxa tem sinal: em cutting, -0,10 contra
-  um alvo de -0,50 é número maior e perda mais lenta.
+  um alvo de -0,50 é número maior e perda mais lenta. O veredito compara os
+  números como a tela os mostra: o peso semanal e os limites da faixa com uma
+  casa decimal, a taxa real e a taxa alvo em quilogramas por semana com duas,
+  com o meio arredondado para longe do zero. A conta por trás continua exata,
+  e só o resultado é arredondado: comparando o valor exato, a tela mostraria,
+  ao lado de um veredito de fora, um número igual à borda.
 - **RN-38** Em cutting e bulking, considera-se no ritmo a taxa real que fique
   dentro de 50% do valor da taxa alvo, para mais ou para menos, com as bordas
   dentro: com alvo de -0,40 kg por semana, está no ritmo a taxa real entre

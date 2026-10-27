@@ -212,10 +212,11 @@ motivo.
 - **RN-44** A barra trava em 100% quando o alvo é atingido ou ultrapassado, e
   em 0% quando o movimento é na direção oposta. Não exibe valor negativo nem
   acima de 100%. E ela não é exibida enquanto o peso alvo estiver do lado
-  errado da base, porque ali apareceria em 100% anunciando progresso completo
-  sem nada ter acontecido; pelo mesmo motivo, nesse estado não há o aviso da
-  RN-45. A comparação é refeita a cada exibição, e não num momento só, porque
-  o peso alvo é editável e a base acompanha a correção de registro (RN-68).
+  errado da base, que inclui o alvo igual a ela, porque ali apareceria em 100%
+  anunciando progresso completo sem nada ter acontecido; pelo mesmo motivo,
+  nesse estado não há o aviso da RN-45. A comparação é refeita a cada
+  exibição, e não num momento só, porque o peso alvo é editável e a base
+  acompanha a correção de registro (RN-68).
 - **RN-45** Ao atingir o peso alvo o sistema avisa o usuário. Atingir se mede
   pelo peso semanal e nunca pelo peso bruto de um dia, por coerência com a
   RN-17: aviso disparado por peso bruto desaparece no dia seguinte e perde

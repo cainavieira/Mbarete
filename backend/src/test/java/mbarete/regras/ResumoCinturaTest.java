@@ -52,7 +52,8 @@ class ResumoCinturaTest {
         .hasValueSatisfying(resumo -> assertThat(resumo.desdeOInicioDaFase()).isNull());
   }
 
-  // Pega a mesma troca com uma fase nova já aberta, que ainda não tem medição
+  // Pega a fase de hoje que ainda não tem medição comparada com uma medição de
+  // fora dela
   @Test
   void faseDeHojeSemMedicaoNaoTemVariacaoDaFase() {
     var desdeODia23 = new PeriodoDeFase(2, DIA.plusDays(23), null);

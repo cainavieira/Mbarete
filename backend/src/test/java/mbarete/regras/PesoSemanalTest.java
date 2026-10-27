@@ -13,7 +13,7 @@ class PesoSemanalTest {
 
   private static final LocalDate DIA = LocalDate.of(2026, 10, 20);
 
-  // Pega o mínimo da janela com um a mais ou a menos (RN-16)
+  // Pega o mínimo da janela com um a menos (RN-16)
   @Test
   void comTresRegistrosNaJanelaNaoHaPesoSemanal() {
     var pesagens = List.of(pesagem(0, "80.0"), pesagem(1, "80.0"), pesagem(2, "80.0"));
@@ -21,17 +21,9 @@ class PesoSemanalTest {
     assertThat(calcularPesoSemanal(pesagens, DIA)).isEmpty();
   }
 
-  @Test
-  void comQuatroRegistrosDevolveAMedia() {
-    var pesagens =
-        List.of(pesagem(0, "80.0"), pesagem(1, "81.0"), pesagem(2, "82.0"), pesagem(3, "83.0"));
-
-    assertThat(calcularPesoSemanal(pesagens, DIA))
-        .hasValueSatisfying(media -> assertThat(media).isEqualByComparingTo("81.5"));
-  }
-
   // Pega a janela de 6 ou de 8 dias, a aberta à direita e a dos últimos 7
-  // registros (RN-15): só os quatro do meio contam
+  // registros (RN-15): só os quatro do meio contam. Quatro é o mínimo, então
+  // pega também o mínimo com um a mais (RN-16)
   @Test
   void soEntramOsSeteDiasAteODia() {
     var pesagens =

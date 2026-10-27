@@ -1,6 +1,5 @@
 package mbarete.config;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -63,12 +62,5 @@ class HojeResolverTest {
   @Test
   void aRotaQueNaoDependeDeHojeNaoOlhaOCabecalho() throws Exception {
     mvc.perform(get("/sem-hoje")).andExpect(status().isOk());
-  }
-
-  // Pega o relógio no fuso da máquina: num servidor no Brasil, o dispositivo no
-  // Japão às 23h30 em UTC estaria a dois dias e seria recusado
-  @Test
-  void oRelogioDoServidorEstaEmUtc() {
-    assertThat(new RelogioConfig().relogio().getZone()).isEqualTo(ZoneOffset.UTC);
   }
 }

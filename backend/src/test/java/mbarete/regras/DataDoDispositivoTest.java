@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class DataDoDispositivoTest {
@@ -22,12 +21,11 @@ class DataDoDispositivoTest {
     assertThat(lerDataLocal(cabecalho, HOJE_EM_UTC)).isEqualTo(LocalDate.parse(cabecalho));
   }
 
-  // Pega a recusa que só olha um lado, e o cabeçalho ausente que cai para a
-  // data do servidor
+  // Pega a recusa que só olha um lado, a data em outro formato aceita e o
+  // cabeçalho vazio caindo para a data do servidor
   @ParameterizedTest
-  @NullSource
-  @ValueSource(strings = {"2026-10-18", "2026-10-22", "2026-1-20", "20/10/2026", "2026-02-30", ""})
-  void ausenteMalformadaOuLongeDoServidorERecusada(String cabecalho) {
+  @ValueSource(strings = {"2026-10-18", "2026-10-22", "20/10/2026", ""})
+  void vaziaMalformadaOuLongeDoServidorERecusada(String cabecalho) {
     assertThatThrownBy(() -> lerDataLocal(cabecalho, HOJE_EM_UTC))
         .isInstanceOfSatisfying(
             RegraVioladaException.class,

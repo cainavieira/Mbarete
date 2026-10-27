@@ -35,8 +35,8 @@ motivo.
   recusada.
 - **RN-12** A cintura não tem valor semanal nem janela móvel. O sistema
   apresenta o último valor medido, a data da medição e a variação desde a
-  medição anterior. Havendo fase na data, apresenta também a variação desde a
-  primeira medição dentro dessa fase.
+  medição anterior. Havendo fase corrente (RN-27), apresenta também a variação
+  desde a primeira medição dentro dela.
 - **RN-13** O campo cintura existe em qualquer tipo de fase, e também em data
   sem fase. Destacá-lo durante cutting é comportamento de tela, não regra.
 - **RN-14** Dado medido não é apagado nem escondido por mudança de

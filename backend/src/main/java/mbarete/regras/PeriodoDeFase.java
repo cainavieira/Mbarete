@@ -16,7 +16,7 @@ public record PeriodoDeFase(int id, LocalDate inicio, @Nullable LocalDate fim) {
     return fases.stream().filter(fase -> fase.cobre(data)).findFirst();
   }
 
-  private boolean cobre(LocalDate data) {
+  boolean cobre(LocalDate data) {
     LocalDate ultimoDia = fim;
     return !data.isBefore(inicio) && (ultimoDia == null || !data.isAfter(ultimoDia));
   }

@@ -102,10 +102,12 @@ Derivado das regras. Todo código novo entra aqui junto com a regra que o gera.
 | `DATA_FIM_ANTES_DO_INICIO` | data de fim anterior à de início | RN-18 |
 | `NAO_CONVIDADO` | e-mail fora da lista de convidados; vai como `motivo` no redirecionamento do callback, não como corpo de erro | RN-48 |
 | `LOGIN_NAO_CONCLUIDO` | retorno do login cancelado no Google ou com verificação falha; vai como `motivo` no redirecionamento do callback, não como corpo de erro | RN-49 |
-| `NAO_ENCONTRADO` | registro ou fase inexistente, ou de outro usuário, sem distinguir os dois | RN-50 |
+| `NAO_ENCONTRADO` | registro ou fase inexistente, ou de outro usuário, sem distinguir os dois; também rota que não existe, método que a rota não aceita e data malformada no caminho | RN-50 |
 | `CSV_COLUNA_AUSENTE` | falta coluna obrigatória | RN-53 |
 | `CSV_SEPARADOR_DESCONHECIDO` | separador não reconhecido | RN-54 |
 | `CSV_LINHA_INVALIDA` | linha recusada na pré-visualização | RN-60 |
+| `CORPO_MALFORMADO` | corpo que não vira o DTO (JSON quebrado ou valor sem o tipo do campo), anotação do Bean Validation sem código, parâmetro de consulta com tipo errado, ou outro pedido que o Spring recusa sozinho; responde 422 | sem regra |
+| `ERRO_INTERNO` | erro inesperado; a resposta e o log não levam a mensagem da exceção, que pode trazer peso ou cintura; responde 500 | RNF-13 |
 
 `REGISTRO_JA_EXISTE` é o único da lista que não é recusada final: ele alimenta a
 confirmação de substituição do UC-02. O mecanismo exato (resposta de conflito

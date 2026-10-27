@@ -3,9 +3,11 @@ package mbarete.service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.HexFormat;
 import mbarete.entity.TokenRenovacao;
 import mbarete.entity.Usuario;
@@ -28,6 +30,8 @@ public class SessaoService {
   public static final Duration VALIDADE_DO_ACESSO = Duration.ofMinutes(15);
   public static final Duration VALIDADE_DA_RENOVACAO = Duration.ofDays(30);
 
+  private static final SecureRandom SORTEIO = new SecureRandom();
+
   private final TokenRenovacaoRepository renovacoes;
   private final JwtEncoder emissor;
   private final Clock relogio;
@@ -36,6 +40,18 @@ public class SessaoService {
     this.renovacoes = renovacoes;
     this.emissor = emissor;
     this.relogio = relogio;
+  }
+
+  /** Os dois tokens de uma sessão nova, no fim do login (ADR-0041). */
+  @Transactional
+  public Sessao abrir(Usuario usuario) {
+    Instant agora = Instant.now(relogio);
+    byte[] sorteado = new byte[32];
+    SORTEIO.nextBytes(sorteado);
+    String renovacao = Base64.getUrlEncoder().withoutPadding().encodeToString(sorteado);
+    renovacoes.save(
+        new TokenRenovacao(usuario, hash(renovacao), agora, agora.plus(VALIDADE_DA_RENOVACAO)));
+    return new Sessao(acesso(usuario, agora), renovacao);
   }
 
   /**

@@ -105,7 +105,7 @@ src/main/java/.../
   mapper/       conversão entre entidade e DTO, escrita à mão
   exception/    tratamento global de erro
   config/       segurança e configuração
-  regras/       nao importa nada alem da biblioteca padrao do Java
+  regras/       só importa a biblioteca padrão do Java e as anotações de nulo
 src/main/resources/db/migration/   as migrações SQL do Flyway
 ```
 

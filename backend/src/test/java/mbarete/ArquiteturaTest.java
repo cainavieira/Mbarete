@@ -13,13 +13,13 @@ import com.tngtech.archunit.lang.ArchRule;
 class ArquiteturaTest {
 
   @ArchTest
-  static final ArchRule regrasSoImportamABibliotecaPadrao =
+  static final ArchRule regrasSoImportamABibliotecaPadraoEAsAnotacoesDeNulo =
       classes()
           .that()
           .resideInAPackage("mbarete.regras..")
           .should()
           .onlyDependOnClassesThat()
-          .resideInAnyPackage("java..", "mbarete.regras..");
+          .resideInAnyPackage("java..", "org.jspecify..", "mbarete.regras..");
 
   @ArchTest
   static final ArchRule controllerNaoUsaRepository =

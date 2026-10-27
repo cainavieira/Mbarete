@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * O último valor da cintura e a data dele, a variação desde a medição anterior e a variação desde a
- * primeira medição da fase em que ele caiu (RN-12). A cintura não tem janela nem valor semanal.
+ * primeira medição da fase de hoje (RN-12). A cintura não tem janela nem valor semanal.
  */
 public record ResumoCintura(
     BigDecimal valor,
@@ -21,10 +21,11 @@ public record ResumoCintura(
 
   /**
    * Vazio quando nunca houve medição. Cada variação fica nula quando não tem com o que comparar:
-   * sem medição anterior, sem fase na data da última, ou quando a última é a primeira da fase.
+   * sem medição anterior, sem fase hoje, sem medição dentro dela ou com só uma. A fase é a de hoje,
+   * e não a da última medição, porque data sem fase não mostra nada de fase (RN-66).
    */
   public static Optional<ResumoCintura> resumoCintura(
-      List<Medicao> medicoes, List<PeriodoDeFase> fases) {
+      List<Medicao> medicoes, List<PeriodoDeFase> fases, LocalDate hoje) {
     List<Medicao> emOrdem = medicoes.stream().sorted(comparing(Medicao::data)).toList();
     if (emOrdem.isEmpty()) {
       return Optional.empty();
@@ -35,7 +36,7 @@ public record ResumoCintura(
             ? null
             : ultima.cintura().subtract(emOrdem.get(emOrdem.size() - 2).cintura());
     BigDecimal desdeOInicioDaFase =
-        faseDaData(fases, ultima.data())
+        faseDaData(fases, hoje)
             .flatMap(fase -> emOrdem.stream().filter(m -> fase.cobre(m.data())).findFirst())
             .filter(primeira -> primeira.data().isBefore(ultima.data()))
             .map(primeira -> ultima.cintura().subtract(primeira.cintura()))

@@ -20,8 +20,7 @@ jobs:
           distribution: temurin
           java-version: '25'
           cache: maven
-      # Cada camada de teste entra quando a primeira tarefa que a usa termina
-      - run: ./mvnw -B -DskipTests verify
+      - run: ./mvnw -B verify
       # Rastro só quando falha, com retenção curta (fluxo-de-trabalho.md)
       - if: failure()
         uses: actions/upload-artifact@v4

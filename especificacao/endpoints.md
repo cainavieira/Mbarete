@@ -290,6 +290,7 @@ tela de entrada.
 | 204 | exclusão bem-sucedida |
 | 400 | valor recusado por regra (faixa, data futura no registro, data de fim futura ou anterior ao início, data local ausente ou inválida) |
 | 401 | sem token de acesso válido; na renovação, sem token de renovação válido |
-| 404 | registro ou fase que não existe, ou que é de outro usuário, sem distinguir os dois |
+| 404 | registro ou fase que não existe, ou que é de outro usuário, sem distinguir os dois; também rota que não existe e método que a rota não aceita |
 | 409 | conflito de data em registro, sobreposição de fase que a RN-19 recusa, ou encerramento de fase que não é a corrente |
 | 422 | corpo malformado, antes de chegar a regra de negócio |
+| 500 | erro inesperado, sem a mensagem da exceção (RNF-13) |

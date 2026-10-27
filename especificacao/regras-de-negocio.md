@@ -240,7 +240,11 @@ motivo.
   semanal e nunca sobre peso bruto de um dia: 7 dias, 30 dias, e desde o
   primeiro peso semanal disponível.
 - **RN-47** Cada variação exibe o intervalo de datas das janelas efetivamente
-  usadas no cálculo, no formato (DD-MM / DD-MM).
+  usadas no cálculo, no formato (DD-MM / DD-MM). Quando o dia de 7 ou de 30
+  dias atrás não tem peso semanal (RN-16), a variação parte do primeiro dia
+  seguinte que tenha, e o intervalo mostra esse dia: avançar, e não recuar,
+  porque a variação de 7 dias nunca cobre mais que 7 dias. Sem peso semanal
+  hoje, ou quando o primeiro dia que tem é o próprio hoje, não há variação.
 
 ## Conta, acesso e dados
 

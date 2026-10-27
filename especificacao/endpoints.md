@@ -199,8 +199,10 @@ montada por uma chamada só.
 
 Onde a janela não tem os 4 registros mínimos, o peso semanal vem nulo e o
 veredito vem com estado de dados insuficientes, em vez de o campo desaparecer
-(RN-16, RN-39). Campo ausente e campo nulo são coisas diferentes para quem
-consome.
+(RN-16, RN-39). Sem peso semanal hoje, as três variações também vêm nulas, e
+cada uma vem nula quando nenhum dia antes de hoje tem peso semanal desde o
+ponto de partida dela (RN-47). Campo ausente e campo nulo são coisas
+diferentes para quem consome.
 
 O progresso segue o mesmo princípio, com dois estados além do número, que a
 tela trata de forma diferente: dados insuficientes, quando a base da RN-68 não

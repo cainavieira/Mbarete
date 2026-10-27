@@ -1,0 +1,31 @@
+# Integração contínua (ADR-0032): as verificações de "Antes de integrar"
+# (fluxo-de-trabalho.md) a cada envio.
+name: integracao-continua
+
+on: push
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      # Cada camada de teste entra quando a primeira tarefa que a usa termina
+      - run: ./mvnw -B -DskipTests verify
+      # Rastro só quando falha, com retenção curta (fluxo-de-trabalho.md)
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorios-de-teste
+          path: backend/target/surefire-reports/
+          retention-days: 2

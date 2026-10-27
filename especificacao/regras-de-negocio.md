@@ -216,7 +216,10 @@ motivo.
   anunciando progresso completo sem nada ter acontecido; pelo mesmo motivo,
   nesse estado não há o aviso da RN-45. A comparação é refeita a cada
   exibição, e não num momento só, porque o peso alvo é editável e a base
-  acompanha a correção de registro (RN-68).
+  acompanha a correção de registro (RN-68). A barra e o aviso usam o peso
+  semanal e a base exatos, sem o arredondamento que a RN-37 aplica ao
+  veredito: a barra mostra a tendência, e não um número de borda, e por isso a
+  tela pode mostrar o peso semanal igual ao alvo um pouco antes do aviso.
 - **RN-45** Ao atingir o peso alvo o sistema avisa o usuário. Atingir se mede
   pelo peso semanal e nunca pelo peso bruto de um dia, por coerência com a
   RN-17: aviso disparado por peso bruto desaparece no dia seguinte e perde

@@ -17,7 +17,7 @@ final class CatalogoDeRecusas {
       case DATA_LOCAL_INVALIDA -> new Descricao(HttpStatus.BAD_REQUEST, "RN-04");
       case NAO_ENCONTRADO -> new Descricao(HttpStatus.NOT_FOUND, "RN-50");
       case CORPO_MALFORMADO -> new Descricao(HttpStatus.UNPROCESSABLE_CONTENT, null);
-      case ERRO_INTERNO -> new Descricao(HttpStatus.INTERNAL_SERVER_ERROR, null);
+      case ERRO_INTERNO -> new Descricao(HttpStatus.INTERNAL_SERVER_ERROR, "RNF-13");
     };
   }
 

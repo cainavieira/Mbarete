@@ -134,7 +134,7 @@ class TratadorGlobalTest {
   }
 
   // Pega a mensagem da exceção levada para a resposta ou para o log, com o peso
-  // dentro dela (RNF-13)
+  // dentro dela (RNF-13), e a regra que o catálogo dá ao código fora da resposta
   @Test
   void erroInesperadoNaoLevaAMensagemParaARespostaNemParaOLog(CapturedOutput saida)
       throws Exception {
@@ -142,7 +142,8 @@ class TratadorGlobalTest {
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.erro.codigo").value("ERRO_INTERNO"))
         .andExpect(
-            jsonPath("$.erro.mensagem").value("Erro inesperado. Tente de novo em instantes."));
+            jsonPath("$.erro.mensagem").value("Erro inesperado. Tente de novo em instantes."))
+        .andExpect(jsonPath("$.erro.regra").value("RNF-13"));
     assertThat(saida.getAll()).contains("IllegalStateException").doesNotContain("82.4");
   }
 }

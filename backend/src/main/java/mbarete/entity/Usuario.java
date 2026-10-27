@@ -35,6 +35,18 @@ public class Usuario {
     return id;
   }
 
+  public String email() {
+    return email;
+  }
+
+  public String nome() {
+    return nome;
+  }
+
+  public String fotoUrl() {
+    return fotoUrl;
+  }
+
   /** A cada login, o nome e a foto voltam a ser os que o Google tem agora. */
   public void atualizarPerfil(String nome, String fotoUrl) {
     this.nome = nome;

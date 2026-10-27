@@ -3,9 +3,12 @@ package mbarete.service;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Optional;
+import mbarete.dto.ContaDto;
 import mbarete.entity.Usuario;
+import mbarete.mapper.ContaMapper;
 import mbarete.repository.ConvidadoRepository;
 import mbarete.repository.UsuarioRepository;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,5 +42,18 @@ public class ContaService {
                 () -> usuarios.save(new Usuario(email, nome, fotoUrl, Instant.now(relogio))));
     usuario.atualizarPerfil(nome, fotoUrl);
     return Optional.of(usuario);
+  }
+
+  /**
+   * A conta do token. O token de acesso vale até 15 minutos depois de a conta ser apagada (UC-12),
+   * e aí a recusa é a de quem não está autenticado: a renovação já não existe, e o frontend volta à
+   * tela de entrada.
+   */
+  @Transactional(readOnly = true)
+  public ContaDto conta(int id) {
+    return usuarios
+        .findById(id)
+        .map(ContaMapper::paraDto)
+        .orElseThrow(() -> new BadCredentialsException("A conta do token não existe mais."));
   }
 }

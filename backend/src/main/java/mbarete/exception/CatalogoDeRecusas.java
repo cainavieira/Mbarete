@@ -18,6 +18,7 @@ final class CatalogoDeRecusas {
       case NAO_ENCONTRADO -> new Descricao(HttpStatus.NOT_FOUND, "RN-50");
       case CORPO_MALFORMADO -> new Descricao(HttpStatus.UNPROCESSABLE_CONTENT, null);
       case ERRO_INTERNO -> new Descricao(HttpStatus.INTERNAL_SERVER_ERROR, "RNF-13");
+      case NAO_AUTENTICADO -> new Descricao(HttpStatus.UNAUTHORIZED, "ADR-0041");
     };
   }
 

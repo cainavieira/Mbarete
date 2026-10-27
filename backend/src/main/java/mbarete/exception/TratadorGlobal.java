@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,10 +29,20 @@ public class TratadorGlobal {
   private static final String CORPO_MALFORMADO =
       "A requisição veio num formato que o sistema não entende.";
   private static final String ERRO_INTERNO = "Erro inesperado. Tente de novo em instantes.";
+  private static final String NAO_AUTENTICADO = "Entre de novo para continuar.";
 
   @ExceptionHandler
   ResponseEntity<RespostaDeErro> recusaDeRegra(RegraVioladaException excecao) {
     return resposta(excecao.recusa(), excecao.campo(), excecao.getMessage());
+  }
+
+  /**
+   * Sem token de acesso válido, ou, na renovação, sem token de renovação válido (endpoints.md). O
+   * frontend renova uma vez e, se voltar isto de novo, leva à tela de entrada.
+   */
+  @ExceptionHandler
+  ResponseEntity<RespostaDeErro> naoAutenticado(AuthenticationException excecao) {
+    return resposta(Recusa.NAO_AUTENTICADO, null, NAO_AUTENTICADO);
   }
 
   /** O corpo não vira o DTO: JSON quebrado, ou valor que não tem o tipo do campo. */

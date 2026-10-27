@@ -30,4 +30,8 @@ public class Usuario {
     this.fotoUrl = fotoUrl;
     this.criadoEm = criadoEm;
   }
+
+  public Integer id() {
+    return id;
+  }
 }

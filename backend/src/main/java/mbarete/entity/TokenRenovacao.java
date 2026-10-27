@@ -36,4 +36,17 @@ public class TokenRenovacao {
     this.criadoEm = criadoEm;
     this.expiraEm = expiraEm;
   }
+
+  public Usuario usuario() {
+    return usuario;
+  }
+
+  public Instant expiraEm() {
+    return expiraEm;
+  }
+
+  /** Cada uso empurra a validade, sem trocar o token (ADR-0041). */
+  public void prorrogarAte(Instant expiraEm) {
+    this.expiraEm = expiraEm;
+  }
 }

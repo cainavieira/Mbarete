@@ -1,12 +1,12 @@
 package mbarete.regras;
 
+import static mbarete.regras.Pesagens.diarias;
 import static mbarete.regras.Variacao.calcularVariacao;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class VariacaoTest {
@@ -56,13 +56,5 @@ class VariacaoTest {
     var pesagens = diarias(HOJE.minusDays(3), HOJE, "80.0");
 
     assertThat(calcularVariacao(pesagens, PARTIDA, HOJE)).isEmpty();
-  }
-
-  /** Uma pesagem por dia, do primeiro ao último, todas com o mesmo peso. */
-  private static List<Pesagem> diarias(LocalDate primeiro, LocalDate ultimo, String peso) {
-    return primeiro
-        .datesUntil(ultimo.plusDays(1))
-        .map(d -> new Pesagem(d, new BigDecimal(peso)))
-        .toList();
   }
 }

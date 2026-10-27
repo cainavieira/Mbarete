@@ -3,6 +3,15 @@ package mbarete;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import jakarta.persistence.EntityManager;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import mbarete.entity.Fase;
+import mbarete.entity.Usuario;
+import mbarete.regras.Nivel;
+import mbarete.regras.TipoDeFase;
+import mbarete.regras.UnidadeDaTaxa;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -22,9 +31,34 @@ import org.springframework.transaction.annotation.Transactional;
 class EsquemaTest {
 
   private final JdbcClient jdbc;
+  private final EntityManager entityManager;
 
-  EsquemaTest(@Autowired JdbcClient jdbc) {
+  EsquemaTest(@Autowired JdbcClient jdbc, @Autowired EntityManager entityManager) {
     this.jdbc = jdbc;
+    this.entityManager = entityManager;
+  }
+
+  @Test
+  void cadaValorDosEnumsPassaNoCheck() {
+    Usuario usuario = new Usuario("a@exemplo.com", "Nome", null, Instant.now());
+    entityManager.persist(usuario);
+    planejada(usuario, TipoDeFase.CUTTING, 1, Nivel.CONSERVADOR, UnidadeDaTaxa.PERCENTUAL_SEMANA);
+    planejada(usuario, TipoDeFase.BULKING, 2, Nivel.MODERADO, UnidadeDaTaxa.KG_SEMANA);
+    planejada(usuario, TipoDeFase.CUTTING, 3, Nivel.AGRESSIVO, UnidadeDaTaxa.KG_SEMANA);
+    planejada(usuario, TipoDeFase.BULKING, 4, Nivel.PERSONALIZADO, UnidadeDaTaxa.PERCENTUAL_SEMANA);
+    entityManager.persist(
+        new Fase(
+            usuario,
+            TipoDeFase.MANUTENCAO,
+            LocalDate.of(2026, 5, 1),
+            null,
+            null,
+            null,
+            null,
+            null,
+            Instant.now()));
+
+    assertThatCode(entityManager::flush).doesNotThrowAnyException();
   }
 
   @Test
@@ -170,6 +204,22 @@ class EsquemaTest {
     int outro = usuario("b@exemplo.com");
 
     assertThatCode(() -> manutencao(outro, "2026-10-01", null)).doesNotThrowAnyException();
+  }
+
+  private void planejada(
+      Usuario usuario, TipoDeFase tipo, int mes, Nivel nivel, UnidadeDaTaxa unidade) {
+    LocalDate inicio = LocalDate.of(2026, mes, 1);
+    entityManager.persist(
+        new Fase(
+            usuario,
+            tipo,
+            inicio,
+            inicio.plusDays(9),
+            nivel,
+            new BigDecimal("0.50"),
+            unidade,
+            new BigDecimal("70.0"),
+            Instant.now()));
   }
 
   private int usuario(String email) {

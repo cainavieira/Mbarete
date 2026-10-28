@@ -290,7 +290,9 @@ motivo.
 - **RN-59** A gravação é tudo ou nada, e só ocorre após confirmação explícita
   do usuário.
 - **RN-60** Todas as regras de validação de registro valem igualmente para as
-  linhas importadas.
+  linhas importadas. Linhas do arquivo com a mesma data são todas recusadas,
+  com o motivo citando as outras, porque não há como saber qual delas vale
+  (RN-01).
 
 ## Idioma e formato
 

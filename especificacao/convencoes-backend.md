@@ -100,7 +100,7 @@ Derivado das regras. Todo código novo entra aqui junto com a regra que o gera.
 | `FASE_NAO_CORRENTE` | encerramento pedido para fase que não é a corrente | RN-27 |
 | `DATA_FIM_FUTURA` | data de fim no futuro, ao criar, editar ou encerrar fase | RN-67 |
 | `DATA_FIM_ANTES_DO_INICIO` | data de fim anterior à de início | RN-18 |
-| `NAO_CONVIDADO` | e-mail fora da lista de convidados; vai como `motivo` no redirecionamento do callback, não como corpo de erro | RN-48 |
+| `NAO_CONVIDADO` | e-mail fora da lista de convidados, ou não verificado pelo Google; vai como `motivo` no redirecionamento do callback, não como corpo de erro | RN-48 |
 | `LOGIN_NAO_CONCLUIDO` | retorno do login cancelado no Google ou com verificação falha; vai como `motivo` no redirecionamento do callback, não como corpo de erro | RN-49 |
 | `NAO_AUTENTICADO` | sem token de acesso válido, inclusive o de conta já apagada; na renovação, sem token de renovação válido; responde 401 | ADR-0041 |
 | `NAO_ENCONTRADO` | registro ou fase inexistente, ou de outro usuário, sem distinguir os dois; também rota que não existe, método que a rota não aceita e data ou identificador malformado no caminho | RN-50 |

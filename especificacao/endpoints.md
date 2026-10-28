@@ -128,7 +128,7 @@ responde **409** com:
   "erro": {
     "codigo": "REGISTRO_JA_EXISTE",
     "campo": "data",
-    "mensagem": "Ja existe registro em 07/09/2026, com 82,4 kg.",
+    "mensagem": "Já existe registro em 07/09/2026, com 82,4 kg.",
     "regra": "RN-01"
   }
 }

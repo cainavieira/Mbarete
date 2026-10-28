@@ -42,4 +42,26 @@ public class Registro {
     this.cintura = cintura;
     this.criadoEm = criadoEm;
   }
+
+  public LocalDate data() {
+    return data;
+  }
+
+  public BigDecimal peso() {
+    return peso;
+  }
+
+  public BigDecimal cintura() {
+    return cintura;
+  }
+
+  /**
+   * A pesagem confirmada toma o lugar da anterior na data inteira, cintura inclusive: sem cintura
+   * no envio novo, a de antes não fica (RN-01).
+   */
+  public void substituir(BigDecimal peso, BigDecimal cintura, Instant criadoEm) {
+    this.peso = peso;
+    this.cintura = cintura;
+    this.criadoEm = criadoEm;
+  }
 }

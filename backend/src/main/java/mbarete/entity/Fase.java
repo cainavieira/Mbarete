@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import mbarete.regras.Nivel;
+import mbarete.regras.PeriodoDeFase;
 import mbarete.regras.TipoDeFase;
 import mbarete.regras.UnidadeDaTaxa;
 
@@ -69,5 +70,14 @@ public class Fase {
     this.taxaAlvoUnidade = taxaAlvoUnidade;
     this.pesoAlvo = pesoAlvo;
     this.criadoEm = criadoEm;
+  }
+
+  public PeriodoDeFase periodo() {
+    return new PeriodoDeFase(id, dataInicio, dataFim);
+  }
+
+  /** Fixado na primeira vez, e só a edição das datas da fase o determina de novo (RN-68). */
+  public void fixarDiaDaBase(LocalDate dia) {
+    this.baseData = dia;
   }
 }

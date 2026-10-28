@@ -19,6 +19,9 @@ final class CatalogoDeRecusas {
       case CORPO_MALFORMADO -> new Descricao(HttpStatus.UNPROCESSABLE_CONTENT, null);
       case ERRO_INTERNO -> new Descricao(HttpStatus.INTERNAL_SERVER_ERROR, "RNF-13");
       case NAO_AUTENTICADO -> new Descricao(HttpStatus.UNAUTHORIZED, "ADR-0041");
+      case CINTURA_FORA_DE_FAIXA -> new Descricao(HttpStatus.BAD_REQUEST, "RN-11");
+      case DATA_FUTURA -> new Descricao(HttpStatus.BAD_REQUEST, "RN-05");
+      case REGISTRO_JA_EXISTE -> new Descricao(HttpStatus.CONFLICT, "RN-01");
     };
   }
 
@@ -29,6 +32,7 @@ final class CatalogoDeRecusas {
   static String mensagemDoCampo(Recusa recusa) {
     return switch (recusa) {
       case PESO_FORA_DE_FAIXA -> "O peso deve estar entre 20,0 e 400,0 kg.";
+      case CINTURA_FORA_DE_FAIXA -> "A cintura deve estar entre 40,0 e 200,0 cm.";
       default -> "Confira o campo destacado.";
     };
   }

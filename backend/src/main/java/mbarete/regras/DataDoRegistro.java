@@ -4,7 +4,8 @@ import java.time.LocalDate;
 
 public final class DataDoRegistro {
 
-  private static final String MENSAGEM = "A data do registro não pode estar no futuro.";
+  /** A mesma frase recusa a linha importada com data futura (RN-60). */
+  static final String MENSAGEM = "A data do registro não pode estar no futuro.";
 
   private DataDoRegistro() {}
 

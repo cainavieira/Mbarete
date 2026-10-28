@@ -79,6 +79,21 @@ public final class EncaixeDeFase {
   }
 
   /**
+   * A fase com o fim do encerramento (UC-14). Só a fase corrente, a que cobre hoje, se encerra, e
+   * ela pode ter fim no futuro, posto pela seguinte agendada; a fase em aberto que ainda não
+   * começou não é corrente (RN-27). O fim não pode ser futuro nem anterior ao início (RN-18,
+   * RN-67).
+   */
+  public static PeriodoDeFase encerrarFase(PeriodoDeFase fase, LocalDate fim, LocalDate hoje) {
+    if (!fase.cobre(hoje)) {
+      throw new RegraVioladaException(
+          Recusa.FASE_NAO_CORRENTE, "Só a fase corrente, a que cobre hoje, pode ser encerrada.");
+    }
+    recusarFim(fase.inicio(), fim, null, hoje);
+    return new PeriodoDeFase(fase.id(), fase.inicio(), fim);
+  }
+
+  /**
    * A anterior com fim no futuro, na véspera da editada: esse fim acompanha o início dela (RN-67).
    */
   private static boolean acompanha(PeriodoDeFase fase, PeriodoDeFase antes, LocalDate hoje) {

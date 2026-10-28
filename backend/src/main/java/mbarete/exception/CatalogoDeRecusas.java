@@ -28,6 +28,7 @@ final class CatalogoDeRecusas {
       case FASE_SOBREPOSTA -> new Descricao(HttpStatus.CONFLICT, "RN-19");
       case DATA_FIM_FUTURA -> new Descricao(HttpStatus.BAD_REQUEST, "RN-67");
       case DATA_FIM_ANTES_DO_INICIO -> new Descricao(HttpStatus.BAD_REQUEST, "RN-18");
+      case FASE_NAO_CORRENTE -> new Descricao(HttpStatus.CONFLICT, "RN-27");
     };
   }
 

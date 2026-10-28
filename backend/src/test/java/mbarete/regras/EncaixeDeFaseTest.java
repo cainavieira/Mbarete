@@ -2,6 +2,7 @@ package mbarete.regras;
 
 import static mbarete.regras.EncaixeDeFase.encaixarEdicao;
 import static mbarete.regras.EncaixeDeFase.encaixarFaseNova;
+import static mbarete.regras.EncaixeDeFase.encerrarFase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -164,6 +165,36 @@ class EncaixeDeFaseTest {
         "dataFim");
   }
 
+  // Pega a fase em aberto tomada como a corrente: a agendada está em aberto e
+  // ainda não começou, e janeiro já acabou (RN-27)
+  @Test
+  void soAFaseQueCobreHojeEEncerrada() {
+    assertRecusa(
+        () -> encerrarFase(AGENDADA, LocalDate.of(2026, 11, 15), HOJE),
+        Recusa.FASE_NAO_CORRENTE,
+        null);
+    assertRecusa(
+        () -> encerrarFase(JANEIRO, LocalDate.of(2026, 1, 20), HOJE),
+        Recusa.FASE_NAO_CORRENTE,
+        null);
+  }
+
+  // Pega a corrente tomada como a sem fim: ela pode ter fim no futuro, posto
+  // pela seguinte agendada (RN-22, RN-27)
+  @Test
+  void aCorrenteComFimNoFuturoPodeSerEncerrada() {
+    assertThat(encerrarFase(ATE_A_AGENDADA, LocalDate.of(2026, 10, 15), HOJE))
+        .isEqualTo(new PeriodoDeFase(3, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 10, 15)));
+  }
+
+  // Pega o encerramento sem as recusas do fim: futuro ou antes do início
+  // (RN-18, RN-67, UC-14 2a e 2b)
+  @ParameterizedTest
+  @CsvSource({"2026-10-21, DATA_FIM_FUTURA", "2026-02-28, DATA_FIM_ANTES_DO_INICIO"})
+  void oEncerramentoNoFuturoOuAntesDoInicioERecusado(String fim, Recusa recusa) {
+    assertRecusa(() -> encerrarFase(DESDE_MARCO, LocalDate.parse(fim), HOJE), recusa, "dataFim");
+  }
+
   private static Optional<PeriodoDeFase> editar(
       List<PeriodoDeFase> fases, PeriodoDeFase antes, String inicio, @Nullable String fim) {
     return encaixarEdicao(
@@ -176,7 +207,7 @@ class EncaixeDeFaseTest {
         fases, LocalDate.parse(inicio), fim == null ? null : LocalDate.parse(fim), HOJE);
   }
 
-  private static void assertRecusa(Runnable chamada, Recusa recusa, String campo) {
+  private static void assertRecusa(Runnable chamada, Recusa recusa, @Nullable String campo) {
     assertThatThrownBy(chamada::run)
         .isInstanceOfSatisfying(
             RegraVioladaException.class,

@@ -427,6 +427,85 @@ class FaseControllerTest {
         .isEqualTo(LocalDate.of(2026, 9, 8));
   }
 
+  // Pega o encerramento que não é gravado, e a fase corrente procurada pelo
+  // dia do servidor: no dispositivo ainda é ontem, e a fase vai até ontem
+  // (RN-04, RN-27)
+  @Test
+  void encerraAFaseCorrenteDoDiaDoDispositivo() throws Exception {
+    LocalDate ontem = hoje.minusDays(1);
+    int fulana = usuario("fulana@exemplo.com");
+    int fase = fase(fulana, LocalDate.of(2026, 9, 1), ontem, null);
+
+    encerrar(fulana, fase, ontem, ontem.minusDays(3))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.dataFim").value(ontem.minusDays(3).toString()));
+    assertThat(fases(fulana))
+        .singleElement()
+        .extracting(Gravada::dataFim)
+        .isEqualTo(ontem.minusDays(3));
+  }
+
+  // Pega a recusa da fase que não é a corrente fora do conflito do catálogo
+  // (RN-27)
+  @Test
+  void aFaseQueNaoEACorrenteRespondeConflito() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    int fase = fase(fulana, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 10), null);
+
+    encerrar(fulana, fase, hoje, LocalDate.of(2026, 9, 5))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.erro.codigo").value("FASE_NAO_CORRENTE"))
+        .andExpect(jsonPath("$.erro.regra").value("RN-27"));
+  }
+
+  // Pega o dia da base que fica depois do fim, e o que não é procurado de novo
+  // no intervalo que sobrou: os registros dos dias 1 a 4 chegaram depois que
+  // ele foi fixado no dia 20 (RN-68)
+  @Test
+  void encerrarAntesDoDiaDaBaseODeterminaDeNovo() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    int fase = fase(fulana, LocalDate.of(2026, 9, 1), null, LocalDate.of(2026, 9, 20));
+    for (int dia : new int[] {1, 2, 3, 4, 17, 18, 19, 20}) {
+      registro(fulana, LocalDate.of(2026, 9, dia));
+    }
+
+    encerrar(fulana, fase, hoje, LocalDate.of(2026, 9, 14)).andExpect(status().isOk());
+    assertThat(fases(fulana))
+        .singleElement()
+        .extracting(Gravada::baseData)
+        .isEqualTo(LocalDate.of(2026, 9, 4));
+  }
+
+  // Pega a fase procurada sem o usuário, que deixaria encerrar a de outra
+  // pessoa (RN-50)
+  @Test
+  void aFaseDeOutraPessoaNaoEEncerrada() throws Exception {
+    int outra = usuario("outra@exemplo.com");
+    int daOutra = fase(outra, LocalDate.of(2026, 9, 1), null, null);
+    int fulana = usuario("fulana@exemplo.com");
+
+    encerrar(fulana, daOutra, hoje, LocalDate.of(2026, 9, 14))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.erro.codigo").value("NAO_ENCONTRADO"));
+    assertThat(fases(outra)).singleElement().extracting(Gravada::dataFim).isNull();
+  }
+
+  // Pega a data sem conferir a presença, que estoura como erro interno
+  @Test
+  void encerramentoSemDataSaiComoCorpoMalformado() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    int fase = fase(fulana, LocalDate.of(2026, 9, 1), null, null);
+
+    mvc.perform(
+            post("/fases/{id}/encerramento", fase)
+                .cookie(acesso(fulana))
+                .header("Data-Local", hoje.toString())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+        .andExpect(status().isUnprocessableContent())
+        .andExpect(jsonPath("$.erro.campo").value("dataFim"));
+  }
+
   record Gravada(
       String tipo,
       LocalDate dataInicio,
@@ -495,6 +574,16 @@ class FaseControllerTest {
         .params(idUsuario, inicio)
         .query(Integer.class)
         .single();
+  }
+
+  private ResultActions encerrar(int idUsuario, int idFase, LocalDate dataLocal, LocalDate fim)
+      throws Exception {
+    return mvc.perform(
+        post("/fases/{id}/encerramento", idFase)
+            .cookie(acesso(idUsuario))
+            .header("Data-Local", dataLocal.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"dataFim\": \"%s\"}".formatted(fim)));
   }
 
   private ResultActions editar(int idUsuario, int idFase, LocalDate dataLocal, String corpo)

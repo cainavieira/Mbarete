@@ -2,6 +2,7 @@ package mbarete.service;
 
 import static mbarete.regras.EncaixeDeFase.encaixarEdicao;
 import static mbarete.regras.EncaixeDeFase.encaixarFaseNova;
+import static mbarete.regras.EncaixeDeFase.encerrarFase;
 import static mbarete.regras.PlanoDeFase.editarPlano;
 import static mbarete.regras.PlanoDeFase.montarPlano;
 
@@ -13,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import mbarete.dto.EncerramentoDto;
 import mbarete.dto.FaseDto;
 import mbarete.dto.FaseEnviadaDto;
 import mbarete.dto.NivelDto;
@@ -148,6 +150,21 @@ public class FaseService {
           }
         },
         editarAFase);
+    diaDaBase.fixarOndeFalta(idUsuario, hoje);
+    return FaseMapper.paraDto(fase);
+  }
+
+  /**
+   * Encerra a fase corrente na data dada (UC-14). Os registros depois dela ficam sem fase (RN-20),
+   * e o dia da base segue a RN-68: só muda se ficar depois do fim.
+   */
+  @Transactional
+  public FaseDto encerrar(int idUsuario, int id, EncerramentoDto encerramento, LocalDate hoje) {
+    Fase fase =
+        fases
+            .findByIdAndUsuarioId(id, idUsuario)
+            .orElseThrow(() -> new RegraVioladaException(Recusa.NAO_ENCONTRADO, NAO_ENCONTRADO));
+    fase.mudarFim(encerrarFase(fase.periodo(), encerramento.dataFim(), hoje).fim());
     diaDaBase.fixarOndeFalta(idUsuario, hoje);
     return FaseMapper.paraDto(fase);
   }

@@ -3,6 +3,7 @@ package mbarete.controller;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import mbarete.config.Hoje;
+import mbarete.dto.EncerramentoDto;
 import mbarete.dto.FaseDto;
 import mbarete.dto.FaseEnviadaDto;
 import mbarete.service.FaseService;
@@ -44,5 +45,14 @@ public class FaseController {
       @Hoje LocalDate hoje,
       @Valid @RequestBody FaseEnviadaDto editada) {
     return fases.editar(ContaDoToken.id(token), id, editada, hoje);
+  }
+
+  @PostMapping("/{id}/encerramento")
+  public FaseDto encerrar(
+      @AuthenticationPrincipal Jwt token,
+      @PathVariable int id,
+      @Hoje LocalDate hoje,
+      @Valid @RequestBody EncerramentoDto encerramento) {
+    return fases.encerrar(ContaDoToken.id(token), id, encerramento, hoje);
   }
 }

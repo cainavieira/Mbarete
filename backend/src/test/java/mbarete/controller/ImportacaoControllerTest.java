@@ -6,14 +6,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import mbarete.ChaveDeTeste;
 import mbarete.TestcontainersConfiguration;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -38,10 +42,13 @@ class ImportacaoControllerTest {
 
   private final MockMvc mvc;
   private final JdbcClient jdbc;
+  private final EntityManager jpa;
 
-  ImportacaoControllerTest(@Autowired MockMvc mvc, @Autowired JdbcClient jdbc) {
+  ImportacaoControllerTest(
+      @Autowired MockMvc mvc, @Autowired JdbcClient jdbc, @Autowired EntityManager jpa) {
     this.mvc = mvc;
     this.jdbc = jdbc;
+    this.jpa = jpa;
   }
 
   // Pega a substituição marcada pelos registros de outra pessoa ou não
@@ -104,6 +111,72 @@ class ImportacaoControllerTest {
         .andExpect(jsonPath("$.erro.regra").value(regra));
   }
 
+  // Pega a data que já tem registro inserida de novo, que o banco recusa, a
+  // cintura de antes mantida na substituição, a linha recusada gravada, a data
+  // futura contada pelo dia do servidor e o registro de outra pessoa
+  // substituído (RN-01, RN-59, RN-60)
+  @Test
+  void importaAsValidasSubstituindoAsDatasQueJaTemRegistro() throws Exception {
+    int outra = usuario("outra@exemplo.com");
+    registro(outra, LocalDate.of(2026, 9, 2));
+    int fulana = usuario("fulana@exemplo.com");
+    jdbc.sql(
+            "insert into registro (usuario_id, data, peso, cintura, criado_em)"
+                + " values (?, '2026-09-01', 80.0, 95.0, now())")
+        .param(fulana)
+        .update();
+    String arquivo =
+        """
+        data;peso;cintura
+        2026-09-01;85.7;
+        2026-09-02;85.6;90.0
+        2026-09-03;19.0;
+        %s;85.0;
+        """
+            .formatted(hoje);
+
+    enviar("/importacao", fulana, "arquivo", arquivo)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.validas", hasSize(2)))
+        .andExpect(jsonPath("$.recusadas", hasSize(2)));
+    assertThat(registros(fulana))
+        .containsExactly(
+            new Gravado(LocalDate.of(2026, 9, 1), new BigDecimal("85.7"), null),
+            new Gravado(LocalDate.of(2026, 9, 2), new BigDecimal("85.6"), new BigDecimal("90.0")));
+    assertThat(registros(outra))
+        .containsExactly(new Gravado(LocalDate.of(2026, 9, 2), new BigDecimal("80.0"), null));
+  }
+
+  // Pega o dia da base que o registro importado dá à fase e não é fixado
+  // (RN-68)
+  @Test
+  void aImportacaoFixaODiaDaBase() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    jdbc.sql(
+            "insert into fase (usuario_id, tipo, data_inicio, criado_em)"
+                + " values (?, 'manutencao', '2026-09-01', now())")
+        .param(fulana)
+        .update();
+
+    String arquivo =
+        """
+        data;peso
+        2026-09-01;80.0
+        2026-09-02;80.0
+        2026-09-03;80.0
+        2026-09-04;80.0
+        """;
+
+    enviar("/importacao", fulana, "arquivo", arquivo).andExpect(status().isOk());
+    jpa.flush();
+    assertThat(
+            jdbc.sql("select base_data from fase where usuario_id = ?")
+                .param(fulana)
+                .query(LocalDate.class)
+                .single())
+        .isEqualTo(LocalDate.of(2026, 9, 4));
+  }
+
   // Pega o envio sem o arquivo estourando como erro interno
   @Test
   void semOArquivoSaiComoCorpoMalformado() throws Exception {
@@ -114,10 +187,26 @@ class ImportacaoControllerTest {
         .andExpect(jsonPath("$.erro.codigo").value("CORPO_MALFORMADO"));
   }
 
+  record Gravado(LocalDate data, BigDecimal peso, @Nullable BigDecimal cintura) {}
+
+  /** O que está no banco, depois de o JPA escrever o que guardou na transação do teste. */
+  private List<Gravado> registros(int idUsuario) {
+    jpa.flush();
+    return jdbc.sql("select data, peso, cintura from registro where usuario_id = ? order by data")
+        .param(idUsuario)
+        .query(Gravado.class)
+        .list();
+  }
+
   private ResultActions previsualizar(int idUsuario, String campo, String conteudo)
       throws Exception {
+    return enviar("/importacao/previsualizacao", idUsuario, campo, conteudo);
+  }
+
+  private ResultActions enviar(String caminho, int idUsuario, String campo, String conteudo)
+      throws Exception {
     return mvc.perform(
-        multipart("/importacao/previsualizacao")
+        multipart(caminho)
             .file(
                 new MockMultipartFile(
                     campo, "historico.csv", "text/csv", conteudo.getBytes(StandardCharsets.UTF_8)))

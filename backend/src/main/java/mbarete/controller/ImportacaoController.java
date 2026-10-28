@@ -37,4 +37,16 @@ public class ImportacaoController {
     return importacao.previsualizar(
         ContaDoToken.id(token), new String(arquivo.getBytes(), StandardCharsets.UTF_8), hoje);
   }
+
+  /**
+   * A confirmação: o mesmo arquivo de novo, e as linhas válidas são gravadas (RN-59). Responde o
+   * mesmo relatório, agora do que foi gravado.
+   */
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public PrevisualizacaoDto importar(
+      @AuthenticationPrincipal Jwt token, @Hoje LocalDate hoje, @RequestParam MultipartFile arquivo)
+      throws IOException {
+    return importacao.importar(
+        ContaDoToken.id(token), new String(arquivo.getBytes(), StandardCharsets.UTF_8), hoje);
+  }
 }

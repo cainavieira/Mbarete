@@ -134,7 +134,10 @@ responde **409** com:
 }
 ```
 
-O frontend abre o diálogo com esse valor, e o segundo envio repete o POST com
+Quando o registro gravado tem cintura, a mensagem a traz também: "Já existe
+registro em 07/09/2026, com 82,4 kg e 91,0 cm de cintura.", porque a
+substituição troca o registro inteiro e a cintura de antes não fica. O
+frontend abre o diálogo com essa mensagem, e o segundo envio repete o POST com
 `"substituir": true`.
 
 A confirmação vai no **corpo** e nunca na URL, porque parâmetro de URL entra no

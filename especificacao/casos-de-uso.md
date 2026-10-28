@@ -65,8 +65,9 @@ Atores em `atores.md`, requisitos em `requisitos-funcionais.md`, regras em
 - **2a** Peso fora de 20,0 a 400,0 kg: recusado, informando o campo e o
   limite. (RF-13, RN-03)
 - **3a** Cintura fora de 40,0 a 200,0 cm: recusada do mesmo modo. (RN-11)
-- **4a** Já existe registro naquela data: o sistema mostra o valor gravado,
-  pede confirmação, e substitui apenas com o sim. (RF-10, RN-01)
+- **4a** Já existe registro naquela data: o sistema mostra o peso gravado, e
+  a cintura quando houver, pede confirmação, e substitui apenas com o sim.
+  (RF-10, RN-01)
 - **4b** O usuário recusa a substituição: nada é gravado e o registro anterior
   permanece intacto.
 

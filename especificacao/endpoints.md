@@ -295,7 +295,7 @@ tela de entrada.
 | 200 | leitura bem-sucedida |
 | 201 | registro ou fase criados |
 | 204 | exclusão bem-sucedida |
-| 400 | valor recusado por regra (faixa, data futura no registro, data de fim futura ou anterior ao início, data local ausente ou inválida) |
+| 400 | valor recusado por regra (faixa, data futura no registro, data de fim futura ou anterior ao início, data local ausente ou inválida, arquivo de importação sem as colunas obrigatórias ou com separador desconhecido) |
 | 401 | sem token de acesso válido; na renovação, sem token de renovação válido |
 | 404 | registro ou fase que não existe, ou que é de outro usuário, sem distinguir os dois; também rota que não existe e método que a rota não aceita |
 | 409 | conflito de data em registro, sobreposição de fase que a RN-19 recusa, ou encerramento de fase que não é a corrente |

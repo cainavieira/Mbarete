@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -292,6 +293,140 @@ class FaseControllerTest {
                         "KG_SEMANA")));
   }
 
+  // Pega a edição que não é gravada (UC-06)
+  @Test
+  void editaOPlanoEAsDatas() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    int fase = faseCutting(fulana, LocalDate.of(2026, 9, 1));
+
+    editar(fulana, fase, hoje, cutting("\"dataFim\": \"2026-09-30\", \"pesoAlvo\": 72.0"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.dataFim").value("2026-09-30"))
+        .andExpect(jsonPath("$.pesoAlvo").value(72.0));
+    assertThat(fases(fulana))
+        .singleElement()
+        .satisfies(
+            gravada -> {
+              assertThat(gravada.dataFim()).isEqualTo(LocalDate.of(2026, 9, 30));
+              assertThat(gravada.pesoAlvo()).isEqualByComparingTo("72.0");
+            });
+  }
+
+  // Pega a edição que confere o plano como na criação, e grava como
+  // personalizado a taxa do cutting que ficou na bulking (RN-28, UC-06 2j)
+  @Test
+  void trocarDeTipoComATaxaComoEstavaGravaOPadraoDoNivel() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    int fase = faseCutting(fulana, LocalDate.of(2026, 9, 1));
+
+    editar(fulana, fase, hoje, cutting("\"tipo\": \"BULKING\"")).andExpect(status().isOk());
+    assertThat(fases(fulana))
+        .singleElement()
+        .satisfies(
+            gravada -> {
+              assertThat(gravada.nivel()).isEqualTo("moderado");
+              assertThat(gravada.taxaAlvoValor()).isEqualByComparingTo("0.30");
+              assertThat(gravada.taxaAlvoUnidade()).isEqualTo("kg_semana");
+            });
+  }
+
+  // Pega o fim no futuro da anterior que não é gravado junto, e a ordem errada
+  // das gravações: quem cresce antes de quem encolhe esbarra na outra, e o
+  // banco recusa como sobreposição (RN-67, UC-06 2i)
+  @ParameterizedTest
+  @CsvSource({"-10, -11", "10, 9"})
+  void oInicioDaSeguinteMoveOFimNoFuturoDaAnterior(int inicio, int fimDaAnterior) throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    fase(fulana, hoje.minusDays(30), hoje.plusDays(5), null);
+    int seguinte = fase(fulana, hoje.plusDays(6), null, null);
+
+    editar(
+            fulana,
+            seguinte,
+            hoje,
+            "{\"tipo\": \"MANUTENCAO\", \"dataInicio\": \"%s\"}".formatted(hoje.plusDays(inicio)))
+        .andExpect(status().isOk());
+    assertThat(fases(fulana))
+        .extracting(Gravada::dataFim)
+        .containsExactly(hoje.plusDays(fimDaAnterior), null);
+  }
+
+  // Pega o fim de antes tomado do corpo em vez do banco, que deixaria passar
+  // todo fim futuro, e o futuro contado pelo dia do servidor (RN-67)
+  @Test
+  void umFimFuturoNovoERecusado() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    int fase = fase(fulana, LocalDate.of(2026, 9, 1), null, null);
+
+    editar(
+            fulana,
+            fase,
+            hoje.minusDays(1),
+            "{\"tipo\": \"MANUTENCAO\", \"dataInicio\": \"2026-09-01\", \"dataFim\": \"%s\"}"
+                .formatted(hoje))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.erro.codigo").value("DATA_FIM_FUTURA"));
+  }
+
+  // Pega a edição sem conferir o corpo, que o banco recusaria como erro
+  // interno
+  @Test
+  void edicaoComPesoAlvoForaDaFaixaERecusada() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    int fase = faseCutting(fulana, LocalDate.of(2026, 9, 1));
+
+    editar(fulana, fase, hoje, cutting("\"pesoAlvo\": 19.9"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.erro.codigo").value("PESO_FORA_DE_FAIXA"));
+  }
+
+  // Pega a fase procurada sem o usuário, que deixaria editar a de outra pessoa
+  // (RN-50)
+  @Test
+  void aFaseDeOutraPessoaNaoEEncontrada() throws Exception {
+    int outra = usuario("outra@exemplo.com");
+    int daOutra = faseCutting(outra, LocalDate.of(2026, 9, 1));
+    int fulana = usuario("fulana@exemplo.com");
+
+    editar(fulana, daOutra, hoje, cutting("\"pesoAlvo\": 72.0"))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.erro.codigo").value("NAO_ENCONTRADO"));
+    assertThat(fases(outra))
+        .singleElement()
+        .satisfies(gravada -> assertThat(gravada.pesoAlvo()).isEqualByComparingTo("75.0"));
+  }
+
+  // Pega as fases conferidas sem o usuário, que recusaria a edição por
+  // sobreposição com a fase de outra pessoa (RN-50)
+  @Test
+  void aFaseDeOutraPessoaNaoSobrepoe() throws Exception {
+    int outra = usuario("outra@exemplo.com");
+    fase(outra, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30), null);
+    int fulana = usuario("fulana@exemplo.com");
+    int fase = fase(fulana, LocalDate.of(2026, 10, 1), null, null);
+
+    editar(fulana, fase, hoje, "{\"tipo\": \"MANUTENCAO\", \"dataInicio\": \"2026-09-15\"}")
+        .andExpect(status().isOk());
+  }
+
+  // Pega o dia da base que fica antes do início novo, fora da fase: a janela
+  // do dia 8 já tem os registros dos dias 2, 3, 4 e 8 (RN-68, UC-06 2f)
+  @Test
+  void mudarOInicioDeterminaDeNovoODiaDaBase() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    int fase = fase(fulana, LocalDate.of(2026, 9, 1), null, LocalDate.of(2026, 9, 4));
+    for (int dia : new int[] {1, 2, 3, 4, 8}) {
+      registro(fulana, LocalDate.of(2026, 9, dia));
+    }
+
+    editar(fulana, fase, hoje, "{\"tipo\": \"MANUTENCAO\", \"dataInicio\": \"2026-09-08\"}")
+        .andExpect(status().isOk());
+    assertThat(fases(fulana))
+        .singleElement()
+        .extracting(Gravada::baseData)
+        .isEqualTo(LocalDate.of(2026, 9, 8));
+  }
+
   record Gravada(
       String tipo,
       LocalDate dataInicio,
@@ -341,13 +476,35 @@ class FaseControllerTest {
   }
 
   /** Uma manutenção, que não pede plano (RN-33). */
-  private void fase(
+  private int fase(
       int idUsuario, LocalDate inicio, @Nullable LocalDate fim, @Nullable LocalDate diaDaBase) {
-    jdbc.sql(
+    return jdbc.sql(
             "insert into fase (usuario_id, tipo, data_inicio, data_fim, base_data, criado_em)"
-                + " values (?, 'manutencao', ?, ?, ?, now())")
+                + " values (?, 'manutencao', ?, ?, ?, now()) returning id")
         .params(idUsuario, inicio, fim, diaDaBase)
-        .update();
+        .query(Integer.class)
+        .single();
+  }
+
+  /** Uma cutting moderada, com a taxa padrão do nível (RN-31). */
+  private int faseCutting(int idUsuario, LocalDate inicio) {
+    return jdbc.sql(
+            "insert into fase (usuario_id, tipo, data_inicio, nivel, taxa_alvo_valor,"
+                + " taxa_alvo_unidade, peso_alvo, criado_em) values (?, 'cutting', ?,"
+                + " 'moderado', 0.50, 'percentual_semana', 75.0, now()) returning id")
+        .params(idUsuario, inicio)
+        .query(Integer.class)
+        .single();
+  }
+
+  private ResultActions editar(int idUsuario, int idFase, LocalDate dataLocal, String corpo)
+      throws Exception {
+    return mvc.perform(
+        patch("/fases/{id}", idFase)
+            .cookie(acesso(idUsuario))
+            .header("Data-Local", dataLocal.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(corpo));
   }
 
   private void registro(int idUsuario, LocalDate data) {

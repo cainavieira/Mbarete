@@ -12,9 +12,10 @@ import mbarete.regras.UnidadeDaTaxa;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A fase como a pessoa a envia. A data de fim só vem na fase que já terminou (RF-15). A taxa alvo
- * vem sem sinal, com até duas casas (RN-29), e o peso alvo com uma (RN-02). O que o tipo exige ou
- * dispensa é conferido na regra do plano.
+ * A fase como a pessoa a envia, ao criar e ao editar: na edição, é a fase inteira como ela fica. A
+ * data de fim só vem na fase que já terminou (RF-15), ou com o fim no futuro que ela já tinha. A
+ * taxa alvo vem sem sinal, com até duas casas (RN-29), e o peso alvo com uma (RN-02). O que o tipo
+ * exige ou dispensa é conferido na regra do plano.
  */
 public record FaseEnviadaDto(
     @NotNull TipoDeFase tipo,

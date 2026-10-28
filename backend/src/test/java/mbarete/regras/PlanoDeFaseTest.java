@@ -1,5 +1,6 @@
 package mbarete.regras;
 
+import static mbarete.regras.PlanoDeFase.editarPlano;
 import static mbarete.regras.PlanoDeFase.montarPlano;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -75,5 +76,83 @@ class PlanoDeFaseTest {
   void taxaForaDoPadraoTornaONivelPersonalizado(BigDecimal valor, UnidadeDaTaxa unidade) {
     assertThat(montarPlano(TipoDeFase.CUTTING, Nivel.MODERADO, valor, unidade, PESO_ALVO).nivel())
         .isEqualTo(Nivel.PERSONALIZADO);
+  }
+
+  private static final TaxaAlvo MEIO_POR_CENTO =
+      new TaxaAlvo(new BigDecimal("0.50"), UnidadeDaTaxa.PERCENTUAL_SEMANA);
+
+  // Pega a taxa do cutting que fica na bulking, virando personalizado com a
+  // unidade do outro tipo, em vez do padrão do mesmo nível (RN-28, UC-06 2j)
+  @Test
+  void trocarDeTipoComATaxaComoEstavaAplicaOPadraoDoNivel() {
+    assertThat(
+            editarPlano(
+                TipoDeFase.CUTTING,
+                MEIO_POR_CENTO,
+                TipoDeFase.BULKING,
+                Nivel.MODERADO,
+                new BigDecimal("0.50"),
+                UnidadeDaTaxa.PERCENTUAL_SEMANA,
+                PESO_ALVO))
+        .isEqualTo(
+            new PlanoDeFase(
+                Nivel.MODERADO,
+                new TaxaAlvo(new BigDecimal("0.30"), UnidadeDaTaxa.KG_SEMANA),
+                PESO_ALVO));
+  }
+
+  // Pega a taxa do outro tipo aceita no personalizado, que não tem padrão para
+  // pôr no lugar (RN-28, UC-06 2j)
+  @Test
+  void trocarDeTipoNoPersonalizadoPedeATaxaDeNovo() {
+    assertThatThrownBy(
+            () ->
+                editarPlano(
+                    TipoDeFase.CUTTING,
+                    MEIO_POR_CENTO,
+                    TipoDeFase.BULKING,
+                    Nivel.PERSONALIZADO,
+                    new BigDecimal("0.50"),
+                    UnidadeDaTaxa.PERCENTUAL_SEMANA,
+                    PESO_ALVO))
+        .isInstanceOfSatisfying(
+            RegraVioladaException.class,
+            excecao -> assertThat(excecao.recusa()).isEqualTo(Recusa.TAXA_ALVO_AUSENTE));
+  }
+
+  // Pega o padrão posto por cima da taxa que a pessoa digitou ao trocar de
+  // tipo, que vale e torna o nível personalizado (RN-30)
+  @Test
+  void trocarDeTipoComTaxaNovaValeATaxaDigitada() {
+    var digitada = new TaxaAlvo(new BigDecimal("0.25"), UnidadeDaTaxa.KG_SEMANA);
+
+    assertThat(
+            editarPlano(
+                TipoDeFase.CUTTING,
+                MEIO_POR_CENTO,
+                TipoDeFase.BULKING,
+                Nivel.MODERADO,
+                digitada.valor(),
+                digitada.unidade(),
+                PESO_ALVO))
+        .isEqualTo(new PlanoDeFase(Nivel.PERSONALIZADO, digitada, PESO_ALVO));
+  }
+
+  // Pega a edição sem troca de tipo tratada como troca, que pediria de novo a
+  // taxa do personalizado ao editar só o peso alvo
+  @Test
+  void semTrocarDeTipoOPersonalizadoFica() {
+    var oitentaCentesimos = new TaxaAlvo(new BigDecimal("0.80"), UnidadeDaTaxa.PERCENTUAL_SEMANA);
+
+    assertThat(
+            editarPlano(
+                TipoDeFase.CUTTING,
+                oitentaCentesimos,
+                TipoDeFase.CUTTING,
+                Nivel.PERSONALIZADO,
+                oitentaCentesimos.valor(),
+                oitentaCentesimos.unidade(),
+                PESO_ALVO))
+        .isEqualTo(new PlanoDeFase(Nivel.PERSONALIZADO, oitentaCentesimos, PESO_ALVO));
   }
 }

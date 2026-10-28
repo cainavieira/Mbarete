@@ -111,8 +111,32 @@ public class Fase {
    */
   public void mudarFim(LocalDate fim) {
     this.dataFim = fim;
-    if (baseData != null && baseData.isAfter(fim)) {
+    if (fim != null && baseData != null && baseData.isAfter(fim)) {
       this.baseData = null;
     }
+  }
+
+  /**
+   * A fase como a edição a deixa (UC-06). Mudar o início determina de novo o dia da base, e mudar
+   * só o fim segue o {@link #mudarFim} (RN-68).
+   */
+  public void editar(
+      TipoDeFase tipo,
+      LocalDate inicio,
+      LocalDate fim,
+      Nivel nivel,
+      BigDecimal taxaAlvoValor,
+      UnidadeDaTaxa taxaAlvoUnidade,
+      BigDecimal pesoAlvo) {
+    this.tipo = tipo;
+    this.nivel = nivel;
+    this.taxaAlvoValor = taxaAlvoValor;
+    this.taxaAlvoUnidade = taxaAlvoUnidade;
+    this.pesoAlvo = pesoAlvo;
+    if (!inicio.equals(dataInicio)) {
+      this.baseData = null;
+    }
+    this.dataInicio = inicio;
+    mudarFim(fim);
   }
 }

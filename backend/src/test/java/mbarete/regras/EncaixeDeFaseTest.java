@@ -1,5 +1,6 @@
 package mbarete.regras;
 
+import static mbarete.regras.EncaixeDeFase.encaixarEdicao;
 import static mbarete.regras.EncaixeDeFase.encaixarFaseNova;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -97,6 +98,76 @@ class EncaixeDeFaseTest {
         () -> encaixar(List.of(), "2026-10-01", "2026-09-30"),
         Recusa.DATA_FIM_ANTES_DO_INICIO,
         "dataFim");
+  }
+
+  /** Encerrada em 31-10 porque a seguinte está agendada para 01-11 (RN-22, RN-67). */
+  private static final PeriodoDeFase ATE_A_AGENDADA =
+      new PeriodoDeFase(3, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 10, 31));
+
+  private static final PeriodoDeFase AGENDADA =
+      new PeriodoDeFase(4, LocalDate.of(2026, 11, 1), null);
+  private static final List<PeriodoDeFase> COM_A_AGENDADA = List.of(ATE_A_AGENDADA, AGENDADA);
+
+  // Pega a fase editada conferida contra ela mesma, que recusaria toda edição
+  @Test
+  void editarSemMudarAsDatasNaoSobrepoeASiMesma() {
+    assertThat(editar(COM_A_AGENDADA, AGENDADA, "2026-11-01", null)).isEmpty();
+  }
+
+  // Pega o fim no futuro que não acompanha o início da seguinte, que fica no
+  // dia do início dela, ou que só a acompanha para o futuro: a véspera nova
+  // pode já ter passado (RN-67, UC-06 2i)
+  @ParameterizedTest
+  @CsvSource({"2026-10-15, 2026-10-14", "2026-11-10, 2026-11-09"})
+  void oInicioDaSeguinteMoveOFimNoFuturoDaAnterior(String inicio, String fimDaAnterior) {
+    assertThat(editar(COM_A_AGENDADA, AGENDADA, inicio, null))
+        .contains(new PeriodoDeFase(3, LocalDate.of(2026, 9, 1), LocalDate.parse(fimDaAnterior)));
+  }
+
+  // Pega a anterior empurrada para antes do próprio início, quando a seguinte
+  // é antecipada até o início dela ou antes (RN-67, UC-06 2i)
+  @ParameterizedTest
+  @CsvSource({"2026-09-01", "2026-08-20"})
+  void anteciparAteOInicioDaAnteriorERecusado(String inicio) {
+    assertRecusa(
+        () -> editar(COM_A_AGENDADA, AGENDADA, inicio, null), Recusa.FASE_SOBREPOSTA, "dataInicio");
+  }
+
+  // Pega a anterior com fim já passado movida junto: só o fim no futuro
+  // acompanha, e para adiantar sobre a anterior encurta-se ela antes (UC-06 2b)
+  @Test
+  void aAnteriorComFimPassadoNaoAcompanha() {
+    var fevereiro = new PeriodoDeFase(5, LocalDate.of(2026, 2, 1), null);
+
+    assertRecusa(
+        () -> editar(List.of(JANEIRO, fevereiro), fevereiro, "2026-01-20", null),
+        Recusa.FASE_SOBREPOSTA,
+        "dataInicio");
+  }
+
+  // Pega a edição tratada como criação, que encerraria a fase em aberto em vez
+  // de recusar (RN-19, UC-06 2b)
+  @Test
+  void editarNuncaEncerraAEmAberto() {
+    assertRecusa(
+        () -> editar(FASES, JANEIRO, "2026-04-01", null), Recusa.FASE_SOBREPOSTA, "dataInicio");
+  }
+
+  // Pega o fim no futuro que a fase já tinha recusado, que impediria editar o
+  // plano dela, e o fim futuro novo aceito (RN-67)
+  @Test
+  void oFimNoFuturoQueJaEstavaFicaEUmNovoERecusado() {
+    assertThat(editar(COM_A_AGENDADA, ATE_A_AGENDADA, "2026-09-01", "2026-10-31")).isEmpty();
+    assertRecusa(
+        () -> editar(COM_A_AGENDADA, ATE_A_AGENDADA, "2026-09-01", "2026-10-25"),
+        Recusa.DATA_FIM_FUTURA,
+        "dataFim");
+  }
+
+  private static Optional<PeriodoDeFase> editar(
+      List<PeriodoDeFase> fases, PeriodoDeFase antes, String inicio, @Nullable String fim) {
+    return encaixarEdicao(
+        fases, antes, LocalDate.parse(inicio), fim == null ? null : LocalDate.parse(fim), HOJE);
   }
 
   private static Optional<PeriodoDeFase> encaixar(

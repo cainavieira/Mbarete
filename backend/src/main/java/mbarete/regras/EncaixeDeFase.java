@@ -22,16 +22,7 @@ public final class EncaixeDeFase {
   public static Optional<PeriodoDeFase> encaixarFaseNova(
       List<PeriodoDeFase> fases, LocalDate inicio, @Nullable LocalDate fim, LocalDate hoje) {
     if (fim != null) {
-      if (fim.isAfter(hoje)) {
-        throw new RegraVioladaException(
-            Recusa.DATA_FIM_FUTURA, "dataFim", "A data de fim não pode estar no futuro.");
-      }
-      if (fim.isBefore(inicio)) {
-        throw new RegraVioladaException(
-            Recusa.DATA_FIM_ANTES_DO_INICIO,
-            "dataFim",
-            "A data de fim não pode ser anterior à de início.");
-      }
+      recusarFim(inicio, fim, null, hoje);
       recusarSobreposicao(fases, inicio, fim);
       return Optional.empty();
     }
@@ -47,6 +38,72 @@ public final class EncaixeDeFase {
         inicio,
         null);
     return encerrada;
+  }
+
+  /**
+   * Confere as datas novas da fase editada contra as outras fases da pessoa (RN-18, RN-19, RN-24) e
+   * devolve a fase anterior que acompanha a mudança do início, já com o fim na nova véspera
+   * (RN-67).
+   *
+   * <p>Editar nunca encerra outra fase: qualquer sobreposição é recusada. A exceção é a anterior
+   * com fim no futuro, que está ali por causa desta (RN-22) e o move junto, inclusive para hoje ou
+   * para o passado; antecipar até o início dela, ou antes, é recusado. O fim no futuro que a fase
+   * editada já tinha fica, porque ele também nasceu da fase seguinte.
+   */
+  public static Optional<PeriodoDeFase> encaixarEdicao(
+      List<PeriodoDeFase> fases,
+      PeriodoDeFase antes,
+      LocalDate inicio,
+      @Nullable LocalDate fim,
+      LocalDate hoje) {
+    if (fim != null) {
+      recusarFim(inicio, fim, antes.fim(), hoje);
+    }
+    List<PeriodoDeFase> outras = fases.stream().filter(fase -> fase.id() != antes.id()).toList();
+    Optional<PeriodoDeFase> movida =
+        outras.stream()
+            .filter(fase -> !inicio.equals(antes.inicio()))
+            .filter(fase -> acompanha(fase, antes, hoje))
+            .findFirst()
+            .map(
+                anterior ->
+                    new PeriodoDeFase(anterior.id(), anterior.inicio(), inicio.minusDays(1)));
+    if (movida.isPresent() && !inicio.isAfter(movida.get().inicio())) {
+      throw new RegraVioladaException(Recusa.FASE_SOBREPOSTA, "dataInicio", SOBREPOSTA);
+    }
+    recusarSobreposicao(
+        outras.stream().filter(fase -> movida.isEmpty() || fase.id() != movida.get().id()).toList(),
+        inicio,
+        fim);
+    return movida;
+  }
+
+  /**
+   * A anterior com fim no futuro, na véspera da editada: esse fim acompanha o início dela (RN-67).
+   */
+  private static boolean acompanha(PeriodoDeFase fase, PeriodoDeFase antes, LocalDate hoje) {
+    LocalDate fimDaOutra = fase.fim();
+    return fimDaOutra != null
+        && fimDaOutra.isAfter(hoje)
+        && fimDaOutra.equals(antes.inicio().minusDays(1));
+  }
+
+  /**
+   * O fim não pode ser futuro nem anterior ao início (RN-18, RN-67). O fim no futuro que a fase já
+   * tinha passa, porque ele nasceu da fase seguinte, e não de uma declaração (RN-22).
+   */
+  private static void recusarFim(
+      LocalDate inicio, LocalDate fim, @Nullable LocalDate fimQueJaEstava, LocalDate hoje) {
+    if (fim.isAfter(hoje) && !fim.equals(fimQueJaEstava)) {
+      throw new RegraVioladaException(
+          Recusa.DATA_FIM_FUTURA, "dataFim", "A data de fim não pode estar no futuro.");
+    }
+    if (fim.isBefore(inicio)) {
+      throw new RegraVioladaException(
+          Recusa.DATA_FIM_ANTES_DO_INICIO,
+          "dataFim",
+          "A data de fim não pode ser anterior à de início.");
+    }
   }
 
   /**

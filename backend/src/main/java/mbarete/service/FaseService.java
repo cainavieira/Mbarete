@@ -1,13 +1,17 @@
 package mbarete.service;
 
+import static mbarete.regras.EncaixeDeFase.encaixarEdicao;
 import static mbarete.regras.EncaixeDeFase.encaixarFaseNova;
+import static mbarete.regras.PlanoDeFase.editarPlano;
 import static mbarete.regras.PlanoDeFase.montarPlano;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 import mbarete.dto.FaseDto;
 import mbarete.dto.FaseEnviadaDto;
@@ -15,7 +19,10 @@ import mbarete.dto.NivelDto;
 import mbarete.entity.Fase;
 import mbarete.mapper.FaseMapper;
 import mbarete.regras.Nivel;
+import mbarete.regras.PeriodoDeFase;
 import mbarete.regras.PlanoDeFase;
+import mbarete.regras.Recusa;
+import mbarete.regras.RegraVioladaException;
 import mbarete.regras.TaxaAlvo;
 import mbarete.regras.TipoDeFase;
 import mbarete.repository.FaseRepository;
@@ -24,6 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FaseService {
+
+  /** A de outra pessoa e a que não existe recebem a mesma recusa (RN-50). */
+  private static final String NAO_ENCONTRADO = "Não encontrado.";
 
   private final FaseRepository fases;
   private final ContaService contas;
@@ -77,6 +87,67 @@ public class FaseService {
                 taxa == null ? null : taxa.unidade(),
                 plano.pesoAlvo(),
                 Instant.now(relogio)));
+    diaDaBase.fixarOndeFalta(idUsuario, hoje);
+    return FaseMapper.paraDto(fase);
+  }
+
+  /**
+   * Edita a fase (UC-06). Mudar o início da fase seguinte a um fim no futuro move esse fim junto
+   * (RN-67), e o dia da base segue a RN-68 nas duas.
+   */
+  @Transactional
+  public FaseDto editar(int idUsuario, int id, FaseEnviadaDto editada, LocalDate hoje) {
+    List<Fase> daPessoa = fases.findByUsuarioId(idUsuario);
+    Fase fase =
+        daPessoa.stream()
+            .filter(daLista -> daLista.id() == id)
+            .findFirst()
+            .orElseThrow(() -> new RegraVioladaException(Recusa.NAO_ENCONTRADO, NAO_ENCONTRADO));
+    BigDecimal valorAntes = fase.taxaAlvoValor();
+    PlanoDeFase plano =
+        editarPlano(
+            fase.tipo(),
+            valorAntes == null ? null : new TaxaAlvo(valorAntes, fase.taxaAlvoUnidade()),
+            editada.tipo(),
+            editada.nivel(),
+            editada.taxaAlvoValor(),
+            editada.taxaAlvoUnidade(),
+            editada.pesoAlvo());
+    PeriodoDeFase antes = fase.periodo();
+    Optional<PeriodoDeFase> anteriorMovida =
+        encaixarEdicao(
+            daPessoa.stream().map(Fase::periodo).toList(),
+            antes,
+            editada.dataInicio(),
+            editada.dataFim(),
+            hoje);
+    TaxaAlvo taxa = plano.taxa();
+    Runnable editarAFase =
+        () ->
+            fase.editar(
+                editada.tipo(),
+                editada.dataInicio(),
+                editada.dataFim(),
+                plano.nivel(),
+                taxa == null ? null : taxa.valor(),
+                taxa == null ? null : taxa.unidade(),
+                plano.pesoAlvo());
+    anteriorMovida.ifPresentOrElse(
+        movida -> {
+          Fase anterior =
+              daPessoa.stream().filter(daLista -> daLista.id() == movida.id()).findFirst().get();
+          // O banco confere a sobreposição a cada gravação, e por isso quem encolhe vai antes
+          if (editada.dataInicio().isBefore(antes.inicio())) {
+            anterior.mudarFim(movida.fim());
+            fases.flush();
+            editarAFase.run();
+          } else {
+            editarAFase.run();
+            fases.flush();
+            anterior.mudarFim(movida.fim());
+          }
+        },
+        editarAFase);
     diaDaBase.fixarOndeFalta(idUsuario, hoje);
     return FaseMapper.paraDto(fase);
   }

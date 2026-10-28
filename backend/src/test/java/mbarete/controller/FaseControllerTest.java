@@ -552,6 +552,81 @@ class FaseControllerTest {
     assertThat(fases(outra)).hasSize(1);
   }
 
+  // Pega a lista sem o usuário ou fora da ordem do início, a situação contada
+  // pelo dia do servidor (o dispositivo ainda está em ontem), a contagem com
+  // registro de fora da fase ou de outra pessoa, e o histórico fora da
+  // encerrada (UC-07, RN-27, RN-69)
+  @Test
+  void listaAsFasesComASituacaoEOsRegistros() throws Exception {
+    LocalDate ontem = hoje.minusDays(1);
+    int outra = usuario("outra@exemplo.com");
+    fase(outra, LocalDate.of(2026, 9, 1), null, null);
+    registro(outra, LocalDate.of(2026, 9, 5));
+    int fulana = usuario("fulana@exemplo.com");
+    int futura = fase(fulana, hoje, null, null);
+    int encerrada = fase(fulana, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30), null);
+    int corrente = fase(fulana, LocalDate.of(2026, 10, 1), ontem, null);
+    registro(fulana, LocalDate.of(2026, 8, 31));
+    registro(fulana, LocalDate.of(2026, 9, 5));
+    registro(fulana, LocalDate.of(2026, 9, 6));
+    registro(fulana, LocalDate.of(2026, 10, 5));
+
+    listar(fulana, ontem)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[*].id").value(contains(encerrada, corrente, futura)))
+        .andExpect(jsonPath("$[*].situacao").value(contains("ENCERRADA", "CORRENTE", "FUTURA")))
+        .andExpect(jsonPath("$[*].registros").value(contains(2, 1, 0)))
+        .andExpect(jsonPath("$[1].historico").value(nullValue()))
+        .andExpect(jsonPath("$[2].historico").value(nullValue()));
+  }
+
+  // Pega a duração, a variação e o alvo perdidos entre a regra e a resposta, e
+  // a variação sem o arredondamento da tela: o peso semanal do fim é 76,375
+  // (RN-37, RN-40)
+  @Test
+  void aEncerradaTrazOHistorico() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    jdbc.sql(
+            "insert into fase (usuario_id, tipo, data_inicio, data_fim, nivel, taxa_alvo_valor,"
+                + " taxa_alvo_unidade, peso_alvo, base_data, criado_em) values (?, 'cutting',"
+                + " '2026-09-01', '2026-09-30', 'moderado', 0.50, 'percentual_semana', 75.0,"
+                + " '2026-09-04', now())")
+        .param(fulana)
+        .update();
+    pesagens(fulana, LocalDate.of(2026, 9, 1), "80.0", "80.0", "80.0", "80.0");
+    pesagens(fulana, LocalDate.of(2026, 9, 10), "75.0", "75.0", "75.0", "75.0");
+    pesagens(fulana, LocalDate.of(2026, 9, 26), "76.3", "76.4", "76.4", "76.4");
+
+    listar(fulana, hoje)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].historico.duracaoEmDias").value(30))
+        .andExpect(jsonPath("$[0].historico.variacaoTotal.valor").value(-3.6))
+        .andExpect(jsonPath("$[0].historico.variacaoTotal.de").value("2026-09-04"))
+        .andExpect(jsonPath("$[0].historico.variacaoTotal.ate").value("2026-09-30"))
+        .andExpect(jsonPath("$[0].historico.variacaoTotal.poucosPontos").value(false))
+        .andExpect(jsonPath("$[0].historico.alvo").value("ATINGIDO"))
+        .andExpect(jsonPath("$[0].historico.alvoAtingidoEm").value("2026-09-13"));
+  }
+
+  // Pega o dia da base que já existe e não foi fixado: a fase agendada começou
+  // e terminou sem nenhuma gravação, e o peso semanal do início veio dos
+  // registros de antes dela (RN-68)
+  @Test
+  void aListaFixaODiaDaBaseQueFalta() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    fase(fulana, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30), null);
+    pesagens(fulana, LocalDate.of(2026, 8, 28), "80.0", "80.0", "80.0", "80.0");
+
+    listar(fulana, hoje)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].historico.variacaoTotal.de").value("2026-09-01"))
+        .andExpect(jsonPath("$[0].historico.variacaoTotal.poucosPontos").value(false));
+    assertThat(fases(fulana))
+        .singleElement()
+        .extracting(Gravada::baseData)
+        .isEqualTo(LocalDate.of(2026, 9, 1));
+  }
+
   record Gravada(
       String tipo,
       LocalDate dataInicio,
@@ -653,6 +728,20 @@ class FaseControllerTest {
     jdbc.sql("insert into registro (usuario_id, data, peso, criado_em) values (?, ?, 80.0, now())")
         .params(idUsuario, data)
         .update();
+  }
+
+  /** Um registro por dia a partir do primeiro, com os pesos na ordem dada. */
+  private void pesagens(int idUsuario, LocalDate primeiro, String... pesos) {
+    for (int i = 0; i < pesos.length; i++) {
+      jdbc.sql("insert into registro (usuario_id, data, peso, criado_em) values (?, ?, ?, now())")
+          .params(idUsuario, primeiro.plusDays(i), new BigDecimal(pesos[i]))
+          .update();
+    }
+  }
+
+  private ResultActions listar(int idUsuario, LocalDate dataLocal) throws Exception {
+    return mvc.perform(
+        get("/fases").cookie(acesso(idUsuario)).header("Data-Local", dataLocal.toString()));
   }
 
   private static Cookie acesso(int idUsuario) {

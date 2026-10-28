@@ -1,5 +1,6 @@
 package mbarete.regras;
 
+import static mbarete.regras.PeriodoDeFase.contarRegistros;
 import static mbarete.regras.PeriodoDeFase.faseDaData;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,5 +38,13 @@ class PeriodoDeFaseTest {
   void faseEmAbertoCobreDaliEmDiante() {
     assertThat(faseDaData(List.of(JANEIRO, DESDE_MARCO), LocalDate.of(2027, 6, 1)))
         .contains(DESDE_MARCO);
+  }
+
+  // Pega a contagem que leva os registros de fora da fase (RN-70)
+  @Test
+  void contaSoOsRegistrosDaFase() {
+    var pesagens = Pesagens.diarias(LocalDate.of(2025, 12, 31), LocalDate.of(2026, 2, 1), "80.0");
+
+    assertThat(contarRegistros(pesagens, JANEIRO)).isEqualTo(31);
   }
 }

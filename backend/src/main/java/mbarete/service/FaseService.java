@@ -4,8 +4,11 @@ import static mbarete.regras.EncaixeDeFase.apagarFase;
 import static mbarete.regras.EncaixeDeFase.encaixarEdicao;
 import static mbarete.regras.EncaixeDeFase.encaixarFaseNova;
 import static mbarete.regras.EncaixeDeFase.encerrarFase;
+import static mbarete.regras.FaseEncerrada.resumirFaseEncerrada;
+import static mbarete.regras.PeriodoDeFase.contarRegistros;
 import static mbarete.regras.PlanoDeFase.editarPlano;
 import static mbarete.regras.PlanoDeFase.montarPlano;
+import static mbarete.regras.SituacaoDaFase.situacaoDaFase;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -18,17 +21,21 @@ import java.util.stream.Stream;
 import mbarete.dto.EncerramentoDto;
 import mbarete.dto.FaseDto;
 import mbarete.dto.FaseEnviadaDto;
+import mbarete.dto.FaseListadaDto;
 import mbarete.dto.NivelDto;
 import mbarete.entity.Fase;
 import mbarete.mapper.FaseMapper;
 import mbarete.regras.Nivel;
 import mbarete.regras.PeriodoDeFase;
+import mbarete.regras.Pesagem;
 import mbarete.regras.PlanoDeFase;
 import mbarete.regras.Recusa;
 import mbarete.regras.RegraVioladaException;
+import mbarete.regras.SituacaoDaFase;
 import mbarete.regras.TaxaAlvo;
 import mbarete.regras.TipoDeFase;
 import mbarete.repository.FaseRepository;
+import mbarete.repository.RegistroRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,16 +46,57 @@ public class FaseService {
   private static final String NAO_ENCONTRADO = "Não encontrado.";
 
   private final FaseRepository fases;
+  private final RegistroRepository registros;
   private final ContaService contas;
   private final DiaDaBaseService diaDaBase;
   private final Clock relogio;
 
   public FaseService(
-      FaseRepository fases, ContaService contas, DiaDaBaseService diaDaBase, Clock relogio) {
+      FaseRepository fases,
+      RegistroRepository registros,
+      ContaService contas,
+      DiaDaBaseService diaDaBase,
+      Clock relogio) {
     this.fases = fases;
+    this.registros = registros;
     this.contas = contas;
     this.diaDaBase = diaDaBase;
     this.relogio = relogio;
+  }
+
+  /**
+   * As fases da pessoa pela data de início, cada uma com a situação em relação a hoje e quantos
+   * registros tem (UC-07, RN-69), e a encerrada com o histórico (UC-09, RN-40). O dia da base que
+   * falta é fixado aqui também, porque ele pode passar a existir sem nenhuma gravação: a fase
+   * agendada que começa já pode ter peso semanal com os registros de antes dela (RN-68).
+   */
+  @Transactional
+  public List<FaseListadaDto> listar(int idUsuario, LocalDate hoje) {
+    diaDaBase.fixarOndeFalta(idUsuario, hoje);
+    List<Pesagem> pesagens =
+        registros.findByUsuarioId(idUsuario).stream()
+            .map(registro -> new Pesagem(registro.data(), registro.peso()))
+            .toList();
+    return fases.findByUsuarioIdOrderByDataInicio(idUsuario).stream()
+        .map(
+            fase -> {
+              PeriodoDeFase periodo = fase.periodo();
+              SituacaoDaFase situacao = situacaoDaFase(periodo, hoje);
+              return FaseMapper.paraListada(
+                  fase,
+                  situacao,
+                  contarRegistros(pesagens, periodo),
+                  situacao == SituacaoDaFase.ENCERRADA
+                      ? resumirFaseEncerrada(
+                          fase.tipo(),
+                          fase.pesoAlvo(),
+                          periodo.inicio(),
+                          periodo.fim(),
+                          fase.diaDaBase(),
+                          pesagens)
+                      : null);
+            })
+        .toList();
   }
 
   /**

@@ -16,6 +16,11 @@ public record PeriodoDeFase(int id, LocalDate inicio, @Nullable LocalDate fim) {
     return fases.stream().filter(fase -> fase.cobre(data)).findFirst();
   }
 
+  /** Os registros da fase, que perdem o rótulo do período se ela for apagada (RN-23, RN-70). */
+  public static long contarRegistros(List<Pesagem> pesagens, PeriodoDeFase fase) {
+    return pesagens.stream().filter(pesagem -> fase.cobre(pesagem.data())).count();
+  }
+
   boolean cobre(LocalDate data) {
     LocalDate ultimoDia = fim;
     return !data.isBefore(inicio) && (ultimoDia == null || !data.isAfter(ultimoDia));

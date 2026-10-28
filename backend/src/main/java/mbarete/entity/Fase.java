@@ -100,6 +100,10 @@ public class Fase {
     return new PeriodoDeFase(id, dataInicio, dataFim);
   }
 
+  public LocalDate diaDaBase() {
+    return baseData;
+  }
+
   /** Fixado na primeira vez, e só a mudança das datas da fase o determina de novo (RN-68). */
   public void fixarDiaDaBase(LocalDate dia) {
     this.baseData = dia;

@@ -2,15 +2,18 @@ package mbarete.controller;
 
 import jakarta.validation.Valid;
 import java.time.LocalDate;
+import java.util.List;
 import mbarete.config.Hoje;
 import mbarete.dto.EncerramentoDto;
 import mbarete.dto.FaseDto;
 import mbarete.dto.FaseEnviadaDto;
+import mbarete.dto.FaseListadaDto;
 import mbarete.service.FaseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +31,12 @@ public class FaseController {
 
   public FaseController(FaseService fases) {
     this.fases = fases;
+  }
+
+  /** Pede o dia de hoje porque a situação de cada fase depende dele (RN-27, RN-40, RN-69). */
+  @GetMapping
+  public List<FaseListadaDto> listar(@AuthenticationPrincipal Jwt token, @Hoje LocalDate hoje) {
+    return fases.listar(ContaDoToken.id(token), hoje);
   }
 
   @PostMapping

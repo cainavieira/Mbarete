@@ -12,5 +12,7 @@ public interface FaseRepository extends JpaRepository<Fase, Integer> {
 
   List<Fase> findByUsuarioId(int usuarioId);
 
+  List<Fase> findByUsuarioIdOrderByDataInicio(int usuarioId);
+
   Optional<Fase> findByIdAndUsuarioId(int id, int usuarioId);
 }

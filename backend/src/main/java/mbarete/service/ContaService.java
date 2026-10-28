@@ -1,5 +1,7 @@
 package mbarete.service;
 
+import static mbarete.regras.Email.recusarEmailQueNaoConfere;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Optional;
@@ -47,6 +49,18 @@ public class ContaService {
   @Transactional(readOnly = true)
   public ContaDto conta(int id) {
     return ContaMapper.paraDto(usuario(id));
+  }
+
+  /**
+   * Apaga a conta e tudo dela, na hora e sem anonimização: registros, fases e tokens de renovação
+   * saem junto pelo banco (RN-51, RNF-14). O convite fica, e a pessoa pode entrar de novo numa
+   * conta nova e vazia (UC-12 3a).
+   */
+  @Transactional
+  public void apagar(int id, String emailDigitado) {
+    Usuario usuario = usuario(id);
+    recusarEmailQueNaoConfere(emailDigitado, usuario.email());
+    usuarios.delete(usuario);
   }
 
   /**

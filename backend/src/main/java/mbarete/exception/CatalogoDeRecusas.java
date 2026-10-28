@@ -32,6 +32,7 @@ final class CatalogoDeRecusas {
       case FASE_NAO_CORRENTE -> new Descricao(HttpStatus.CONFLICT, "RN-27");
       case CSV_COLUNA_AUSENTE -> new Descricao(HttpStatus.BAD_REQUEST, "RN-53");
       case CSV_SEPARADOR_DESCONHECIDO -> new Descricao(HttpStatus.BAD_REQUEST, "RN-54");
+      case EMAIL_NAO_CONFERE -> new Descricao(HttpStatus.BAD_REQUEST, "UC-12");
     };
   }
 

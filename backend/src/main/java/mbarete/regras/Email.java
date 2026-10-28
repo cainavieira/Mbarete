@@ -19,4 +19,16 @@ public final class Email {
     String email = texto.strip().toLowerCase(Locale.ROOT);
     return FORMA.matcher(email).matches() ? Optional.of(email) : Optional.empty();
   }
+
+  /**
+   * A conta só é apagada com o próprio e-mail digitado, comparado como o login compara: sem
+   * diferença de maiúscula nem de espaço em volta (RN-48, UC-12 2a).
+   */
+  public static void recusarEmailQueNaoConfere(String digitado, String daConta) {
+    Optional<String> email = normalizar(digitado);
+    if (email.isEmpty() || !email.equals(normalizar(daConta))) {
+      throw new RegraVioladaException(
+          Recusa.EMAIL_NAO_CONFERE, "email", "O e-mail digitado não é o da conta.");
+    }
+  }
 }

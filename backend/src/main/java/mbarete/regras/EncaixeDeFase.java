@@ -94,6 +94,27 @@ public final class EncaixeDeFase {
   }
 
   /**
+   * A fase anterior à apagada, quando o fim dela no futuro estava ali por causa da apagada: ele vai
+   * para a véspera da próxima fase ou some, se não houver próxima, e a anterior volta a ser a fase
+   * em aberto (RN-67, UC-07 3b).
+   */
+  public static Optional<PeriodoDeFase> apagarFase(
+      List<PeriodoDeFase> fases, PeriodoDeFase apagada, LocalDate hoje) {
+    List<PeriodoDeFase> outras = fases.stream().filter(fase -> fase.id() != apagada.id()).toList();
+    @Nullable LocalDate fimNovo =
+        outras.stream()
+            .filter(fase -> fase.inicio().isAfter(apagada.inicio()))
+            .map(PeriodoDeFase::inicio)
+            .min(LocalDate::compareTo)
+            .map(inicio -> inicio.minusDays(1))
+            .orElse(null);
+    return outras.stream()
+        .filter(fase -> acompanha(fase, apagada, hoje))
+        .findFirst()
+        .map(anterior -> new PeriodoDeFase(anterior.id(), anterior.inicio(), fimNovo));
+  }
+
+  /**
    * A anterior com fim no futuro, na véspera da editada: esse fim acompanha o início dela (RN-67).
    */
   private static boolean acompanha(PeriodoDeFase fase, PeriodoDeFase antes, LocalDate hoje) {

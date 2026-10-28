@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -506,6 +507,51 @@ class FaseControllerTest {
         .andExpect(jsonPath("$.erro.campo").value("dataFim"));
   }
 
+  // Pega a fase que não é apagada, e os registros dela levados junto: eles só
+  // perdem o rótulo do período (RN-70)
+  @Test
+  void apagaAFaseEOsRegistrosFicam() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    int fase = fase(fulana, LocalDate.of(2026, 9, 1), null, null);
+    registro(fulana, LocalDate.of(2026, 9, 5));
+    registro(fulana, LocalDate.of(2026, 9, 6));
+
+    apagar(fulana, fase).andExpect(status().isNoContent());
+    assertThat(fases(fulana)).isEmpty();
+    assertThat(
+            jdbc.sql("select count(*) from registro where usuario_id = ?")
+                .param(fulana)
+                .query(Integer.class)
+                .single())
+        .isEqualTo(2);
+  }
+
+  // Pega o fim no futuro da anterior que fica, e a anterior esticada antes de
+  // a apagada sair do banco, que recusa a sobreposição (RN-67, UC-07 3b)
+  @Test
+  void apagarASeguinteTiraOFimNoFuturoDaAnterior() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    fase(fulana, hoje.minusDays(30), hoje.plusDays(5), null);
+    int seguinte = fase(fulana, hoje.plusDays(6), null, null);
+
+    apagar(fulana, seguinte).andExpect(status().isNoContent());
+    assertThat(fases(fulana)).singleElement().extracting(Gravada::dataFim).isNull();
+  }
+
+  // Pega a fase procurada sem o usuário, que deixaria apagar a de outra pessoa
+  // (RN-50)
+  @Test
+  void aFaseDeOutraPessoaNaoEApagada() throws Exception {
+    int outra = usuario("outra@exemplo.com");
+    int daOutra = fase(outra, LocalDate.of(2026, 9, 1), null, null);
+    int fulana = usuario("fulana@exemplo.com");
+
+    apagar(fulana, daOutra)
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.erro.codigo").value("NAO_ENCONTRADO"));
+    assertThat(fases(outra)).hasSize(1);
+  }
+
   record Gravada(
       String tipo,
       LocalDate dataInicio,
@@ -584,6 +630,13 @@ class FaseControllerTest {
             .header("Data-Local", dataLocal.toString())
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"dataFim\": \"%s\"}".formatted(fim)));
+  }
+
+  private ResultActions apagar(int idUsuario, int idFase) throws Exception {
+    return mvc.perform(
+        delete("/fases/{id}", idFase)
+            .cookie(acesso(idUsuario))
+            .header("Data-Local", hoje.toString()));
   }
 
   private ResultActions editar(int idUsuario, int idFase, LocalDate dataLocal, String corpo)

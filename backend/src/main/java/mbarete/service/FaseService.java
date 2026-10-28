@@ -1,5 +1,6 @@
 package mbarete.service;
 
+import static mbarete.regras.EncaixeDeFase.apagarFase;
 import static mbarete.regras.EncaixeDeFase.encaixarEdicao;
 import static mbarete.regras.EncaixeDeFase.encaixarFaseNova;
 import static mbarete.regras.EncaixeDeFase.encerrarFase;
@@ -167,6 +168,32 @@ public class FaseService {
     fase.mudarFim(encerrarFase(fase.periodo(), encerramento.dataFim(), hoje).fim());
     diaDaBase.fixarOndeFalta(idUsuario, hoje);
     return FaseMapper.paraDto(fase);
+  }
+
+  /**
+   * Apaga a fase (UC-07). Os registros ficam e perdem o rótulo do período (RN-70), e o fim no
+   * futuro da anterior, que estava ali por causa dela, vai para a véspera da próxima ou some
+   * (RN-67).
+   */
+  @Transactional
+  public void apagar(int idUsuario, int id, LocalDate hoje) {
+    List<Fase> daPessoa = fases.findByUsuarioId(idUsuario);
+    Fase fase =
+        daPessoa.stream()
+            .filter(daLista -> daLista.id() == id)
+            .findFirst()
+            .orElseThrow(() -> new RegraVioladaException(Recusa.NAO_ENCONTRADO, NAO_ENCONTRADO));
+    Optional<PeriodoDeFase> anteriorMovida =
+        apagarFase(daPessoa.stream().map(Fase::periodo).toList(), fase.periodo(), hoje);
+    fases.delete(fase);
+    // O Hibernate apagaria só depois de esticar a anterior, e o banco recusaria a sobreposição
+    fases.flush();
+    anteriorMovida.ifPresent(
+        movida ->
+            daPessoa.stream()
+                .filter(daLista -> daLista.id() == movida.id())
+                .forEach(anterior -> anterior.mudarFim(movida.fim())));
+    diaDaBase.fixarOndeFalta(idUsuario, hoje);
   }
 
   /**

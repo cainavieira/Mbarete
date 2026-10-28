@@ -10,6 +10,7 @@ import mbarete.service.FaseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,5 +55,13 @@ public class FaseController {
       @Hoje LocalDate hoje,
       @Valid @RequestBody EncerramentoDto encerramento) {
     return fases.encerrar(ContaDoToken.id(token), id, encerramento, hoje);
+  }
+
+  /** Pede o dia de hoje porque o fim no futuro da anterior acompanha a apagada (RN-67). */
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void apagar(
+      @AuthenticationPrincipal Jwt token, @PathVariable int id, @Hoje LocalDate hoje) {
+    fases.apagar(ContaDoToken.id(token), id, hoje);
   }
 }

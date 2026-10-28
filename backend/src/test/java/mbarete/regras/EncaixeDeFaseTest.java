@@ -1,5 +1,6 @@
 package mbarete.regras;
 
+import static mbarete.regras.EncaixeDeFase.apagarFase;
 import static mbarete.regras.EncaixeDeFase.encaixarEdicao;
 import static mbarete.regras.EncaixeDeFase.encaixarFaseNova;
 import static mbarete.regras.EncaixeDeFase.encerrarFase;
@@ -193,6 +194,36 @@ class EncaixeDeFaseTest {
   @CsvSource({"2026-10-21, DATA_FIM_FUTURA", "2026-02-28, DATA_FIM_ANTES_DO_INICIO"})
   void oEncerramentoNoFuturoOuAntesDoInicioERecusado(String fim, Recusa recusa) {
     assertRecusa(() -> encerrarFase(DESDE_MARCO, LocalDate.parse(fim), HOJE), recusa, "dataFim");
+  }
+
+  // Pega o fim no futuro da anterior que fica na véspera da apagada, e o que
+  // vai para a véspera da última fase em vez da próxima (RN-67, UC-07 3b)
+  @Test
+  void apagarASeguinteLevaOFimDaAnteriorParaAVesperaDaProxima() {
+    var novembro = new PeriodoDeFase(4, LocalDate.of(2026, 11, 1), LocalDate.of(2026, 11, 30));
+    var dezembro = new PeriodoDeFase(5, LocalDate.of(2026, 12, 1), LocalDate.of(2026, 12, 31));
+    var desdeJaneiro = new PeriodoDeFase(6, LocalDate.of(2027, 1, 1), null);
+
+    assertThat(
+            apagarFase(List.of(ATE_A_AGENDADA, novembro, dezembro, desdeJaneiro), novembro, HOJE))
+        .contains(new PeriodoDeFase(3, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 11, 30)));
+  }
+
+  // Pega o fim no futuro que fica quando não há próxima: a anterior volta a
+  // ser a fase em aberto (RN-67, UC-07 3b)
+  @Test
+  void semProximaOFimNoFuturoDaAnteriorSome() {
+    assertThat(apagarFase(COM_A_AGENDADA, AGENDADA, HOJE))
+        .contains(new PeriodoDeFase(3, LocalDate.of(2026, 9, 1), null));
+  }
+
+  // Pega a anterior com fim já passado esticada sobre o vão da apagada: só o
+  // fim no futuro estava ali por causa dela (RN-67, RN-70)
+  @Test
+  void aAnteriorComFimPassadoFicaComoEstava() {
+    var fevereiro = new PeriodoDeFase(5, LocalDate.of(2026, 2, 1), null);
+
+    assertThat(apagarFase(List.of(JANEIRO, fevereiro), fevereiro, HOJE)).isEmpty();
   }
 
   private static Optional<PeriodoDeFase> editar(

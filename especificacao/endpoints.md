@@ -248,7 +248,7 @@ da taxa real, que tem sinal (RN-37).
 
 A primeira recebe o arquivo e devolve o relatório: linhas válidas, linhas
 recusadas com número de linha e motivo, e datas existentes que serão
-substituídas (RN-58). Nada é gravado.
+substituídas, cada uma com o registro gravado nela (RN-58). Nada é gravado.
 
 A segunda **reenvia o mesmo arquivo** junto com a confirmação. O servidor não
 guarda nada entre as duas chamadas.

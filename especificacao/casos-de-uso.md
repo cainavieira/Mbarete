@@ -338,7 +338,8 @@ aí o caminho é o da RN-70. (RN-70)
 1. O usuário envia o arquivo. (RF-37)
 2. O sistema lê, valida e apresenta a pré-visualização: linhas válidas, linhas
    recusadas com número e motivo, e datas já existentes que serão
-   substituídas. (RF-38, RN-58)
+   substituídas, cada uma com o peso e a cintura gravados nela, porque a
+   substituição troca o registro inteiro. (RF-38, RN-58)
 3. O usuário confirma.
 4. O sistema grava tudo em uma única operação, **sem criar fase**. As datas
    importadas ficam sem fase. (RF-40, RN-57, RN-59)

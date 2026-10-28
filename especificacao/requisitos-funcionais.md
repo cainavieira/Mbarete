@@ -124,8 +124,8 @@ aposentados estão listados no fim.
 - **RF-37** O sistema deve receber um arquivo CSV do AT-01 e apresentar a
   pré-visualização antes de qualquer gravação. (RN-58)
 - **RF-38** O sistema deve reportar na pré-visualização as linhas válidas, as
-  recusadas com número de linha e motivo, e as datas que serão substituídas.
-  (RN-58)
+  recusadas com número de linha e motivo, e as datas que serão substituídas,
+  com o registro gravado em cada uma. (RN-58)
 - **RF-40** O sistema deve gravar a importação inteira ou nenhuma linha, após
   confirmação, sem criar fase. (RN-57, RN-59)
 - **RF-41** O sistema deve permitir que o AT-01 abandone a importação na

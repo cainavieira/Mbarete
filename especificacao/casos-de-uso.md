@@ -286,10 +286,10 @@ aí o caminho é o da RN-70. (RN-70)
   dela mostra isso. (RN-36, RN-68)
 - **5a** A fase corrente é manutenção: não existe barra de progresso, porque
   não existe peso alvo. (RN-41)
-- **5c** A base do progresso não existe, porque nenhum peso semanal ocorreu
-  dentro da fase, ou porque a janela do dia da base deixou de ter 4
-  registros: a barra informa dados insuficientes em vez de aparecer vazia.
-  (RN-68)
+- **5c** Há peso semanal hoje, mas a janela do dia da base deixou de ter 4
+  registros, e a base do progresso não existe: a barra informa dados
+  insuficientes em vez de aparecer vazia. Sem peso semanal hoje, vale o 1a, e
+  a barra não aparece. (RN-68)
 - **5b** O peso alvo foi atingido: o sistema avisa, a barra trava em 100%, e a
   fase continua aberta. (RF-34, RN-44, RN-45)
 - **5d** O peso alvo está do lado errado da base: a barra não é exibida, e o

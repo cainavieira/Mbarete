@@ -22,6 +22,12 @@ final class CatalogoDeRecusas {
       case CINTURA_FORA_DE_FAIXA -> new Descricao(HttpStatus.BAD_REQUEST, "RN-11");
       case DATA_FUTURA -> new Descricao(HttpStatus.BAD_REQUEST, "RN-05");
       case REGISTRO_JA_EXISTE -> new Descricao(HttpStatus.CONFLICT, "RN-01");
+      case NIVEL_AUSENTE -> new Descricao(HttpStatus.BAD_REQUEST, "RN-28");
+      case TAXA_ALVO_AUSENTE, TAXA_ALVO_INVALIDA -> new Descricao(HttpStatus.BAD_REQUEST, "RN-29");
+      case PESO_ALVO_AUSENTE -> new Descricao(HttpStatus.BAD_REQUEST, "RN-41");
+      case FASE_SOBREPOSTA -> new Descricao(HttpStatus.CONFLICT, "RN-19");
+      case DATA_FIM_FUTURA -> new Descricao(HttpStatus.BAD_REQUEST, "RN-67");
+      case DATA_FIM_ANTES_DO_INICIO -> new Descricao(HttpStatus.BAD_REQUEST, "RN-18");
     };
   }
 
@@ -33,6 +39,7 @@ final class CatalogoDeRecusas {
     return switch (recusa) {
       case PESO_FORA_DE_FAIXA -> "O peso deve estar entre 20,0 e 400,0 kg.";
       case CINTURA_FORA_DE_FAIXA -> "A cintura deve estar entre 40,0 e 200,0 cm.";
+      case TAXA_ALVO_INVALIDA -> "A taxa alvo é digitada sem sinal e deve ser maior que zero.";
       default -> "Confira o campo destacado.";
     };
   }

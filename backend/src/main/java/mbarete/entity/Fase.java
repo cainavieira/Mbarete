@@ -72,12 +72,46 @@ public class Fase {
     this.criadoEm = criadoEm;
   }
 
+  public Integer id() {
+    return id;
+  }
+
+  public TipoDeFase tipo() {
+    return tipo;
+  }
+
+  public Nivel nivel() {
+    return nivel;
+  }
+
+  public BigDecimal taxaAlvoValor() {
+    return taxaAlvoValor;
+  }
+
+  public UnidadeDaTaxa taxaAlvoUnidade() {
+    return taxaAlvoUnidade;
+  }
+
+  public BigDecimal pesoAlvo() {
+    return pesoAlvo;
+  }
+
   public PeriodoDeFase periodo() {
     return new PeriodoDeFase(id, dataInicio, dataFim);
   }
 
-  /** Fixado na primeira vez, e só a edição das datas da fase o determina de novo (RN-68). */
+  /** Fixado na primeira vez, e só a mudança das datas da fase o determina de novo (RN-68). */
   public void fixarDiaDaBase(LocalDate dia) {
     this.baseData = dia;
+  }
+
+  /**
+   * O intervalo passou a ser outro, e o dia da base é determinado de novo sobre ele (RN-68): quem
+   * muda as datas fixa o dia de novo depois.
+   */
+  public void mudarDatas(LocalDate inicio, LocalDate fim) {
+    this.dataInicio = inicio;
+    this.dataFim = fim;
+    this.baseData = null;
   }
 }

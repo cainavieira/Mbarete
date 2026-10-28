@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface FaseRepository extends JpaRepository<Fase, Integer> {
 
   List<Fase> findByUsuarioIdAndBaseDataIsNull(int usuarioId);
+
+  List<Fase> findByUsuarioId(int usuarioId);
 }

@@ -128,9 +128,10 @@ Atores em `atores.md`, requisitos em `requisitos-funcionais.md`, regras em
   taxa alvo zero, com a faixa de tolerância de 1% em volta da base. (RF-24,
   RN-33)
 - **2a** A data de início é passada ou hoje, cai dentro da fase **em aberto**
-  depois do início dela, e a fase nova não tem data de fim: aceito, e a fase
-  em aberto é encerrada na véspera. É o caso comum, de quem começou o ciclo
-  antes de cadastrar. (RF-19, RN-19, RN-22)
+  depois do início dela, e a fase nova não tem data de fim: aceito, a fase em
+  aberto é encerrada na véspera, e a tela avisa isso antes da confirmação,
+  como no 2d. É o caso comum, de quem começou o ciclo antes de cadastrar.
+  (RF-19, RN-19, RN-22)
 - **2b** A data de início cai dentro de fase que já tem data de fim: recusado
   por sobreposição. (RF-46, RN-19)
 - **2c** A fase nova cabe inteira num período **sem fase**: aceito, e é assim

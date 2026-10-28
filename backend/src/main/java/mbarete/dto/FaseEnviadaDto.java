@@ -1,5 +1,8 @@
 package mbarete.dto;
 
+import static mbarete.regras.FaixaDoRegistro.PESO_MAXIMO;
+import static mbarete.regras.FaixaDoRegistro.PESO_MINIMO;
+
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
@@ -26,7 +29,7 @@ public record FaseEnviadaDto(
         @Digits(integer = 2, fraction = 2)
         @Nullable BigDecimal taxaAlvoValor,
     @Nullable UnidadeDaTaxa taxaAlvoUnidade,
-    @DecimalMin(value = "20.0", message = "PESO_FORA_DE_FAIXA")
-        @DecimalMax(value = "400.0", message = "PESO_FORA_DE_FAIXA")
+    @DecimalMin(value = PESO_MINIMO, message = "PESO_FORA_DE_FAIXA")
+        @DecimalMax(value = PESO_MAXIMO, message = "PESO_FORA_DE_FAIXA")
         @Digits(integer = 3, fraction = 1)
         @Nullable BigDecimal pesoAlvo) {}

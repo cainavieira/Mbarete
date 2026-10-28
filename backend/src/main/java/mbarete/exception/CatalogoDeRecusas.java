@@ -1,5 +1,6 @@
 package mbarete.exception;
 
+import mbarete.regras.FaixaDoRegistro;
 import mbarete.regras.Recusa;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
@@ -38,8 +39,8 @@ final class CatalogoDeRecusas {
    */
   static String mensagemDoCampo(Recusa recusa) {
     return switch (recusa) {
-      case PESO_FORA_DE_FAIXA -> "O peso deve estar entre 20,0 e 400,0 kg.";
-      case CINTURA_FORA_DE_FAIXA -> "A cintura deve estar entre 40,0 e 200,0 cm.";
+      case PESO_FORA_DE_FAIXA -> FaixaDoRegistro.PESO_FORA_DE_FAIXA;
+      case CINTURA_FORA_DE_FAIXA -> FaixaDoRegistro.CINTURA_FORA_DE_FAIXA;
       case TAXA_ALVO_INVALIDA -> "A taxa alvo é digitada sem sinal e deve ser maior que zero.";
       default -> "Confira o campo destacado.";
     };

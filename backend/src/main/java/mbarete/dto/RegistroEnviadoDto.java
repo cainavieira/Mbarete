@@ -1,5 +1,10 @@
 package mbarete.dto;
 
+import static mbarete.regras.FaixaDoRegistro.CINTURA_MAXIMA;
+import static mbarete.regras.FaixaDoRegistro.CINTURA_MINIMA;
+import static mbarete.regras.FaixaDoRegistro.PESO_MAXIMO;
+import static mbarete.regras.FaixaDoRegistro.PESO_MINIMO;
+
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
@@ -17,12 +22,12 @@ import org.jspecify.annotations.Nullable;
 public record RegistroEnviadoDto(
     @NotNull LocalDate data,
     @NotNull
-        @DecimalMin(value = "20.0", message = "PESO_FORA_DE_FAIXA")
-        @DecimalMax(value = "400.0", message = "PESO_FORA_DE_FAIXA")
+        @DecimalMin(value = PESO_MINIMO, message = "PESO_FORA_DE_FAIXA")
+        @DecimalMax(value = PESO_MAXIMO, message = "PESO_FORA_DE_FAIXA")
         @Digits(integer = 3, fraction = 1)
         BigDecimal peso,
-    @DecimalMin(value = "40.0", message = "CINTURA_FORA_DE_FAIXA")
-        @DecimalMax(value = "200.0", message = "CINTURA_FORA_DE_FAIXA")
+    @DecimalMin(value = CINTURA_MINIMA, message = "CINTURA_FORA_DE_FAIXA")
+        @DecimalMax(value = CINTURA_MAXIMA, message = "CINTURA_FORA_DE_FAIXA")
         @Digits(integer = 3, fraction = 1)
         @Nullable BigDecimal cintura,
     @Nullable Boolean substituir) {}

@@ -256,7 +256,7 @@ a tela de entrada com o motivo na URL, e a tela explica.
 
 | Motivo | Quando | Caso de uso |
 |:--|:--|:--|
-| `NAO_CONVIDADO` | o e-mail não está na lista de convidados | UC-01 1a |
+| `NAO_CONVIDADO` | o e-mail não está na lista de convidados, ou o Google não o deu como verificado | UC-01 1a |
 | `LOGIN_NAO_CONCLUIDO` | a pessoa cancelou no Google, ou a verificação do retorno falhou (`state`, troca do código, `id_token`) | UC-01 1d |
 
 O `NAO_CONVIDADO` não leva o e-mail e só diz que o acesso é por convite, sem

@@ -192,9 +192,10 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   unidade, sem conversão automática, porque 0,5% e 0,5 kg são alvos
   diferentes e adivinhar qual a pessoa quis é pior que perguntar. O nível
   passa a personalizado. (RF-18, RN-30)
-- **2f** Uma das datas é alterada: o dia da base do progresso, da tolerância e
-  da taxa real do primeiro mês é determinado de novo, porque o intervalo da
-  fase passou a ser outro. (RN-36, RN-68)
+- **2f** A data de início é alterada: o dia da base do progresso, da
+  tolerância e da taxa real do primeiro mês é determinado de novo, porque o
+  intervalo da fase passou a ser outro. Se só a data de fim muda, o dia da base
+  fica, salvo quando passa a cair depois do novo fim. (RN-36, RN-68)
 - **2g** O peso alvo passa para o lado errado da base: a alteração é aceita, e
   a barra deixa de ser exibida enquanto isso durar. (RN-44)
 - **2h** O valor da taxa alvo é editado: o nível passa a personalizado.

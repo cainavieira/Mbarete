@@ -234,9 +234,13 @@ motivo.
   a base. Enquanto nenhum dia da fase tiver peso semanal, ou quando a janela do
   dia da base deixar de ter os 4 registros da RN-16, não há barra nem faixa de
   tolerância, e o sistema informa dados insuficientes, sem repetir o último
-  valor conhecido (RN-09). A exceção é editar as datas da fase (RN-24): ali o
-  intervalo passou a ser outro, e o dia da base é determinado de novo sobre o
-  intervalo novo.
+  valor conhecido (RN-09). A exceção é a mudança das datas da fase. Mudar o
+  início (RN-24) muda o intervalo onde o dia é procurado, e ele é determinado
+  de novo sobre o intervalo novo. Mudar só o fim, pela edição (RN-24), pelo
+  encerramento (RN-67) ou pela fase seguinte que a encerra (RN-22), só o
+  determina de novo quando o dia da base fica depois do novo fim: o dia é
+  procurado a partir do início, e o fim que não o alcança não muda o que foi
+  achado.
 
 ## Variações exibidas
 

@@ -279,7 +279,9 @@ motivo.
   opcional.
 - **RN-54** O separador pode ser ponto e vírgula ou vírgula, detectado a
   partir do conteúdo do arquivo.
-- **RN-55** A data aceita os formatos AAAA-MM-DD e DD/MM/AAAA.
+- **RN-55** A data aceita os formatos AAAA-MM-DD e DD/MM/AAAA. O peso e a
+  cintura usam ponto decimal, como trafegam (RN-62), e a vírgula, quando
+  aparece, só separa colunas.
 - **RN-57** A importação não cria fase. As datas importadas ficam sem fase
   (RN-20), e classificar o histórico depois se faz criando fase com início e
   fim sobre o intervalo, que é operação normal pela RN-19. Isso evita que um período

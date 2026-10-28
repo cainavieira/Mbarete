@@ -293,8 +293,9 @@ aí o caminho é o da RN-70. (RN-70)
   a barra não aparece. (RN-68)
 - **5b** O peso alvo foi atingido: o sistema avisa, a barra trava em 100%, e a
   fase continua aberta. (RF-34, RN-44, RN-45)
-- **5d** O peso alvo está do lado errado da base: a barra não é exibida, e o
-  aviso de alvo atingido não dispara. (RN-44)
+- **5d** O peso alvo está do lado errado da base: a barra não é exibida, a
+  tela diz no lugar dela que o alvo está do lado errado, e o aviso de alvo
+  atingido não dispara. (RN-44)
 - **6a** Nunca houve medição de cintura: a seção não aparece.
 - **1b** A conta não tem nenhum registro: a tela convida ao primeiro registro
   em vez de exibir estrutura vazia.

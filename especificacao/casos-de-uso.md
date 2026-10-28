@@ -387,8 +387,8 @@ aí o caminho é o da RN-70. (RN-70)
 2. O sistema explica o que será removido, avisa que as cópias de backup somem
    no fim da retenção, e exige que o usuário digite o próprio e-mail para
    confirmar.
-3. O sistema remove registros, fases e dados de conta, e encerra a sessão.
-   (RF-06, RN-51)
+3. O sistema remove registros, fases e dados de conta, encerra a sessão e
+   volta à tela de entrada, que confirma a exclusão. (RF-06, RN-51)
 
 **Fluxos alternativos**
 

@@ -44,16 +44,20 @@ public class ContaService {
     return Optional.of(usuario);
   }
 
-  /**
-   * A conta do token. O token de acesso vale até 15 minutos depois de a conta ser apagada (UC-12),
-   * e aí a recusa é a de quem não está autenticado: a renovação já não existe, e o frontend volta à
-   * tela de entrada.
-   */
   @Transactional(readOnly = true)
   public ContaDto conta(int id) {
+    return ContaMapper.paraDto(usuario(id));
+  }
+
+  /**
+   * A conta do token. O token de acesso vale até 15 minutos depois de a conta ser apagada (UC-12),
+   * e aí a recusa é a de quem não está autenticado, em vez de erro interno: a renovação já não
+   * existe, e o frontend volta à tela de entrada.
+   */
+  @Transactional(readOnly = true)
+  public Usuario usuario(int id) {
     return usuarios
         .findById(id)
-        .map(ContaMapper::paraDto)
         .orElseThrow(() -> new BadCredentialsException("A conta do token não existe mais."));
   }
 }

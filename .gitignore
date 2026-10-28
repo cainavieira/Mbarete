@@ -25,6 +25,7 @@ desktop.ini
 
 # Ferramental local
 .claude/
+.vscode/
 
 # Rascunho local, nao versionado
 instrucao.md

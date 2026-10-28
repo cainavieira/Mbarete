@@ -204,8 +204,8 @@ class FaseControllerTest {
             tuple(LocalDate.of(2026, 9, 15), null));
   }
 
-  // Pega o dia da base da fase encerrada que fica fora do intervalo novo dela,
-  // e a fase nova sem o dia da base onde já há peso semanal (RN-68)
+  // Pega o dia da base da fase encerrada que fica depois do novo fim dela, e a
+  // fase nova sem o dia da base onde já há peso semanal (RN-68)
   @Test
   void criarFixaODiaDaBaseDaNovaEDeterminaDeNovoODaEncerrada() throws Exception {
     int fulana = usuario("fulana@exemplo.com");
@@ -218,6 +218,23 @@ class FaseControllerTest {
     assertThat(fases(fulana))
         .extracting(Gravada::baseData)
         .containsExactly(null, LocalDate.of(2026, 9, 20));
+  }
+
+  // Pega o dia da base que cabe no novo fim, até no último dia, e mesmo assim é
+  // escolhido de novo: os registros dos dias 1 a 4 chegaram depois, e a base
+  // saltaria para o dia 4 (RN-68)
+  @Test
+  void oDiaDaBaseQueCabeNoNovoFimFica() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    fase(fulana, LocalDate.of(2026, 9, 1), null, LocalDate.of(2026, 9, 14));
+    for (int dia = 1; dia <= 4; dia++) {
+      registro(fulana, LocalDate.of(2026, 9, dia));
+    }
+
+    criar(fulana, hoje, cutting("\"dataInicio\": \"2026-09-15\"")).andExpect(status().isCreated());
+    assertThat(fases(fulana))
+        .extracting(Gravada::baseData)
+        .containsExactly(LocalDate.of(2026, 9, 14), null);
   }
 
   // Pega as fases procuradas sem o usuário, que encerraria a fase em aberto de

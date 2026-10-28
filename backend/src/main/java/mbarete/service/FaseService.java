@@ -40,8 +40,8 @@ public class FaseService {
 
   /**
    * Cria a fase (UC-05). A fase nova sem data de fim que começa depois da fase em aberto a encerra
-   * na véspera (RN-22), e o dia da base é fixado onde já há peso semanal, na nova e na encerrada,
-   * cujo intervalo mudou (RN-68).
+   * na véspera (RN-22). O dia da base é fixado onde já há peso semanal: na nova, e na encerrada
+   * quando o fim novo deixou o dela de fora (RN-68).
    */
   @Transactional
   public FaseDto criar(int idUsuario, FaseEnviadaDto nova, LocalDate hoje) {
@@ -59,7 +59,7 @@ public class FaseService {
             encerrada -> {
               daPessoa.stream()
                   .filter(fase -> fase.id() == encerrada.id())
-                  .forEach(fase -> fase.mudarDatas(encerrada.inicio(), encerrada.fim()));
+                  .forEach(fase -> fase.mudarFim(encerrada.fim()));
               // O banco confere a sobreposição com a fase em aberto como ela está gravada, e o
               // Hibernate só gravaria o encerramento depois de inserir a nova
               fases.flush();

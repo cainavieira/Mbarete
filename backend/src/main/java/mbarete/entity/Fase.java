@@ -106,12 +106,13 @@ public class Fase {
   }
 
   /**
-   * O intervalo passou a ser outro, e o dia da base é determinado de novo sobre ele (RN-68): quem
-   * muda as datas fixa o dia de novo depois.
+   * O dia da base é procurado a partir do início, e por isso o fim novo só o invalida quando o
+   * deixa de fora: aí ele é determinado de novo, por quem muda o fim; senão, fica (RN-68).
    */
-  public void mudarDatas(LocalDate inicio, LocalDate fim) {
-    this.dataInicio = inicio;
+  public void mudarFim(LocalDate fim) {
     this.dataFim = fim;
-    this.baseData = null;
+    if (baseData != null && baseData.isAfter(fim)) {
+      this.baseData = null;
+    }
   }
 }

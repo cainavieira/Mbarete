@@ -1,6 +1,7 @@
 package mbarete.regras;
 
 import static mbarete.regras.PesoSemanal.calcularPesoSemanal;
+import static mbarete.regras.PesoSemanal.contarNaJanela;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
@@ -58,6 +59,20 @@ class PesoSemanalTest {
             media ->
                 assertThat(media)
                     .isCloseTo(new BigDecimal("80.0142857"), within(new BigDecimal("0.0000001"))));
+  }
+
+  // Pega a contagem com os registros de fora da janela (RN-16)
+  @Test
+  void contaSoOsRegistrosDaJanela() {
+    var pesagens =
+        List.of(
+            pesagem(-1, "80.0"),
+            pesagem(0, "80.0"),
+            pesagem(3, "80.0"),
+            pesagem(6, "80.0"),
+            pesagem(7, "80.0"));
+
+    assertThat(contarNaJanela(pesagens, DIA)).isEqualTo(3);
   }
 
   /** A pesagem de {@code diasAntes} dias antes do dia calculado. */

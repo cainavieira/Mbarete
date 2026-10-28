@@ -18,16 +18,24 @@ public final class PesoSemanal {
    * conta não arredonda: só o resultado exibido é arredondado (RN-37).
    */
   public static Optional<BigDecimal> calcularPesoSemanal(List<Pesagem> pesagens, LocalDate dia) {
-    LocalDate inicio = dia.minusDays(6);
-    List<BigDecimal> naJanela =
-        pesagens.stream()
-            .filter(p -> !p.data().isBefore(inicio) && !p.data().isAfter(dia))
-            .map(Pesagem::peso)
-            .toList();
+    List<BigDecimal> naJanela = naJanela(pesagens, dia);
     if (naJanela.size() < MINIMO_NA_JANELA) {
       return Optional.empty();
     }
     BigDecimal soma = naJanela.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
     return Optional.of(soma.divide(BigDecimal.valueOf(naJanela.size()), MathContext.DECIMAL128));
+  }
+
+  /** Quantos registros a janela do dia tem, para a tela dizer quantos faltam (RN-16). */
+  public static int contarNaJanela(List<Pesagem> pesagens, LocalDate dia) {
+    return naJanela(pesagens, dia).size();
+  }
+
+  private static List<BigDecimal> naJanela(List<Pesagem> pesagens, LocalDate dia) {
+    LocalDate inicio = dia.minusDays(6);
+    return pesagens.stream()
+        .filter(p -> !p.data().isBefore(inicio) && !p.data().isAfter(dia))
+        .map(Pesagem::peso)
+        .toList();
   }
 }

@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import mbarete.regras.Nivel;
 import mbarete.regras.PeriodoDeFase;
+import mbarete.regras.TaxaAlvo;
 import mbarete.regras.TipoDeFase;
 import mbarete.regras.UnidadeDaTaxa;
 
@@ -94,6 +95,11 @@ public class Fase {
 
   public BigDecimal pesoAlvo() {
     return pesoAlvo;
+  }
+
+  /** Como a pessoa a digitou, sem sinal; nula na manutenção (RN-29, RN-33). */
+  public TaxaAlvo taxaAlvo() {
+    return taxaAlvoValor == null ? null : new TaxaAlvo(taxaAlvoValor, taxaAlvoUnidade);
   }
 
   public PeriodoDeFase periodo() {

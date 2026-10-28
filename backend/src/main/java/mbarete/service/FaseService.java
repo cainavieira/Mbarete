@@ -10,7 +10,6 @@ import static mbarete.regras.PlanoDeFase.editarPlano;
 import static mbarete.regras.PlanoDeFase.montarPlano;
 import static mbarete.regras.SituacaoDaFase.situacaoDaFase;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -154,11 +153,10 @@ public class FaseService {
             .filter(daLista -> daLista.id() == id)
             .findFirst()
             .orElseThrow(() -> new RegraVioladaException(Recusa.NAO_ENCONTRADO, NAO_ENCONTRADO));
-    BigDecimal valorAntes = fase.taxaAlvoValor();
     PlanoDeFase plano =
         editarPlano(
             fase.tipo(),
-            valorAntes == null ? null : new TaxaAlvo(valorAntes, fase.taxaAlvoUnidade()),
+            fase.taxaAlvo(),
             editada.tipo(),
             editada.nivel(),
             editada.taxaAlvoValor(),

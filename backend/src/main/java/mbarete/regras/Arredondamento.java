@@ -20,4 +20,12 @@ public final class Arredondamento {
   public static BigDecimal arredondarTaxa(BigDecimal taxa) {
     return taxa.setScale(2, RoundingMode.HALF_UP);
   }
+
+  /**
+   * O percentual da barra, inteiro e cortado, e não arredondado: assim a barra só escreve 100%
+   * quando o alvo foi atingido, e nunca ao lado de um aviso que ainda não disparou (RN-44, RN-45).
+   */
+  public static BigDecimal arredondarPercentual(BigDecimal percentual) {
+    return percentual.setScale(0, RoundingMode.DOWN);
+  }
 }

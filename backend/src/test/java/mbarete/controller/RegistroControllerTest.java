@@ -2,8 +2,10 @@ package mbarete.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -31,6 +33,7 @@ import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
 @Import(TestcontainersConfiguration.class)
@@ -452,7 +455,97 @@ class RegistroControllerTest {
     assertThat(registros(outra)).hasSize(1);
   }
 
+  // Pega as pontas do intervalo deixadas de fora, a data fora dele que entra,
+  // e a lista fora da ordem de data (RF-14): os registros entram fora de ordem
+  @Test
+  void listaOIntervaloEmOrdemDeData() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, LocalDate.of(2026, 9, 7), "82.0", null);
+    registro(fulana, LocalDate.of(2026, 9, 5), "82.4", null);
+    registro(fulana, LocalDate.of(2026, 9, 8), "81.8", null);
+    registro(fulana, LocalDate.of(2026, 9, 6), "82.2", null);
+    registro(fulana, LocalDate.of(2026, 9, 4), "82.6", null);
+    // Pelo índice da data, a ordem viria certa mesmo sem pedir; sem ele, o
+    // Postgres devolve na ordem em que gravou, como faria com outro plano
+    jdbc.sql("set local enable_indexscan = off").update();
+    jdbc.sql("set local enable_bitmapscan = off").update();
+
+    listar(fulana, hoje, "de", "2026-09-05", "ate", "2026-09-07")
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[*].data").value(contains("2026-09-05", "2026-09-06", "2026-09-07")));
+  }
+
+  // Pega a lista sem intervalo com 91 dias, e a contada a partir do dia do
+  // servidor em vez do dia do dispositivo, que ainda está em ontem (RN-04)
+  @Test
+  void semIntervaloListaOsUltimos90DiasDoDispositivo() throws Exception {
+    LocalDate ontem = hoje.minusDays(1);
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, ontem.minusDays(90), "82.0", null);
+    registro(fulana, ontem.minusDays(89), "82.0", null);
+    registro(fulana, ontem, "82.0", null);
+    registro(fulana, hoje, "82.0", null);
+
+    listar(fulana, ontem)
+        .andExpect(status().isOk())
+        .andExpect(
+            jsonPath("$[*].data")
+                .value(contains(ontem.minusDays(89).toString(), ontem.toString())));
+  }
+
+  // Pega o início contado a partir de hoje quando só o fim vem, que deixaria
+  // vazia a lista de um intervalo antigo
+  @Test
+  void soComOFimListaOs90DiasQueTerminamNele() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, LocalDate.of(2026, 4, 1), "82.0", null);
+    registro(fulana, LocalDate.of(2026, 4, 2), "82.0", null);
+    registro(fulana, LocalDate.of(2026, 6, 30), "82.0", null);
+    registro(fulana, LocalDate.of(2026, 7, 1), "82.0", null);
+
+    listar(fulana, hoje, "ate", "2026-06-30")
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[*].data").value(contains("2026-04-02", "2026-06-30")));
+  }
+
+  // Pega o início ignorado quando o fim não vem, que cairia nos últimos 90 dias
+  @Test
+  void soComOInicioListaAteHoje() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, hoje.minusDays(201), "82.0", null);
+    registro(fulana, hoje.minusDays(150), "82.0", null);
+
+    listar(fulana, hoje, "de", hoje.minusDays(200).toString())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[*].data").value(contains(hoje.minusDays(150).toString())));
+  }
+
+  // Pega a lista consultada sem o usuário, que mostraria o peso de outra
+  // pessoa (RN-50)
+  @Test
+  void naoListaORegistroDeOutraPessoa() throws Exception {
+    int outra = usuario("outra@exemplo.com");
+    registro(outra, DIA, "70.0", null);
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, OUTRO_DIA, "82.4", null);
+
+    listar(fulana, hoje, "de", "2026-09-07", "ate", "2026-09-08")
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[*].data").value(contains("2026-09-08")));
+  }
+
   record Gravado(LocalDate data, BigDecimal peso, @Nullable BigDecimal cintura) {}
+
+  /** A consulta, com os parâmetros em pares de nome e valor. */
+  private ResultActions listar(int idUsuario, LocalDate dataLocal, String... parametros)
+      throws Exception {
+    MockHttpServletRequestBuilder pedido =
+        get("/registros").cookie(acesso(idUsuario)).header("Data-Local", dataLocal.toString());
+    for (int i = 0; i < parametros.length; i += 2) {
+      pedido.param(parametros[i], parametros[i + 1]);
+    }
+    return mvc.perform(pedido);
+  }
 
   private ResultActions registrar(int idUsuario, LocalDate dataLocal, String corpo)
       throws Exception {

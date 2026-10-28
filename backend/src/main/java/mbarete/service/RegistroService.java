@@ -21,6 +21,7 @@ import mbarete.regras.RegraVioladaException;
 import mbarete.repository.FaseRepository;
 import mbarete.repository.RegistroRepository;
 import mbarete.repository.UsuarioRepository;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegistroService {
 
   private static final DateTimeFormatter DATA_EXIBIDA = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+
+  /** A lista sem intervalo, contando hoje (endpoints.md). */
+  private static final int DIAS_DA_LISTA = 90;
 
   /** O de outra pessoa e o que não existe recebem a mesma recusa (RN-50). */
   private static final String NAO_ENCONTRADO = "Não encontrado.";
@@ -106,6 +110,21 @@ public class RegistroService {
   @Transactional
   public void apagar(int idUsuario, LocalDate data) {
     registros.delete(registroDaData(idUsuario, data));
+  }
+
+  /**
+   * Os registros de {@code de} a {@code ate}, as duas pontas inclusive, em ordem de data (RF-14).
+   * Sem {@code ate}, vai até hoje; sem {@code de}, cobre os 90 dias que terminam no {@code ate}, e
+   * sem nenhum dos dois são os últimos 90 dias (endpoints.md).
+   */
+  @Transactional(readOnly = true)
+  public List<RegistroDto> listar(
+      int idUsuario, @Nullable LocalDate de, @Nullable LocalDate ate, LocalDate hoje) {
+    LocalDate fim = ate == null ? hoje : ate;
+    LocalDate inicio = de == null ? fim.minusDays(DIAS_DA_LISTA - 1) : de;
+    return registros.findByUsuarioIdAndDataBetweenOrderByData(idUsuario, inicio, fim).stream()
+        .map(RegistroMapper::paraDto)
+        .toList();
   }
 
   private Registro registroDaData(int idUsuario, LocalDate data) {

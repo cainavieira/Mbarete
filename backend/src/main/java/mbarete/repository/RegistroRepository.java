@@ -12,4 +12,7 @@ public interface RegistroRepository extends JpaRepository<Registro, Integer> {
   Optional<Registro> findByUsuarioIdAndData(int usuarioId, LocalDate data);
 
   List<Registro> findByUsuarioId(int usuarioId);
+
+  List<Registro> findByUsuarioIdAndDataBetweenOrderByData(
+      int usuarioId, LocalDate de, LocalDate ate);
 }

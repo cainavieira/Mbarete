@@ -101,8 +101,8 @@ aposentados estão listados no fim.
   com o intervalo de datas usado no formato da RN-47. (RN-27, RN-33, RN-36,
   RN-37, RN-38)
 - **RF-31** O sistema deve informar dados insuficientes no lugar do veredito
-  enquanto faltar o mínimo de dias ou um dos pesos semanais comparados.
-  (RN-39)
+  enquanto faltar o mínimo de dias ou um dos pesos semanais comparados, e,
+  enquanto faltar o mínimo de dias, a data em que ele se completa. (RN-39)
 - **RF-48** O sistema deve omitir taxa alvo, veredito, barra de progresso e
   faixa de tolerância quando a data não pertencer a fase alguma, mantendo peso
   semanal, variações e cintura. (RN-66)

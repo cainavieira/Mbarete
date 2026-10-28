@@ -204,6 +204,12 @@ cada uma vem nula quando nenhum dia antes de hoje tem peso semanal desde o
 ponto de partida dela (RN-47). Campo ausente e campo nulo são coisas
 diferentes para quem consome.
 
+Em cutting e bulking, enquanto não se completam os 14 dias da RN-39, o
+veredito vem também com a data em que eles se completam, e a tela diz a partir
+de quando o veredito aparece sem conhecer os 14 dias (ADR-0025). Quando o que
+falta é um dos dois pesos semanais comparados, a data vem nula, porque não há
+como prever quando ele vai existir.
+
 O progresso segue o mesmo princípio, com dois estados além do número, que a
 tela trata de forma diferente: dados insuficientes, quando a base da RN-68 não
 existe (UC-08 5c), e não exibido, quando o peso alvo está do lado errado da

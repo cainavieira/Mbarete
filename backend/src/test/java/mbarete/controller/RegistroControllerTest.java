@@ -1,7 +1,9 @@
 package mbarete.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,6 +42,7 @@ class RegistroControllerTest {
   private final LocalDate hoje = LocalDate.now(ZoneOffset.UTC);
 
   private static final LocalDate DIA = LocalDate.of(2026, 9, 7);
+  private static final LocalDate OUTRO_DIA = LocalDate.of(2026, 9, 8);
 
   private final MockMvc mvc;
   private final JdbcClient jdbc;
@@ -269,12 +272,174 @@ class RegistroControllerTest {
     assertThat(diaDaBase(fase)).isEqualTo(LocalDate.of(2026, 9, 10));
   }
 
+  // Pega a edição que não grava, a cintura enviada que se perde, e a data igual
+  // à do caminho tratada como mudança, que daria conflito com o próprio
+  // registro (RN-07)
+  @Test
+  void editaPesoECinturaNaMesmaData() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, DIA, "82.4", "90.0");
+
+    editar(fulana, DIA, hoje, "{\"data\": \"2026-09-07\", \"peso\": 81.5, \"cintura\": 89.0}")
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.peso").value(81.5))
+        .andExpect(jsonPath("$.cintura").value(89.0));
+    assertThat(registros(fulana))
+        .singleElement()
+        .satisfies(
+            registro -> {
+              assertThat(registro.peso()).isEqualByComparingTo("81.5");
+              assertThat(registro.cintura()).isEqualByComparingTo("89.0");
+            });
+  }
+
+  // Pega o registro copiado em vez de movido, a data que não muda, e a cintura
+  // antiga que fica quando a edição vem sem ela (UC-03)
+  @Test
+  void mudarADataMoveORegistro() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, DIA, "82.4", "90.0");
+
+    editar(fulana, DIA, hoje, "{\"data\": \"2026-09-08\", \"peso\": 82.4}")
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data").value("2026-09-08"));
+    assertThat(registros(fulana))
+        .singleElement()
+        .satisfies(
+            registro -> {
+              assertThat(registro.data()).isEqualTo(OUTRO_DIA);
+              assertThat(registro.cintura()).isNull();
+            });
+  }
+
+  // Pega a data ocupada sobrescrita sem a confirmação, e a mensagem com o valor
+  // do registro editado em vez do que já está na data (UC-03 2a)
+  @Test
+  void moverParaDataOcupadaSemSubstituirRespondeConflito() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, DIA, "82.4", null);
+    registro(fulana, OUTRO_DIA, "80.0", null);
+
+    editar(fulana, DIA, hoje, "{\"data\": \"2026-09-08\", \"peso\": 82.4}")
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.erro.codigo").value("REGISTRO_JA_EXISTE"))
+        .andExpect(
+            jsonPath("$.erro.mensagem").value("Já existe registro em 08/09/2026, com 80,0 kg."));
+    assertThat(registros(fulana))
+        .extracting(Gravado::data, registro -> registro.peso().toPlainString())
+        .containsExactly(tuple(DIA, "82.4"), tuple(OUTRO_DIA, "80.0"));
+  }
+
+  // Pega o registro da data nova que não é apagado, e o apagado só depois de
+  // mover, que o banco recusa como dois na mesma data: dois passam a ser um
+  @Test
+  void moverComSubstituirApagaORegistroDaDataNova() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, DIA, "82.4", null);
+    registro(fulana, OUTRO_DIA, "80.0", null);
+
+    editar(fulana, DIA, hoje, "{\"data\": \"2026-09-08\", \"peso\": 82.4, \"substituir\": true}")
+        .andExpect(status().isOk());
+    assertThat(registros(fulana))
+        .singleElement()
+        .satisfies(
+            registro -> {
+              assertThat(registro.data()).isEqualTo(OUTRO_DIA);
+              assertThat(registro.peso()).isEqualByComparingTo("82.4");
+            });
+  }
+
+  // Pega a data futura aceita na edição, e a comparada com o dia do servidor
+  // em vez do dia do dispositivo (RN-04, RN-05, UC-03 2c)
+  @Test
+  void editarParaDepoisDoDiaDoDispositivoERecusado() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, DIA, "82.4", null);
+
+    editar(fulana, DIA, hoje.minusDays(1), "{\"data\": \"%s\", \"peso\": 82.4}".formatted(hoje))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.erro.codigo").value("DATA_FUTURA"));
+    assertThat(registros(fulana))
+        .singleElement()
+        .satisfies(registro -> assertThat(registro.data()).isEqualTo(DIA));
+  }
+
+  // Pega a edição sem conferir o corpo, que o banco recusaria como erro
+  // interno (UC-03 2c)
+  @Test
+  void edicaoComPesoForaDaFaixaERecusada() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, DIA, "82.4", null);
+
+    editar(fulana, DIA, hoje, "{\"data\": \"2026-09-07\", \"peso\": 19.9}")
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.erro.codigo").value("PESO_FORA_DE_FAIXA"));
+  }
+
+  // Pega o registro procurado sem o usuário, que deixaria editar o de outra
+  // pessoa (RN-50)
+  @Test
+  void oRegistroDeOutraPessoaNaoEEncontrado() throws Exception {
+    int outra = usuario("outra@exemplo.com");
+    registro(outra, DIA, "70.0", null);
+    int fulana = usuario("fulana@exemplo.com");
+
+    editar(fulana, DIA, hoje, "{\"data\": \"2026-09-07\", \"peso\": 82.4}")
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.erro.codigo").value("NAO_ENCONTRADO"));
+    assertThat(registros(outra))
+        .singleElement()
+        .satisfies(registro -> assertThat(registro.peso()).isEqualByComparingTo("70.0"));
+  }
+
+  // Pega a data nova procurada sem o usuário, que daria conflito com o
+  // registro de outra pessoa e mostraria o peso dela (RN-50)
+  @Test
+  void moverParaADataDeOutraPessoaNaoConflita() throws Exception {
+    int outra = usuario("outra@exemplo.com");
+    registro(outra, OUTRO_DIA, "70.0", null);
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, DIA, "82.4", null);
+
+    editar(fulana, DIA, hoje, "{\"data\": \"2026-09-08\", \"peso\": 82.4}")
+        .andExpect(status().isOk());
+    assertThat(registros(outra))
+        .singleElement()
+        .satisfies(registro -> assertThat(registro.peso()).isEqualByComparingTo("70.0"));
+  }
+
+  // Pega a edição que não fixa o dia da base: é ela que, movendo o registro,
+  // completa os 4 da janela do dia 3 (RN-68)
+  @Test
+  void aEdicaoTambemFixaODiaDaBase() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    int fase = fase(fulana, LocalDate.of(2026, 9, 1), null);
+    registro(fulana, LocalDate.of(2026, 8, 20), "80.0", null);
+    registro(fulana, LocalDate.of(2026, 9, 1), "80.0", null);
+    registro(fulana, LocalDate.of(2026, 9, 2), "80.0", null);
+    registro(fulana, LocalDate.of(2026, 9, 3), "80.0", null);
+
+    editar(fulana, LocalDate.of(2026, 8, 20), hoje, "{\"data\": \"2026-08-31\", \"peso\": 80.0}")
+        .andExpect(status().isOk());
+    assertThat(diaDaBase(fase)).isEqualTo(LocalDate.of(2026, 9, 3));
+  }
+
   record Gravado(LocalDate data, BigDecimal peso, @Nullable BigDecimal cintura) {}
 
   private ResultActions registrar(int idUsuario, LocalDate dataLocal, String corpo)
       throws Exception {
     return mvc.perform(
         post("/registros")
+            .cookie(acesso(idUsuario))
+            .header("Data-Local", dataLocal.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(corpo));
+  }
+
+  private ResultActions editar(int idUsuario, LocalDate data, LocalDate dataLocal, String corpo)
+      throws Exception {
+    return mvc.perform(
+        patch("/registros/{data}", data)
             .cookie(acesso(idUsuario))
             .header("Data-Local", dataLocal.toString())
             .contentType(MediaType.APPLICATION_JSON)

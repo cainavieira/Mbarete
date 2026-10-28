@@ -9,11 +9,12 @@ import java.time.LocalDate;
 import org.jspecify.annotations.Nullable;
 
 /**
- * O corpo do POST /registros. Peso e cintura com uma casa (RN-02, RN-10), a cintura opcional. O
- * {@code substituir} só vem no segundo envio, depois de a pessoa confirmar (UC-02 4a); ausente, o
- * Jackson recusaria um {@code boolean}, e por isso ele é {@code Boolean}.
+ * O registro como a pessoa o envia, ao criar e ao editar: na edição, é o registro inteiro como ele
+ * fica, e a data diferente da do caminho o move. Peso e cintura com uma casa (RN-02, RN-10), a
+ * cintura opcional. O {@code substituir} só vem no segundo envio, depois de a pessoa confirmar
+ * (UC-02 4a); ausente, o Jackson recusaria um {@code boolean}, e por isso ele é {@code Boolean}.
  */
-public record NovoRegistroDto(
+public record RegistroEnviadoDto(
     @NotNull LocalDate data,
     @NotNull
         @DecimalMin(value = "20.0", message = "PESO_FORA_DE_FAIXA")

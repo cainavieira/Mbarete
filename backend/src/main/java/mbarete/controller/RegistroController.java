@@ -3,12 +3,14 @@ package mbarete.controller;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import mbarete.config.Hoje;
-import mbarete.dto.NovoRegistroDto;
 import mbarete.dto.RegistroDto;
+import mbarete.dto.RegistroEnviadoDto;
 import mbarete.service.RegistroService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +33,16 @@ public class RegistroController {
   public RegistroDto registrar(
       @AuthenticationPrincipal Jwt token,
       @Hoje LocalDate hoje,
-      @Valid @RequestBody NovoRegistroDto novo) {
+      @Valid @RequestBody RegistroEnviadoDto novo) {
     return registros.registrar(ContaDoToken.id(token), novo, hoje);
+  }
+
+  @PatchMapping("/{data}")
+  public RegistroDto editar(
+      @AuthenticationPrincipal Jwt token,
+      @PathVariable LocalDate data,
+      @Hoje LocalDate hoje,
+      @Valid @RequestBody RegistroEnviadoDto editado) {
+    return registros.editar(ContaDoToken.id(token), data, editado, hoje);
   }
 }

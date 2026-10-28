@@ -9,8 +9,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
-import mbarete.dto.NovoRegistroDto;
 import mbarete.dto.RegistroDto;
+import mbarete.dto.RegistroEnviadoDto;
 import mbarete.entity.Fase;
 import mbarete.entity.Registro;
 import mbarete.entity.Usuario;
@@ -29,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegistroService {
 
   private static final DateTimeFormatter DATA_EXIBIDA = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+
+  /** O de outra pessoa e o que não existe recebem a mesma recusa (RN-50). */
+  private static final String NAO_ENCONTRADO = "Não encontrado.";
 
   private final RegistroRepository registros;
   private final FaseRepository fases;
@@ -51,7 +54,7 @@ public class RegistroService {
    * dela só é substituído no segundo envio, com a confirmação (RN-01, endpoints.md).
    */
   @Transactional
-  public RegistroDto registrar(int idUsuario, NovoRegistroDto novo, LocalDate hoje) {
+  public RegistroDto registrar(int idUsuario, RegistroEnviadoDto novo, LocalDate hoje) {
     recusarDataFutura(novo.data(), hoje);
     Instant agora = Instant.now(relogio);
     Optional<Registro> existente = registros.findByUsuarioIdAndData(idUsuario, novo.data());
@@ -64,16 +67,45 @@ public class RegistroService {
       registro = existente.get();
       registro.substituir(novo.peso(), novo.cintura(), agora);
     } else {
-      throw new RegraVioladaException(Recusa.REGISTRO_JA_EXISTE, "data", jaExiste(existente.get()));
+      throw conflito(existente.get());
     }
     fixarDiasDaBase(idUsuario, hoje);
     return RegistroMapper.paraDto(registro);
   }
 
   /**
-   * O registro novo pode dar o primeiro peso semanal a uma fase, inclusive a uma que não cobre a
-   * data dele, porque a janela olha 7 dias para trás. Fase que já tem o dia da base não muda
-   * (RN-68).
+   * Edita o registro da data, inclusive movendo-o para outra (UC-03). A data nova ocupada responde
+   * como no registro, e a confirmação apaga o registro dela: dois registros passam a ser um
+   * (endpoints.md).
+   */
+  @Transactional
+  public RegistroDto editar(
+      int idUsuario, LocalDate data, RegistroEnviadoDto editado, LocalDate hoje) {
+    recusarDataFutura(editado.data(), hoje);
+    Registro registro =
+        registros
+            .findByUsuarioIdAndData(idUsuario, data)
+            .orElseThrow(() -> new RegraVioladaException(Recusa.NAO_ENCONTRADO, NAO_ENCONTRADO));
+    if (!editado.data().equals(data)) {
+      Optional<Registro> ocupante = registros.findByUsuarioIdAndData(idUsuario, editado.data());
+      if (ocupante.isPresent()) {
+        if (!Boolean.TRUE.equals(editado.substituir())) {
+          throw conflito(ocupante.get());
+        }
+        registros.delete(ocupante.get());
+        // O Hibernate apagaria só depois de mover, e o banco recusaria dois na mesma data
+        registros.flush();
+      }
+    }
+    registro.editar(editado.data(), editado.peso(), editado.cintura());
+    fixarDiasDaBase(idUsuario, hoje);
+    return RegistroMapper.paraDto(registro);
+  }
+
+  /**
+   * O registro gravado ou editado pode dar o primeiro peso semanal a uma fase, inclusive a uma que
+   * não cobre a data dele, porque a janela olha 7 dias para trás. Fase que já tem o dia da base não
+   * muda (RN-68).
    */
   private void fixarDiasDaBase(int idUsuario, LocalDate hoje) {
     List<Fase> semBase = fases.findByUsuarioIdAndBaseDataIsNull(idUsuario);
@@ -100,14 +132,17 @@ public class RegistroService {
   }
 
   /**
-   * O valor gravado, que o diálogo de confirmação mostra (UC-02 4a), escrito como a tela escreve
-   * (RN-62, RN-63).
+   * A data já tem registro, e a mensagem leva o valor gravado, que o diálogo de confirmação mostra
+   * (UC-02 4a), escrito como a tela escreve (RN-62, RN-63).
    */
-  private static String jaExiste(Registro registro) {
-    return "Já existe registro em "
-        + DATA_EXIBIDA.format(registro.data())
-        + ", com "
-        + registro.peso().toPlainString().replace('.', ',')
-        + " kg.";
+  private static RegraVioladaException conflito(Registro ocupante) {
+    return new RegraVioladaException(
+        Recusa.REGISTRO_JA_EXISTE,
+        "data",
+        "Já existe registro em "
+            + DATA_EXIBIDA.format(ocupante.data())
+            + ", com "
+            + ocupante.peso().toPlainString().replace('.', ',')
+            + " kg.");
   }
 }

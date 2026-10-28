@@ -64,4 +64,11 @@ public class Registro {
     this.cintura = cintura;
     this.criadoEm = criadoEm;
   }
+
+  /** A edição troca o registro inteiro, e a data nova o move (RN-07, endpoints.md). */
+  public void editar(LocalDate data, BigDecimal peso, BigDecimal cintura) {
+    this.data = data;
+    this.peso = peso;
+    this.cintura = cintura;
+  }
 }

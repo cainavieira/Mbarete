@@ -37,7 +37,7 @@ documento está datado.
 | `POST` | `/registros` | cria registro | RF-07, RF-08, RF-09 |
 | `PATCH` | `/registros/{data}` | edita peso, cintura ou a própria data | RF-11 |
 | `DELETE` | `/registros/{data}` | apaga registro | RF-12 |
-| `GET` | `/fases` | lista todas, marcando a corrente quando existir | RF-23 |
+| `GET` | `/fases` | lista todas, marcando a corrente quando existir, com quantos registros cada uma tem | RF-23, RF-22 |
 | `POST` | `/fases` | cria fase, com data de fim opcional; sem ela, encerra a fase em aberto que começou antes da nova | RF-15, RF-19 |
 | `PATCH` | `/fases/{id}` | edita tipo, nível, taxa alvo, peso alvo, início e fim; mudar o início move o fim no futuro da fase anterior | RF-20, RF-19 |
 | `POST` | `/fases/{id}/encerramento` | encerra a fase corrente | RF-45 |
@@ -219,6 +219,13 @@ depende de fase (RN-66). Isso não é estado de erro: é o que acontece em conta
 nova, depois de encerrar uma fase, e em todo o passado importado.
 
 Fase futura cadastrada não aparece aqui, apenas em `/fases` (RN-69).
+
+### A lista de fases traz a contagem de registros
+
+O UC-07 informa, antes de apagar, quantos registros perdem o rótulo. A
+contagem vem em cada fase do `GET /fases`, e não da tela contando o
+`GET /registros` sobre o intervalo: saber que registro é de qual fase é a
+RN-23, e a regra fica numa casa só (ADR-0025).
 
 ### A taxa alvo trafega sem sinal nas rotas de fase
 

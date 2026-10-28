@@ -2,11 +2,15 @@ package mbarete.controller;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import jakarta.servlet.http.Cookie;
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import mbarete.ChaveDeTeste;
 import mbarete.TestcontainersConfiguration;
@@ -16,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +69,41 @@ class ContaControllerTest {
     mvc.perform(get("/conta").cookie(acesso(9999)))
         .andExpect(status().isUnauthorized())
         .andExpect(jsonPath("$.erro.codigo").value("NAO_AUTENTICADO"));
+  }
+
+  // Pega o registro de outra pessoa no arquivo, a ordem em que o banco devolve,
+  // e o arquivo aberto no navegador em vez de baixado (UC-11)
+  @Test
+  void exportaOHistoricoDaPessoa() throws Exception {
+    int outra = usuario("outra@exemplo.com", "Outra Pessoa", null);
+    registro(outra, LocalDate.of(2026, 9, 3), "70.0", null);
+    int fulana = usuario("fulana@exemplo.com", "Fulana de Tal", null);
+    registro(fulana, LocalDate.of(2026, 9, 2), "85.6", "90.0");
+    registro(fulana, LocalDate.of(2026, 9, 1), "85.7", null);
+
+    mvc.perform(get("/conta/exportar").cookie(acesso(fulana)))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("text/csv;charset=UTF-8"))
+        .andExpect(
+            header()
+                .string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"historico.csv\""))
+        .andExpect(
+            content()
+                .string(
+                    """
+                    data;peso;cintura
+                    2026-09-01;85.7;
+                    2026-09-02;85.6;90.0
+                    """));
+  }
+
+  private void registro(int idUsuario, LocalDate data, String peso, @Nullable String cintura) {
+    jdbc.sql(
+            "insert into registro (usuario_id, data, peso, cintura, criado_em)"
+                + " values (?, ?, ?, ?, now())")
+        .params(
+            idUsuario, data, new BigDecimal(peso), cintura == null ? null : new BigDecimal(cintura))
+        .update();
   }
 
   private int usuario(String email, String nome, @Nullable String foto) {

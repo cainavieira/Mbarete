@@ -9,6 +9,7 @@ import mbarete.service.RegistroService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,5 +45,11 @@ public class RegistroController {
       @Hoje LocalDate hoje,
       @Valid @RequestBody RegistroEnviadoDto editado) {
     return registros.editar(ContaDoToken.id(token), data, editado, hoje);
+  }
+
+  @DeleteMapping("/{data}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void apagar(@AuthenticationPrincipal Jwt token, @PathVariable LocalDate data) {
+    registros.apagar(ContaDoToken.id(token), data);
   }
 }

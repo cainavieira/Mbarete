@@ -82,10 +82,7 @@ public class RegistroService {
   public RegistroDto editar(
       int idUsuario, LocalDate data, RegistroEnviadoDto editado, LocalDate hoje) {
     recusarDataFutura(editado.data(), hoje);
-    Registro registro =
-        registros
-            .findByUsuarioIdAndData(idUsuario, data)
-            .orElseThrow(() -> new RegraVioladaException(Recusa.NAO_ENCONTRADO, NAO_ENCONTRADO));
+    Registro registro = registroDaData(idUsuario, data);
     if (!editado.data().equals(data)) {
       Optional<Registro> ocupante = registros.findByUsuarioIdAndData(idUsuario, editado.data());
       if (ocupante.isPresent()) {
@@ -100,6 +97,21 @@ public class RegistroService {
     registro.editar(editado.data(), editado.peso(), editado.cintura());
     fixarDiasDaBase(idUsuario, hoje);
     return RegistroMapper.paraDto(registro);
+  }
+
+  /**
+   * Apaga o registro da data, sem exclusão lógica (RN-08). O que dependia dele é recalculado na
+   * leitura, e o dia da base que ele ajudou a fixar fica onde está (RN-68).
+   */
+  @Transactional
+  public void apagar(int idUsuario, LocalDate data) {
+    registros.delete(registroDaData(idUsuario, data));
+  }
+
+  private Registro registroDaData(int idUsuario, LocalDate data) {
+    return registros
+        .findByUsuarioIdAndData(idUsuario, data)
+        .orElseThrow(() -> new RegraVioladaException(Recusa.NAO_ENCONTRADO, NAO_ENCONTRADO));
   }
 
   /**

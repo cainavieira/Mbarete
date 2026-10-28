@@ -3,6 +3,7 @@ package mbarete.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -422,6 +423,33 @@ class RegistroControllerTest {
     editar(fulana, LocalDate.of(2026, 8, 20), hoje, "{\"data\": \"2026-08-31\", \"peso\": 80.0}")
         .andExpect(status().isOk());
     assertThat(diaDaBase(fase)).isEqualTo(LocalDate.of(2026, 9, 3));
+  }
+
+  // Pega o registro que não é apagado, e a exclusão que leva outros registros
+  // da pessoa junto (RN-08)
+  @Test
+  void apagaSoORegistroDaData() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, DIA, "82.4", null);
+    registro(fulana, OUTRO_DIA, "80.0", null);
+
+    mvc.perform(delete("/registros/{data}", DIA).cookie(acesso(fulana)))
+        .andExpect(status().isNoContent());
+    assertThat(registros(fulana)).extracting(Gravado::data).containsExactly(OUTRO_DIA);
+  }
+
+  // Pega o registro procurado sem o usuário, que apagaria o de outra pessoa
+  // (RN-50), e a data sem registro respondida como apagada
+  @Test
+  void oRegistroDeOutraPessoaNaoEEncontradoNemApagado() throws Exception {
+    int outra = usuario("outra@exemplo.com");
+    registro(outra, DIA, "70.0", null);
+    int fulana = usuario("fulana@exemplo.com");
+
+    mvc.perform(delete("/registros/{data}", DIA).cookie(acesso(fulana)))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.erro.codigo").value("NAO_ENCONTRADO"));
+    assertThat(registros(outra)).hasSize(1);
   }
 
   record Gravado(LocalDate data, BigDecimal peso, @Nullable BigDecimal cintura) {}

@@ -39,8 +39,9 @@ aposentados estão listados no fim.
   existente. (RN-08)
 - **RF-13** O sistema deve recusar valor fora de faixa e data futura,
   informando qual campo foi recusado e qual é o limite. (RN-03, RN-05, RN-11)
-- **RF-14** O sistema deve listar os registros do AT-01 em ordem cronológica,
-  recortados por intervalo de datas, com data, peso e cintura quando houver.
+- **RF-14** O sistema deve listar os registros do AT-01 do mais recente para
+  o mais antigo, recortados por intervalo de datas, com data, peso e cintura
+  quando houver.
 
 ## Fase
 

@@ -321,6 +321,8 @@ aí o caminho é o da RN-70. (RN-70)
 - **2c** O peso alvo da fase está do lado errado da base: ela não é marcada
   como atingida, e a lista indica que o alvo estava do lado errado. (RN-40,
   RN-44)
+- **2d** A fase encerrada tem menos de dois registros: não há variação total,
+  e a lista diz isso em vez de omiti-la. (RN-40)
 
 ## UC-10 Importar histórico em CSV
 

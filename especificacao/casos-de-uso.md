@@ -187,7 +187,8 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   início de uma fase colada na anterior, encurta-se antes a anterior. (RF-46,
   RN-19)
 - **2c** O tipo muda para manutenção: peso alvo, nível e taxa alvo deixam de
-  existir para aquela fase e seus valores são descartados. (RF-24, RN-33)
+  existir para aquela fase e seus valores são descartados, e a tela avisa
+  isso antes de salvar. (RF-24, RN-33)
 - **2d** O tipo muda de manutenção para cutting ou bulking: o sistema passa a
   exigir nível, taxa alvo e peso alvo antes de aceitar. (RN-28, RN-29, RN-41)
 - **2e** A taxa alvo muda de unidade: o valor é reinterpretado na nova
@@ -204,8 +205,9 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   (RF-18, RN-30)
 - **2i** A data de início muda, e a fase anterior tem fim no futuro, na
   véspera desta: esse fim vai para a nova véspera, inclusive quando ela é hoje
-  ou já passou, e os registros desses dias mudam de fase. Antecipar para o
-  início da fase anterior, ou antes, é recusado. (RF-19, RN-67)
+  ou já passou, e os registros desses dias mudam de fase; a tela avisa isso
+  antes de salvar. Antecipar para o início da fase anterior, ou antes, é
+  recusado. (RF-19, RN-67)
 - **2j** O tipo muda entre cutting e bulking: a taxa alvo passa ao padrão do
   mesmo nível no tipo novo, com valor, unidade e sinal dele; no personalizado,
   o sistema exige o valor de novo antes de aceitar. O peso alvo continua, e
@@ -232,7 +234,8 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   (RN-27, RN-66)
 - **3b** A fase anterior à apagada tem fim no futuro, na véspera dela: esse
   fim vai para a véspera da próxima fase; se não houver próxima, ele some, e a
-  anterior volta a ser a fase em aberto. (RF-19, RN-67)
+  anterior volta a ser a fase em aberto. A confirmação diz isso antes. (RF-19,
+  RN-67)
 
 **Pós-condição:** nenhum registro é perdido. A operação é reversível criando
 fase sobre o mesmo intervalo, salvo quando a fase apagada tinha fim no futuro:

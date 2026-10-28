@@ -195,12 +195,17 @@ motivo.
   que tem data de fim anterior a hoje; a corrente com fim agendado segue
   corrente, com veredito, até o último dia. A fase encerrada apresenta
   variação total, duração e se o peso alvo foi atingido, sem receber veredito.
-  Quando o peso alvo está do lado errado da base, ela não é marcada como
-  atingida, e o histórico indica isso, pelo mesmo motivo da RN-44. Quando a
-  variação total dessa fase foi calculada sobre menos pontos que o mínimo da
-  RN-16, o número é exibido com indicação disso, em vez de omitido: variação
-  sobre poucos pontos informa mais que variação ausente, desde que a pessoa
-  saiba qual das duas está olhando.
+  A variação total vai da base (RN-68) ao peso semanal do último dia da fase
+  que o tiver, e vem com as duas datas, como as da RN-47. O alvo conta como
+  atingido quando o peso semanal o alcançou em algum dia da fase, e o
+  histórico mostra o primeiro desses dias: a variação diz onde a fase
+  terminou, e o alvo, o que ela alcançou no caminho. Quando o peso alvo está
+  do lado errado da base, ela não é marcada como atingida, e o histórico
+  indica isso, pelo mesmo motivo da RN-44. Sem a base, a variação vai do
+  primeiro ao último registro da fase e é exibida com indicação de poucos
+  pontos, em vez de omitida, e o alvo fica sem avaliação: variação sobre
+  poucos pontos informa mais que variação ausente, desde que a pessoa saiba
+  qual das duas está olhando. Com menos de dois registros, não há variação.
 
 ## Peso alvo e progresso
 

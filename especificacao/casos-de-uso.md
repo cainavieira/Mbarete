@@ -313,9 +313,9 @@ aí o caminho é o da RN-70. (RN-70)
 
 - **2a** Nenhuma fase encerrada ainda: a lista informa isso, sem convite a
   ação, porque encerrar fase não é objetivo.
-- **2b** A fase encerrada tinha menos registros que o mínimo: a variação total
-  é exibida com a marca de que foi calculada sobre poucos pontos, em vez de
-  omitida.
+- **2b** A fase encerrada não tem a base da RN-68: a variação total vai do
+  primeiro ao último registro, com a marca de que foi calculada sobre poucos
+  pontos, em vez de omitida, e o alvo fica sem avaliação. (RN-40, RN-68)
 - **2c** O peso alvo da fase está do lado errado da base: ela não é marcada
   como atingida, e a lista indica que o alvo estava do lado errado. (RN-40,
   RN-44)

@@ -128,10 +128,11 @@ Atores em `atores.md`, requisitos em `requisitos-funcionais.md`, regras em
   taxa alvo zero, com a faixa de tolerância de 1% em volta da base. (RF-24,
   RN-33)
 - **2a** A data de início é passada ou hoje, cai dentro da fase **em aberto**
-  depois do início dela, e a fase nova não tem data de fim: aceito, a fase em
-  aberto é encerrada na véspera, e a tela avisa isso antes da confirmação,
-  como no 2d. É o caso comum, de quem começou o ciclo antes de cadastrar.
-  (RF-19, RN-19, RN-22)
+  depois do início dela, e a fase nova não tem data de fim: aceito. Antes de
+  gravar, o sistema diz qual fase em aberto termina e em que dia, a véspera, e
+  só a encerra depois de o usuário confirmar; sem a confirmação, nada é
+  gravado. É o caso comum, de quem começou o ciclo antes de cadastrar. (RF-19,
+  RN-19, RN-22)
 - **2b** A data de início cai dentro de fase que já tem data de fim: recusado
   por sobreposição. (RF-46, RN-19)
 - **2c** A fase nova cabe inteira num período **sem fase**: aceito, e é assim
@@ -139,8 +140,7 @@ Atores em `atores.md`, requisitos em `requisitos-funcionais.md`, regras em
   data de fim. (RN-57)
 - **2d** A data de início é futura: aceito. A fase aparece na lista de fases e
   não entra no acompanhamento até começar. Se houver fase em aberto, ela é
-  encerrada na véspera, e a tela avisa isso antes da confirmação. (RN-22,
-  RN-69)
+  encerrada na véspera, com o aviso e a confirmação do 2a. (RN-22, RN-69)
 - **2e** A data de fim é informada e a fase invade a fase em aberto: recusado.
   Para classificar um período dentro do ciclo atual, a pessoa encerra a fase
   em aberto antes. Se o período começa no mesmo dia da fase em aberto,
@@ -205,9 +205,10 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   (RF-18, RN-30)
 - **2i** A data de início muda, e a fase anterior tem fim no futuro, na
   véspera desta: esse fim vai para a nova véspera, inclusive quando ela é hoje
-  ou já passou, e os registros desses dias mudam de fase; a tela avisa isso
-  antes de salvar. Antecipar para o início da fase anterior, ou antes, é
-  recusado. (RF-19, RN-67)
+  ou já passou, e os registros desses dias mudam de fase. Antes de gravar, o
+  sistema diz para que dia esse fim vai, e só o move depois de o usuário
+  confirmar. Antecipar para o início da fase anterior, ou antes, é recusado.
+  (RF-19, RN-67)
 - **2j** O tipo muda entre cutting e bulking: a taxa alvo passa ao padrão do
   mesmo nível no tipo novo, com valor, unidade e sinal dele; no personalizado,
   o sistema exige o valor de novo antes de aceitar. O peso alvo continua, e
@@ -234,8 +235,8 @@ fase, e pode não haver fase corrente. (RN-19, RN-20, RN-27)
   (RN-27, RN-66)
 - **3b** A fase anterior à apagada tem fim no futuro, na véspera dela: esse
   fim vai para a véspera da próxima fase; se não houver próxima, ele some, e a
-  anterior volta a ser a fase em aberto. A confirmação diz isso antes. (RF-19,
-  RN-67)
+  anterior volta a ser a fase em aberto. A confirmação do passo 2 diz isso
+  antes, com a data para onde o fim vai. (RF-19, RF-22, RN-67)
 
 **Pós-condição:** nenhum registro é perdido. A operação é reversível criando
 fase sobre o mesmo intervalo, salvo quando a fase apagada tinha fim no futuro:
@@ -437,7 +438,7 @@ segundos para um grupo pequeno.
 
 - **2a** A data informada é futura: recusada. Para que a fase termine numa data
   futura, o caminho é criar a fase seguinte começando no dia seguinte, e a
-  RN-22 encerra esta sozinha. (RN-67)
+  RN-22 encerra esta, com a confirmação do UC-05 2d. (RN-67)
 - **2b** A data informada é anterior ao início da fase: recusada. (RN-18)
 - **3a** Existem registros depois da data de encerramento: eles permanecem e
   passam a não ter fase. (RN-20)

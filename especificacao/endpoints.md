@@ -37,9 +37,9 @@ documento está datado.
 | `POST` | `/registros` | cria registro | RF-07, RF-08, RF-09 |
 | `PATCH` | `/registros/{data}` | edita peso, cintura ou a própria data | RF-11 |
 | `DELETE` | `/registros/{data}` | apaga registro | RF-12 |
-| `GET` | `/fases` | lista todas, marcando a corrente quando existir, com quantos registros cada uma tem | RF-23, RF-22 |
-| `POST` | `/fases` | cria fase, com data de fim opcional; sem ela, encerra a fase em aberto que começou antes da nova | RF-15, RF-19 |
-| `PATCH` | `/fases/{id}` | edita tipo, nível, taxa alvo, peso alvo, início e fim; mudar o início move o fim no futuro da fase anterior | RF-20, RF-19 |
+| `GET` | `/fases` | lista todas, marcando a corrente quando existir, com quantos registros cada uma tem e o que apagá-la faz com o fim da anterior | RF-23, RF-22 |
+| `POST` | `/fases` | cria fase, com data de fim opcional; sem ela, encerra a fase em aberto que começou antes da nova, depois da confirmação | RF-15, RF-19 |
+| `PATCH` | `/fases/{id}` | edita tipo, nível, taxa alvo, peso alvo, início e fim; mudar o início move o fim no futuro da fase anterior, depois da confirmação | RF-20, RF-19 |
 | `POST` | `/fases/{id}/encerramento` | encerra a fase corrente | RF-45 |
 | `DELETE` | `/fases/{id}` | apaga a fase; os registros permanecem sem fase; o fim no futuro da fase anterior vai para a véspera da próxima, ou some | RF-22, RF-19 |
 | `GET` | `/niveis` | a taxa alvo padrão de cada nível, para cutting e bulking | RF-16 |
@@ -147,6 +147,32 @@ ação do usuário.
 Recusadas duas alternativas: consultar a data antes de abrir o formulário, que
 gasta uma ida a mais em todo registro e tem condição de corrida entre a consulta
 e a gravação; e substituir direto avisando depois, que contraria a RN-01.
+
+### Mudar outra fase também pede confirmação por conflito
+
+`POST /fases` que encerraria a fase em aberto (RN-22) responde **409** com
+`FASE_EM_ABERTO_SERA_ENCERRADA`, e a mensagem diz qual fase termina e quando:
+"O cutting iniciado em 01/09/2026 termina em 14/10/2026.". O frontend abre o
+diálogo com essa mensagem, e o segundo envio repete o POST com
+`"encerrarEmAberto": true`.
+
+Do mesmo jeito, `PATCH /fases/{id}` que mudaria o início de uma fase cuja
+anterior tem fim no futuro (RN-67) responde 409 com
+`FIM_DA_ANTERIOR_SERA_MOVIDO`, e a mensagem diz para onde esse fim vai: "O
+cutting iniciado em 01/09/2026 passa a terminar em 09/11/2026.". O segundo
+envio leva `"moverFimDaAnterior": true`.
+
+O motivo é o da substituição de registro: só custa uma ida a mais quando há
+efeito, e não tem a condição de corrida da consulta antes. E saber se a fase
+nova encerra a em aberto, ou se o fim da anterior acompanha a editada, é a
+RN-22 e a RN-67: a tela que deduzisse isso do `GET /fases` teria a regra numa
+segunda casa (ADR-0025).
+
+Apagar não usa o conflito, porque a confirmação da exclusão é pedida sempre
+(UC-07). O efeito vem em cada fase do `GET /fases`, ao lado da contagem de
+registros, no campo `aoApagar`: nulo quando apagar a fase não mexe em outra;
+senão, o identificador da anterior e a data de fim que ela passa a ter, nula
+quando ela volta a ser a fase em aberto.
 
 ### A exclusão de conta é um POST, não um DELETE
 
@@ -307,6 +333,6 @@ tela de entrada.
 | 400 | valor recusado por regra (faixa, data futura no registro, data de fim futura ou anterior ao início, data local ausente ou inválida, arquivo de importação sem as colunas obrigatórias ou com separador desconhecido, e-mail digitado na exclusão de conta que não é o da conta) |
 | 401 | sem token de acesso válido; na renovação, sem token de renovação válido |
 | 404 | registro ou fase que não existe, ou que é de outro usuário, sem distinguir os dois; também rota que não existe e método que a rota não aceita |
-| 409 | conflito de data em registro, sobreposição de fase que a RN-19 recusa, ou encerramento de fase que não é a corrente |
+| 409 | conflito de data em registro, sobreposição de fase que a RN-19 recusa, encerramento de fase que não é a corrente, ou fase criada ou editada que mudaria outra fase sem a confirmação |
 | 422 | corpo malformado, antes de chegar a regra de negócio |
 | 500 | erro inesperado, sem a mensagem da exceção (RNF-13) |

@@ -60,11 +60,14 @@ aposentados estão listados no fim.
   uma fase nova, sem data de fim, que a invada começando depois dela. Enquanto
   esse fim está no futuro, ele acompanha a nova: muda com o início dela e, se
   ela for apagada, vai para a véspera da próxima fase, ou some, se não houver
-  próxima. (RN-19, RN-22, RN-67)
+  próxima. Antes de encerrar a fase em aberto ou de mover esse fim com o
+  início da nova, o sistema deve dizer qual fase muda e para que data, e
+  pedir a confirmação do AT-01. (RN-19, RN-22, RN-67)
 - **RF-20** O sistema deve permitir que o AT-01 edite as datas de início e de
   fim de uma fase. (RN-24)
 - **RF-22** O sistema deve permitir que o AT-01 apague qualquer fase,
-  informando antes quantos registros perderão o rótulo do período. (RN-70)
+  informando antes quantos registros perderão o rótulo do período e, quando a
+  anterior tiver fim no futuro, para onde esse fim vai. (RN-67, RN-70)
 - **RF-23** O sistema deve apresentar as fases encerradas com variação total,
   duração e se o peso alvo foi atingido, salvo quando o alvo está do lado
   errado da base. (RN-40, RN-44)

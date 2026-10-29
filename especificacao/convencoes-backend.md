@@ -97,6 +97,8 @@ Derivado das regras. Todo código novo entra aqui junto com a regra que o gera.
 | `TAXA_ALVO_AUSENTE` | cutting ou bulking sem taxa alvo | RN-29 |
 | `TAXA_ALVO_INVALIDA` | taxa alvo zero ou negativa; o sinal vem do tipo | RN-29 |
 | `FASE_SOBREPOSTA` | a fase invade outra num caso que a RN-19 recusa | RN-19 |
+| `FASE_EM_ABERTO_SERA_ENCERRADA` | a fase nova encerraria a fase em aberto, e o pedido veio sem `encerrarEmAberto` | RN-22 |
+| `FIM_DA_ANTERIOR_SERA_MOVIDO` | mudar o início da fase moveria o fim no futuro da anterior, e o pedido veio sem `moverFimDaAnterior` | RN-67 |
 | `FASE_NAO_CORRENTE` | encerramento pedido para fase que não é a corrente | RN-27 |
 | `DATA_FIM_FUTURA` | data de fim no futuro, ao criar, editar ou encerrar fase | RN-67 |
 | `DATA_FIM_ANTES_DO_INICIO` | data de fim anterior à de início | RN-18 |
@@ -111,9 +113,10 @@ Derivado das regras. Todo código novo entra aqui junto com a regra que o gera.
 | `CORPO_MALFORMADO` | corpo que não vira o DTO (JSON quebrado ou valor sem o tipo do campo), anotação do Bean Validation sem código, parâmetro de consulta com tipo errado, ou outro pedido que o Spring recusa sozinho; responde 422 | sem regra |
 | `ERRO_INTERNO` | erro inesperado; a resposta e o log não levam a mensagem da exceção, que pode trazer peso ou cintura; responde 500 | RNF-13 |
 
-`REGISTRO_JA_EXISTE` é o único da lista que não é recusada final: ele alimenta a
-confirmação de substituição do UC-02. O mecanismo exato (resposta de conflito
-ou verificação prévia) é decidido em `endpoints.md`.
+`REGISTRO_JA_EXISTE`, `FASE_EM_ABERTO_SERA_ENCERRADA` e
+`FIM_DA_ANTERIOR_SERA_MOVIDO` não são recusa final: alimentam a confirmação do
+UC-02, do UC-05 e do UC-06, e o segundo envio, com a confirmação, grava. O
+mecanismo, a resposta de conflito, está em `endpoints.md`.
 
 ## Onde mora o quê
 

@@ -65,9 +65,9 @@ function Conteudo({ dados }: { dados: Dados }) {
     // linha absorve a altura dele, para os cartões da esquerda não se afastarem
     <div className="flex flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:grid-rows-[repeat(5,auto)_1fr] lg:items-start lg:gap-x-5 lg:gap-y-4">
       <PesoSemanal dados={dados} />
-      {progresso?.atingido && fase?.pesoAlvo != null && <AlvoAtingido alvo={fase.pesoAlvo} />}
+      {progresso?.atingido && fase?.pesoAlvo != null && <AlvoAtingido alvo={fase.pesoAlvo} faseId={fase.id} />}
       {progresso !== null && fase?.pesoAlvo != null && (
-        <Progresso progresso={progresso} alvo={fase.pesoAlvo} />
+        <Progresso progresso={progresso} alvo={fase.pesoAlvo} faseId={fase.id} />
       )}
       <GraficoEvolucao
         serie={dados.serie}
@@ -218,7 +218,7 @@ function Selo({
   )
 }
 
-function AlvoAtingido({ alvo }: { alvo: number }) {
+function AlvoAtingido({ alvo, faseId }: { alvo: number; faseId: number }) {
   return (
     <div
       role="status"
@@ -228,7 +228,7 @@ function AlvoAtingido({ alvo }: { alvo: number }) {
       <div className="flex flex-col gap-0.5">
         <strong className="tabular-nums">O peso semanal chegou ao peso alvo de {formatarPeso(alvo)} kg.</strong>
         <span className="text-muted-foreground">A fase continua aberta até você encerrá-la.</span>
-        <Link to="/fases" className={cn(LINK, 'mt-1 self-start')}>
+        <Link to={`/fases/${faseId}`} className={cn(LINK, 'mt-1 self-start')}>
           Encerrar a fase
         </Link>
       </div>
@@ -236,7 +236,13 @@ function AlvoAtingido({ alvo }: { alvo: number }) {
   )
 }
 
-function Progresso({ progresso, alvo }: { progresso: Esquema<'ProgressoDto'>; alvo: number }) {
+interface PropsDoProgresso {
+  progresso: Esquema<'ProgressoDto'>
+  alvo: number
+  faseId: number
+}
+
+function Progresso({ progresso, alvo, faseId }: PropsDoProgresso) {
   const { estado, percentual } = progresso
 
   return (
@@ -271,7 +277,7 @@ function Progresso({ progresso, alvo }: { progresso: Esquema<'ProgressoDto'>; al
         <p className="text-sm text-muted-foreground">
           A barra fica escondida enquanto o peso alvo estiver do lado errado do peso de partida da
           fase.{' '}
-            <Link to="/fases" className={LINK}>
+            <Link to={`/fases/${faseId}`} className={LINK}>
             Editar a fase
           </Link>
         </p>

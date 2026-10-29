@@ -47,11 +47,7 @@ export function DialogoConfirmacao({
         <AlertDialogFooter>
           <AlertDialogAction
             onClick={() => responder(true)}
-            className={
-              apaga
-                ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
-                : undefined
-            }
+            variant={apaga ? 'destructive' : 'default'}
           >
             {confirmar}
           </AlertDialogAction>

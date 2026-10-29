@@ -29,6 +29,44 @@ function invalidarOQueDependeDasFases(cliente: QueryClient): Promise<void> {
   ]).then(() => undefined)
 }
 
+/**
+ * Edita a fase inteira (UC-06); mudar o início que move o fim no futuro da
+ * anterior volta 409 até o envio com a confirmação (RN-67).
+ */
+export function useEditarFase(id: number) {
+  const cliente = useQueryClient()
+  return useMutation({
+    mutationFn: (fase: FaseEnviada) =>
+      chamar<Esquema<'FaseDto'>>(`/fases/${id}`, { metodo: 'PATCH', corpo: fase }),
+    onSuccess: () => invalidarOQueDependeDasFases(cliente),
+  })
+}
+
+/** Encerra a fase corrente na data dada (UC-14). */
+export function useEncerrarFase(id: number) {
+  const cliente = useQueryClient()
+  return useMutation({
+    mutationFn: (dataFim: string) =>
+      chamar<Esquema<'FaseDto'>>(`/fases/${id}/encerramento`, {
+        metodo: 'POST',
+        corpo: { dataFim },
+      }),
+    onSuccess: () => invalidarOQueDependeDasFases(cliente),
+  })
+}
+
+/** Apaga a fase; os registros ficam, sem o rótulo do período (UC-07, RN-70). */
+export function useApagarFase(id: number) {
+  const cliente = useQueryClient()
+  return useMutation({
+    mutationFn: () => chamar<void>(`/fases/${id}`, { metodo: 'DELETE' }),
+    // Sem esperar: a tela da fase apagada sai antes de a lista voltar sem ela
+    onSuccess: () => {
+      void invalidarOQueDependeDasFases(cliente)
+    },
+  })
+}
+
 /** Cria a fase (UC-05); a que encerraria a em aberto volta 409 até o envio com a confirmação. */
 export function useCriarFase() {
   const cliente = useQueryClient()

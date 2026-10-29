@@ -3,6 +3,7 @@ import { Casca } from '@/componentes/Casca'
 import { Toaster } from '@/componentes/ui/sonner'
 import { Acompanhamento } from '@/paginas/Acompanhamento'
 import { Conta } from '@/paginas/Conta'
+import { EditarFase } from '@/paginas/EditarFase'
 import { Entrada } from '@/paginas/Entrada'
 import { Fases } from '@/paginas/Fases'
 import { NovaFase } from '@/paginas/NovaFase'
@@ -24,7 +25,7 @@ export function App() {
           <Route path="historico" element={<TelaPorFazer titulo="Histórico" />} />
           <Route path="fases" element={<Fases />} />
           <Route path="fases/nova" element={<NovaFase />} />
-          <Route path="fases/:id" element={<TelaPorFazer titulo="Fase" />} />
+          <Route path="fases/:id" element={<EditarFase />} />
           <Route path="importar" element={<TelaPorFazer titulo="Importar e exportar" />} />
           <Route path="conta" element={<Conta />} />
         </Route>

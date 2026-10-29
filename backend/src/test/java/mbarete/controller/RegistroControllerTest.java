@@ -158,8 +158,8 @@ class RegistroControllerTest {
   }
 
   // Pega a data ocupada substituída sem a confirmação (RN-01), o conflito que
-  // estoura como erro interno na restrição do banco, e a mensagem sem o valor
-  // gravado que o diálogo mostra (UC-02 4a)
+  // estoura como erro interno na restrição do banco, e a mensagem sem o peso
+  // ou a cintura gravados que o diálogo mostra (UC-02 4a)
   @Test
   void dataOcupadaSemSubstituirRespondeConflitoComOValorGravado() throws Exception {
     int fulana = usuario("fulana@exemplo.com");
@@ -170,7 +170,8 @@ class RegistroControllerTest {
         .andExpect(jsonPath("$.erro.codigo").value("REGISTRO_JA_EXISTE"))
         .andExpect(jsonPath("$.erro.campo").value("data"))
         .andExpect(
-            jsonPath("$.erro.mensagem").value("Já existe registro em 07/09/2026, com 82,4 kg."))
+            jsonPath("$.erro.mensagem")
+                .value("Já existe registro em 07/09/2026, com 82,4 kg e 90,0 cm de cintura."))
         .andExpect(jsonPath("$.erro.regra").value("RN-01"));
     assertThat(registros(fulana))
         .singleElement()
@@ -316,8 +317,9 @@ class RegistroControllerTest {
             });
   }
 
-  // Pega a data ocupada sobrescrita sem a confirmação, e a mensagem com o valor
-  // do registro editado em vez do que já está na data (UC-03 2a)
+  // Pega a data ocupada sobrescrita sem a confirmação, a mensagem com o valor
+  // do registro editado em vez do que já está na data (UC-03 2a), e a cintura
+  // escrita quando o registro da data não tem
   @Test
   void moverParaDataOcupadaSemSubstituirRespondeConflito() throws Exception {
     int fulana = usuario("fulana@exemplo.com");

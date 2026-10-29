@@ -129,9 +129,14 @@ public class RegistroService {
 
   /**
    * A data já tem registro, e a mensagem leva o valor gravado, que o diálogo de confirmação mostra
-   * (UC-02 4a), escrito como a tela escreve (RN-62, RN-63).
+   * (UC-02 4a), escrito como a tela escreve (RN-62, RN-63). A cintura entra quando existe, porque a
+   * substituição troca o registro inteiro e ela não fica (endpoints.md).
    */
   private static RegraVioladaException conflito(Registro ocupante) {
+    String cintura =
+        ocupante.cintura() == null
+            ? ""
+            : " e " + ocupante.cintura().toPlainString().replace('.', ',') + " cm de cintura";
     return new RegraVioladaException(
         Recusa.REGISTRO_JA_EXISTE,
         "data",
@@ -139,6 +144,8 @@ public class RegistroService {
             + DATA_EXIBIDA.format(ocupante.data())
             + ", com "
             + ocupante.peso().toPlainString().replace('.', ',')
-            + " kg.");
+            + " kg"
+            + cintura
+            + ".");
   }
 }

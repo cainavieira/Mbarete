@@ -1,10 +1,9 @@
-import { useQuery } from '@tanstack/react-query'
 import { CalendarRange, ChartLine, List, Plus, UserRound, type LucideIcon } from 'lucide-react'
 import { Link, NavLink, Outlet } from 'react-router'
-import { chamar } from '@/api/cliente'
 import { Logotipo } from '@/componentes/Logotipo'
 import { Alert, AlertDescription, AlertTitle } from '@/componentes/ui/alert'
 import { Button } from '@/componentes/ui/button'
+import { useConta } from '@/hooks/useConta'
 import { cn } from '@/lib/utils'
 
 interface Destino {
@@ -25,7 +24,7 @@ const CONTA: Destino = { para: '/conta', rotulo: 'Conta', rotuloLargo: 'Conta', 
  * direita. A conta é a prova de sessão: sem ela, o cliente HTTP leva à entrada.
  */
 export function Casca() {
-  const sessao = useQuery({ queryKey: ['conta'], queryFn: () => chamar<unknown>('/conta') })
+  const sessao = useConta()
 
   if (sessao.isPending) {
     return null

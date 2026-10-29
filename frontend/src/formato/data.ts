@@ -9,6 +9,19 @@ function partes(iso: string): [string, string, string] {
   return [ano, mes, dia]
 }
 
+/** O dia de um Date no calendário do dispositivo, e não no do UTC, em AAAA-MM-DD (RN-04). */
+export function isoDoDia(dia: Date): string {
+  const mes = String(dia.getMonth() + 1).padStart(2, '0')
+  const numero = String(dia.getDate()).padStart(2, '0')
+  return `${dia.getFullYear()}-${mes}-${numero}`
+}
+
+/** O dia, à meia-noite do dispositivo, para o calendário, que trabalha com Date. */
+export function diaDoIso(iso: string): Date {
+  const [ano, mes, dia] = partes(iso)
+  return new Date(Number(ano), Number(mes) - 1, Number(dia))
+}
+
 /** 07/09/2026. */
 export function formatarData(iso: string): string {
   const [ano, mes, dia] = partes(iso)

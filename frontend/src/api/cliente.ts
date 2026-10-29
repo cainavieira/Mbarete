@@ -5,6 +5,8 @@
  * pessoa vai para a tela de entrada (endpoints.md).
  */
 
+import { isoDoDia } from '@/formato/data'
+
 const PREFIXO = '/api/v1'
 
 /** A recusa no formato único do backend (convencoes-backend.md). */
@@ -40,9 +42,7 @@ export interface Opcoes {
 
 /** O dia do calendário do dispositivo, e não o do UTC, em AAAA-MM-DD (RN-04). */
 export function dataDoDispositivo(agora: Date = new Date()): string {
-  const mes = String(agora.getMonth() + 1).padStart(2, '0')
-  const dia = String(agora.getDate()).padStart(2, '0')
-  return `${agora.getFullYear()}-${mes}-${dia}`
+  return isoDoDia(agora)
 }
 
 let aoPerderSessao: () => void = () => window.location.assign('/entrar')

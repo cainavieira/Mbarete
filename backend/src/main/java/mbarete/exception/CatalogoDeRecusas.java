@@ -34,6 +34,8 @@ final class CatalogoDeRecusas {
       case CSV_SEPARADOR_DESCONHECIDO -> new Descricao(HttpStatus.BAD_REQUEST, "RN-54");
       case EMAIL_NAO_CONFERE -> new Descricao(HttpStatus.BAD_REQUEST, "UC-12");
       case PREVISUALIZACAO_DESATUALIZADA -> new Descricao(HttpStatus.CONFLICT, "RN-01");
+      case FASE_EM_ABERTO_SERA_ENCERRADA -> new Descricao(HttpStatus.CONFLICT, "RN-22");
+      case FIM_DA_ANTERIOR_SERA_MOVIDO -> new Descricao(HttpStatus.CONFLICT, "RN-67");
     };
   }
 

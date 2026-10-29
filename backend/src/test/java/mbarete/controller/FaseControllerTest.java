@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import mbarete.ChaveDeTeste;
@@ -198,12 +199,30 @@ class FaseControllerTest {
     int fulana = usuario("fulana@exemplo.com");
     fase(fulana, LocalDate.of(2026, 9, 1), null, null);
 
-    criar(fulana, hoje, cutting("\"dataInicio\": \"2026-09-15\"")).andExpect(status().isCreated());
+    criar(fulana, hoje, cutting(ENCERRANDO_A_EM_ABERTO)).andExpect(status().isCreated());
     assertThat(fases(fulana))
         .extracting(Gravada::dataInicio, Gravada::dataFim)
         .containsExactly(
             tuple(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 14)),
             tuple(LocalDate.of(2026, 9, 15), null));
+  }
+
+  // Pega a fase em aberto encerrada sem a confirmação, e a mensagem sem a fase
+  // ou sem a data em que ela termina, que o diálogo mostra como veio (RN-22,
+  // UC-05 2a)
+  @Test
+  void semConfirmarAFaseEmAbertoNaoEEncerrada() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    fase(fulana, LocalDate.of(2026, 9, 1), null, null);
+
+    criar(fulana, hoje, cutting("\"dataInicio\": \"2026-09-15\""))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.erro.codigo").value("FASE_EM_ABERTO_SERA_ENCERRADA"))
+        .andExpect(jsonPath("$.erro.regra").value("RN-22"))
+        .andExpect(
+            jsonPath("$.erro.mensagem")
+                .value("A manutenção iniciada em 01/09/2026 termina em 14/09/2026."));
+    assertThat(fases(fulana)).singleElement().extracting(Gravada::dataFim).isNull();
   }
 
   // Pega o dia da base da fase encerrada que fica depois do novo fim dela, e a
@@ -216,7 +235,7 @@ class FaseControllerTest {
       registro(fulana, LocalDate.of(2026, 9, dia));
     }
 
-    criar(fulana, hoje, cutting("\"dataInicio\": \"2026-09-15\"")).andExpect(status().isCreated());
+    criar(fulana, hoje, cutting(ENCERRANDO_A_EM_ABERTO)).andExpect(status().isCreated());
     assertThat(fases(fulana))
         .extracting(Gravada::baseData)
         .containsExactly(null, LocalDate.of(2026, 9, 20));
@@ -233,7 +252,7 @@ class FaseControllerTest {
       registro(fulana, LocalDate.of(2026, 9, dia));
     }
 
-    criar(fulana, hoje, cutting("\"dataInicio\": \"2026-09-15\"")).andExpect(status().isCreated());
+    criar(fulana, hoje, cutting(ENCERRANDO_A_EM_ABERTO)).andExpect(status().isCreated());
     assertThat(fases(fulana))
         .extracting(Gravada::baseData)
         .containsExactly(LocalDate.of(2026, 9, 14), null);
@@ -345,11 +364,39 @@ class FaseControllerTest {
             fulana,
             seguinte,
             hoje,
-            "{\"tipo\": \"MANUTENCAO\", \"dataInicio\": \"%s\"}".formatted(hoje.plusDays(inicio)))
+            "{\"tipo\": \"MANUTENCAO\", \"dataInicio\": \"%s\", \"moverFimDaAnterior\": true}"
+                .formatted(hoje.plusDays(inicio)))
         .andExpect(status().isOk());
     assertThat(fases(fulana))
         .extracting(Gravada::dataFim)
         .containsExactly(hoje.plusDays(fimDaAnterior), null);
+  }
+
+  // Pega o fim da anterior movido sem a confirmação, ou a edição gravada antes
+  // da recusa, e a mensagem sem a data nova (RN-67, UC-06 2i)
+  @Test
+  void semConfirmarOFimDaAnteriorNaoEMovido() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    fase(fulana, hoje.minusDays(30), hoje.plusDays(5), null);
+    int seguinte = fase(fulana, hoje.plusDays(6), null, null);
+
+    editar(
+            fulana,
+            seguinte,
+            hoje,
+            "{\"tipo\": \"MANUTENCAO\", \"dataInicio\": \"%s\"}".formatted(hoje.plusDays(10)))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.erro.codigo").value("FIM_DA_ANTERIOR_SERA_MOVIDO"))
+        .andExpect(jsonPath("$.erro.regra").value("RN-67"))
+        .andExpect(
+            jsonPath("$.erro.mensagem")
+                .value(
+                    "A manutenção iniciada em %s passa a terminar em %s."
+                        .formatted(exibida(hoje.minusDays(30)), exibida(hoje.plusDays(9)))));
+    assertThat(fases(fulana))
+        .extracting(Gravada::dataInicio, Gravada::dataFim)
+        .containsExactly(
+            tuple(hoje.minusDays(30), hoje.plusDays(5)), tuple(hoje.plusDays(6), null));
   }
 
   // Pega o fim de antes tomado do corpo em vez do banco, que deixaria passar
@@ -580,6 +627,25 @@ class FaseControllerTest {
         .andExpect(jsonPath("$[2].historico").value(nullValue()));
   }
 
+  // Pega o efeito de apagar calculado para a fase errada, e a data de fim que
+  // a anterior passa a ter perdida no caminho: a do meio leva o fim da
+  // primeira para a véspera da última, e a última o tira (RN-67, UC-07 3b)
+  @Test
+  void aListaDizOQueApagarFazComOFimDaAnterior() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    int primeira = fase(fulana, hoje.minusDays(30), hoje.plusDays(5), null);
+    int doMeio = fase(fulana, hoje.plusDays(6), hoje.plusDays(9), null);
+    fase(fulana, hoje.plusDays(10), null, null);
+
+    listar(fulana, hoje)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].aoApagar").value(nullValue()))
+        .andExpect(jsonPath("$[1].aoApagar.fase").value(primeira))
+        .andExpect(jsonPath("$[1].aoApagar.dataFim").value(hoje.plusDays(9).toString()))
+        .andExpect(jsonPath("$[2].aoApagar.fase").value(doMeio))
+        .andExpect(jsonPath("$[2].aoApagar.dataFim").value(nullValue()));
+  }
+
   // Pega a duração, a variação e o alvo perdidos entre a regra e a resposta, e
   // a variação sem o arredondamento da tela: o peso semanal do fim é 76,375
   // (RN-37, RN-40)
@@ -638,6 +704,14 @@ class FaseControllerTest {
       @Nullable String taxaAlvoUnidade,
       @Nullable BigDecimal pesoAlvo,
       @Nullable LocalDate baseData) {}
+
+  /** A fase nova que encerra a fase em aberto, já com a confirmação (RN-22). */
+  private static final String ENCERRANDO_A_EM_ABERTO =
+      "\"dataInicio\": \"2026-09-15\", \"encerrarEmAberto\": true";
+
+  private static String exibida(LocalDate data) {
+    return DateTimeFormatter.ofPattern("dd/MM/uuuu").format(data);
+  }
 
   /** Uma cutting válida, com o trecho dado sobrepondo os campos dela. */
   private static String cutting(String trecho) {

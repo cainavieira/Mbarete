@@ -9,8 +9,9 @@ import mbarete.regras.UnidadeDaTaxa;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A fase na lista, com a situação em relação a hoje e quantos registros tem, o número que a
- * confirmação de apagar informa (UC-07). O histórico só vem na encerrada (RN-40).
+ * A fase na lista, com a situação em relação a hoje, quantos registros tem e o que apagá-la faz com
+ * a anterior, o que a confirmação de apagar informa (UC-07). O histórico só vem na encerrada
+ * (RN-40).
  */
 public record FaseListadaDto(
     int id,
@@ -23,4 +24,5 @@ public record FaseListadaDto(
     @Nullable BigDecimal pesoAlvo,
     SituacaoDaFase situacao,
     long registros,
+    @Nullable AoApagarDto aoApagar,
     @Nullable HistoricoDto historico) {}

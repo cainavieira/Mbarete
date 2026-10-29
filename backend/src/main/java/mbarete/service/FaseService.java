@@ -13,6 +13,7 @@ import static mbarete.regras.SituacaoDaFase.situacaoDaFase;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +45,8 @@ public class FaseService {
   /** A de outra pessoa e a que não existe recebem a mesma recusa (RN-50). */
   private static final String NAO_ENCONTRADO = "Não encontrado.";
 
+  private static final DateTimeFormatter DATA_EXIBIDA = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+
   private final FaseRepository fases;
   private final RegistroRepository registros;
   private final ContaService contas;
@@ -64,10 +67,11 @@ public class FaseService {
   }
 
   /**
-   * As fases da pessoa pela data de início, cada uma com a situação em relação a hoje e quantos
-   * registros tem (UC-07, RN-69), e a encerrada com o histórico (UC-09, RN-40). O dia da base que
-   * falta é fixado aqui também, porque ele pode passar a existir sem nenhuma gravação: a fase
-   * agendada que começa já pode ter peso semanal com os registros de antes dela (RN-68).
+   * As fases da pessoa pela data de início, cada uma com a situação em relação a hoje, quantos
+   * registros tem e o que apagá-la faz com o fim da anterior (UC-07, RN-67, RN-69), e a encerrada
+   * com o histórico (UC-09, RN-40). O dia da base que falta é fixado aqui também, porque ele pode
+   * passar a existir sem nenhuma gravação: a fase agendada que começa já pode ter peso semanal com
+   * os registros de antes dela (RN-68).
    */
   @Transactional
   public List<FaseListadaDto> listar(int idUsuario, LocalDate hoje) {
@@ -76,7 +80,9 @@ public class FaseService {
         registros.findByUsuarioId(idUsuario).stream()
             .map(registro -> new Pesagem(registro.data(), registro.peso()))
             .toList();
-    return fases.findByUsuarioIdOrderByDataInicio(idUsuario).stream()
+    List<Fase> daPessoa = fases.findByUsuarioIdOrderByDataInicio(idUsuario);
+    List<PeriodoDeFase> periodos = daPessoa.stream().map(Fase::periodo).toList();
+    return daPessoa.stream()
         .map(
             fase -> {
               PeriodoDeFase periodo = fase.periodo();
@@ -85,6 +91,7 @@ public class FaseService {
                   fase,
                   situacao,
                   contarRegistros(pesagens, periodo),
+                  apagarFase(periodos, periodo, hoje).orElse(null),
                   situacao == SituacaoDaFase.ENCERRADA
                       ? resumirFaseEncerrada(
                           fase.tipo(),
@@ -100,8 +107,9 @@ public class FaseService {
 
   /**
    * Cria a fase (UC-05). A fase nova sem data de fim que começa depois da fase em aberto a encerra
-   * na véspera (RN-22). O dia da base é fixado onde já há peso semanal: na nova, e na encerrada
-   * quando o fim novo deixou o dela de fora (RN-68).
+   * na véspera, e só no segundo envio, com a confirmação: o primeiro responde com a fase e a data,
+   * que o diálogo mostra (RN-22, endpoints.md). O dia da base é fixado onde já há peso semanal: na
+   * nova, e na encerrada quando o fim novo deixou o dela de fora (RN-68).
    */
   @Transactional
   public FaseDto criar(int idUsuario, FaseEnviadaDto nova, LocalDate hoje) {
@@ -117,9 +125,14 @@ public class FaseService {
             daPessoa.stream().map(Fase::periodo).toList(), nova.dataInicio(), nova.dataFim(), hoje)
         .ifPresent(
             encerrada -> {
-              daPessoa.stream()
-                  .filter(fase -> fase.id() == encerrada.id())
-                  .forEach(fase -> fase.mudarFim(encerrada.fim()));
+              Fase aberta = fasePeloId(daPessoa, encerrada.id());
+              if (!Boolean.TRUE.equals(nova.encerrarEmAberto())) {
+                throw new RegraVioladaException(
+                    Recusa.FASE_EM_ABERTO_SERA_ENCERRADA,
+                    "dataInicio",
+                    iniciada(aberta) + " termina em " + DATA_EXIBIDA.format(encerrada.fim()) + ".");
+              }
+              aberta.mudarFim(encerrada.fim());
               // O banco confere a sobreposição com a fase em aberto como ela está gravada, e o
               // Hibernate só gravaria o encerramento depois de inserir a nova
               fases.flush();
@@ -142,8 +155,9 @@ public class FaseService {
   }
 
   /**
-   * Edita a fase (UC-06). Mudar o início da fase seguinte a um fim no futuro move esse fim junto
-   * (RN-67), e o dia da base segue a RN-68 nas duas.
+   * Edita a fase (UC-06). Mudar o início da fase seguinte a um fim no futuro move esse fim junto, e
+   * só no segundo envio, com a confirmação: o primeiro responde com a fase e a data nova (RN-67,
+   * endpoints.md). O dia da base segue a RN-68 nas duas.
    */
   @Transactional
   public FaseDto editar(int idUsuario, int id, FaseEnviadaDto editada, LocalDate hoje) {
@@ -181,10 +195,19 @@ public class FaseService {
                 taxa == null ? null : taxa.valor(),
                 taxa == null ? null : taxa.unidade(),
                 plano.pesoAlvo());
+    if (anteriorMovida.isPresent() && !Boolean.TRUE.equals(editada.moverFimDaAnterior())) {
+      PeriodoDeFase movida = anteriorMovida.get();
+      throw new RegraVioladaException(
+          Recusa.FIM_DA_ANTERIOR_SERA_MOVIDO,
+          "dataInicio",
+          iniciada(fasePeloId(daPessoa, movida.id()))
+              + " passa a terminar em "
+              + DATA_EXIBIDA.format(movida.fim())
+              + ".");
+    }
     anteriorMovida.ifPresentOrElse(
         movida -> {
-          Fase anterior =
-              daPessoa.stream().filter(daLista -> daLista.id() == movida.id()).findFirst().get();
+          Fase anterior = fasePeloId(daPessoa, movida.id());
           // O banco confere a sobreposição a cada gravação, e por isso quem encolhe vai antes
           if (editada.dataInicio().isBefore(antes.inicio())) {
             anterior.mudarFim(movida.fim());
@@ -240,6 +263,23 @@ public class FaseService {
                 .filter(daLista -> daLista.id() == movida.id())
                 .forEach(anterior -> anterior.mudarFim(movida.fim())));
     diaDaBase.fixarOndeFalta(idUsuario, hoje);
+  }
+
+  private static Fase fasePeloId(List<Fase> daPessoa, int id) {
+    return daPessoa.stream().filter(fase -> fase.id() == id).findFirst().orElseThrow();
+  }
+
+  /**
+   * A fase que muda, nomeada como o diálogo de confirmação a mostra, com a data escrita como a tela
+   * escreve (RN-63): "A manutenção iniciada em 14/09/2026".
+   */
+  private static String iniciada(Fase fase) {
+    String inicio = DATA_EXIBIDA.format(fase.periodo().inicio());
+    return switch (fase.tipo()) {
+      case CUTTING -> "O cutting iniciado em " + inicio;
+      case BULKING -> "O bulking iniciado em " + inicio;
+      case MANUTENCAO -> "A manutenção iniciada em " + inicio;
+    };
   }
 
   /**

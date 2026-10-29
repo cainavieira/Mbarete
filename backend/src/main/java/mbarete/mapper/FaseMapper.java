@@ -2,6 +2,7 @@ package mbarete.mapper;
 
 import static mbarete.regras.Arredondamento.arredondarPeso;
 
+import mbarete.dto.AoApagarDto;
 import mbarete.dto.FaseDto;
 import mbarete.dto.FaseListadaDto;
 import mbarete.dto.HistoricoDto;
@@ -29,8 +30,13 @@ public final class FaseMapper {
         fase.pesoAlvo());
   }
 
+  /** O efeito de apagar é a anterior como ela fica, quando apagar mexe nela (RN-67). */
   public static FaseListadaDto paraListada(
-      Fase fase, SituacaoDaFase situacao, long registros, @Nullable FaseEncerrada encerrada) {
+      Fase fase,
+      SituacaoDaFase situacao,
+      long registros,
+      @Nullable PeriodoDeFase anteriorAoApagar,
+      @Nullable FaseEncerrada encerrada) {
     PeriodoDeFase periodo = fase.periodo();
     return new FaseListadaDto(
         periodo.id(),
@@ -43,6 +49,9 @@ public final class FaseMapper {
         fase.pesoAlvo(),
         situacao,
         registros,
+        anteriorAoApagar == null
+            ? null
+            : new AoApagarDto(anteriorAoApagar.id(), anteriorAoApagar.fim()),
         encerrada == null ? null : paraHistorico(encerrada));
   }
 

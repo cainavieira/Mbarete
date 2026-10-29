@@ -42,6 +42,7 @@ escolha fica no navegador (RF-51).
 | fora do ritmo | `#8A3B22` sobre `#F8E3DA` | `#F0B49C` sobre `#3A2620` | selo de abaixo e acima |
 | dados insuficientes | texto suave, tracejado `#7C8378` | texto suave, tracejado `#6E746A` | selo sem fundo |
 | erro | `#B42318`, texto sobre ele `#FFFFFF` | `#F08C7D`, texto sobre ele `#131512` | recusa no formulário e botão que apaga |
+| sobreposição | `#121212` a 50% | `#131512` a 80% | o fundo escurecido atrás do diálogo |
 
 Fundo e texto não são branco e preto puros. O par puro dá contraste de 21 para
 1 e cansa a vista; `#121212` sobre branco dá 18,7 e continua muito acima do

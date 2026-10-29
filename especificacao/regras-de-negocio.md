@@ -76,7 +76,9 @@ motivo.
 - **RN-20** Data pode não pertencer a fase nenhuma. Período sem fase é estado
   válido e esperado, não defeito a corrigir.
 - **RN-22** Iniciar uma fase nova sem data de fim, começando depois da fase em
-  aberto, encerra a fase em aberto no dia anterior à data de início da nova.
+  aberto, encerra a fase em aberto no dia anterior à data de início da nova. O
+  encerramento exige confirmação explícita do usuário, porque muda uma fase
+  que não é a que ele está criando.
 - **RN-23** A fase de um registro é derivada da data do registro. A fase não é
   gravada dentro do registro.
 - **RN-24** As datas de início e de fim de uma fase são editáveis, sujeitas à
@@ -101,8 +103,9 @@ motivo.
   seguinte move esse fim para a nova véspera, como edição de datas da RN-24,
   inclusive quando a véspera nova é hoje ou já passou; e apagar a seguinte
   leva o fim para a véspera da próxima fase, ou o tira, se não houver
-  próxima. Antecipar a seguinte para o início da anterior, ou antes, é
-  recusado pela RN-19.
+  próxima. Mover esse fim junto com o início da seguinte exige confirmação
+  explícita do usuário, pelo mesmo motivo da RN-22. Antecipar a seguinte para
+  o início da anterior, ou antes, é recusado pela RN-19.
 - **RN-69** A fase pode começar em data futura. Isso difere da RN-05, que
   recusa registro em data futura, e a diferença é deliberada: registro afirma
   uma medição que não aconteceu, fase declara uma intenção que ainda não

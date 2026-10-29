@@ -123,12 +123,16 @@ fica como isso vira código.
 | borda da faixa | `--faixa-borda` |
 | fora do ritmo, texto e fundo | `--fora`, `--fora-fundo` |
 | tracejado de dados insuficientes | `--insuficiente-borda` |
+| sobreposição | `--sobreposicao` |
 
 A barra de progresso usa `--grafico-linha`, e a faixa de tolerância usa
 `--ritmo-fundo`: a mesma cor nos dois lugares é decisão do design, não
 coincidência de valor. O canto arredondado é a variável `--radius`. Nome da
 tabela que a versão instalada do shadcn/ui não trouxer entra como as cores
 próprias, nos dois blocos e no tema do Tailwind.
+
+O diálogo do shadcn/ui vem com `bg-black/50` no fundo escurecido, e a cópia
+troca pela `bg-sobreposicao`, pelo antipadrão 10.
 
 ## Antipadrões proibidos
 

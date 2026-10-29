@@ -39,8 +39,9 @@ aposentados estão listados no fim.
   existente. (RN-08)
 - **RF-13** O sistema deve recusar valor fora de faixa e data futura,
   informando qual campo foi recusado e qual é o limite. (RN-03, RN-05, RN-11)
-- **RF-14** O sistema deve listar os registros do AT-01 em ordem cronológica,
-  recortados por intervalo de datas, com data, peso e cintura quando houver.
+- **RF-14** O sistema deve listar os registros do AT-01 do mais recente para
+  o mais antigo, recortados por intervalo de datas, com data, peso e cintura
+  quando houver.
 
 ## Fase
 
@@ -59,11 +60,14 @@ aposentados estão listados no fim.
   uma fase nova, sem data de fim, que a invada começando depois dela. Enquanto
   esse fim está no futuro, ele acompanha a nova: muda com o início dela e, se
   ela for apagada, vai para a véspera da próxima fase, ou some, se não houver
-  próxima. (RN-19, RN-22, RN-67)
+  próxima. Antes de encerrar a fase em aberto ou de mover esse fim com o
+  início da nova, o sistema deve dizer qual fase muda e para que data, e
+  pedir a confirmação do AT-01. (RN-19, RN-22, RN-67)
 - **RF-20** O sistema deve permitir que o AT-01 edite as datas de início e de
   fim de uma fase. (RN-24)
 - **RF-22** O sistema deve permitir que o AT-01 apague qualquer fase,
-  informando antes quantos registros perderão o rótulo do período. (RN-70)
+  informando antes quantos registros perderão o rótulo do período e, quando a
+  anterior tiver fim no futuro, para onde esse fim vai. (RN-67, RN-70)
 - **RF-23** O sistema deve apresentar as fases encerradas com variação total,
   duração e se o peso alvo foi atingido, salvo quando o alvo está do lado
   errado da base. (RN-40, RN-44)
@@ -101,8 +105,9 @@ aposentados estão listados no fim.
   com o intervalo de datas usado no formato da RN-47. (RN-27, RN-33, RN-36,
   RN-37, RN-38)
 - **RF-31** O sistema deve informar dados insuficientes no lugar do veredito
-  enquanto faltar o mínimo de dias ou um dos pesos semanais comparados.
-  (RN-39)
+  enquanto faltar o mínimo de dias ou um dos pesos semanais comparados, e,
+  quando faltar só o mínimo de dias e ele se completar dentro da fase, a data
+  em que ele se completa. (RN-39)
 - **RF-48** O sistema deve omitir taxa alvo, veredito, barra de progresso e
   faixa de tolerância quando a data não pertencer a fase alguma, mantendo peso
   semanal, variações e cintura. (RN-66)
@@ -123,8 +128,8 @@ aposentados estão listados no fim.
 - **RF-37** O sistema deve receber um arquivo CSV do AT-01 e apresentar a
   pré-visualização antes de qualquer gravação. (RN-58)
 - **RF-38** O sistema deve reportar na pré-visualização as linhas válidas, as
-  recusadas com número de linha e motivo, e as datas que serão substituídas.
-  (RN-58)
+  recusadas com número de linha e motivo, e as datas que serão substituídas,
+  com o registro gravado em cada uma. (RN-58)
 - **RF-40** O sistema deve gravar a importação inteira ou nenhuma linha, após
   confirmação, sem criar fase. (RN-57, RN-59)
 - **RF-41** O sistema deve permitir que o AT-01 abandone a importação na

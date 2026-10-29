@@ -37,15 +37,15 @@ documento está datado.
 | `POST` | `/registros` | cria registro | RF-07, RF-08, RF-09 |
 | `PATCH` | `/registros/{data}` | edita peso, cintura ou a própria data | RF-11 |
 | `DELETE` | `/registros/{data}` | apaga registro | RF-12 |
-| `GET` | `/fases` | lista todas, marcando a corrente quando existir, com quantos registros cada uma tem | RF-23, RF-22 |
-| `POST` | `/fases` | cria fase, com data de fim opcional; sem ela, encerra a fase em aberto que começou antes da nova | RF-15, RF-19 |
-| `PATCH` | `/fases/{id}` | edita tipo, nível, taxa alvo, peso alvo, início e fim; mudar o início move o fim no futuro da fase anterior | RF-20, RF-19 |
+| `GET` | `/fases` | lista todas, marcando a corrente quando existir, com quantos registros cada uma tem e o que apagá-la faz com o fim da anterior | RF-23, RF-22 |
+| `POST` | `/fases` | cria fase, com data de fim opcional; sem ela, encerra a fase em aberto que começou antes da nova, depois da confirmação | RF-15, RF-19 |
+| `PATCH` | `/fases/{id}` | edita tipo, nível, taxa alvo, peso alvo, início e fim; mudar o início move o fim no futuro da fase anterior, depois da confirmação | RF-20, RF-19 |
 | `POST` | `/fases/{id}/encerramento` | encerra a fase corrente | RF-45 |
 | `DELETE` | `/fases/{id}` | apaga a fase; os registros permanecem sem fase; o fim no futuro da fase anterior vai para a véspera da próxima, ou some | RF-22, RF-19 |
 | `GET` | `/niveis` | a taxa alvo padrão de cada nível, para cutting e bulking | RF-16 |
 | `GET` | `/acompanhamento` | tudo da tela principal, numa resposta | UC-08 |
 | `POST` | `/importacao/previsualizacao` | valida o arquivo e relata, sem gravar | RF-37, RF-38 |
-| `POST` | `/importacao` | grava o arquivo inteiro ou nada | RF-40 |
+| `POST` | `/importacao` | grava o arquivo inteiro ou nada, conferindo as datas a substituir que a pessoa viu | RF-40 |
 | `GET` | `/saude` | responde se a api está no ar; o script de deploy confere por ela | ADR-0037 |
 
 ## As decisões que não se leem na lista
@@ -134,7 +134,10 @@ responde **409** com:
 }
 ```
 
-O frontend abre o diálogo com esse valor, e o segundo envio repete o POST com
+Quando o registro gravado tem cintura, a mensagem a traz também: "Já existe
+registro em 07/09/2026, com 82,4 kg e 91,0 cm de cintura.", porque a
+substituição troca o registro inteiro e a cintura de antes não fica. O
+frontend abre o diálogo com essa mensagem, e o segundo envio repete o POST com
 `"substituir": true`.
 
 A confirmação vai no **corpo** e nunca na URL, porque parâmetro de URL entra no
@@ -144,6 +147,32 @@ ação do usuário.
 Recusadas duas alternativas: consultar a data antes de abrir o formulário, que
 gasta uma ida a mais em todo registro e tem condição de corrida entre a consulta
 e a gravação; e substituir direto avisando depois, que contraria a RN-01.
+
+### Mudar outra fase também pede confirmação por conflito
+
+`POST /fases` que encerraria a fase em aberto (RN-22) responde **409** com
+`FASE_EM_ABERTO_SERA_ENCERRADA`, e a mensagem diz qual fase termina e quando:
+"O cutting iniciado em 01/09/2026 termina em 14/10/2026.". O frontend abre o
+diálogo com essa mensagem, e o segundo envio repete o POST com
+`"encerrarEmAberto": true`.
+
+Do mesmo jeito, `PATCH /fases/{id}` que mudaria o início de uma fase cuja
+anterior tem fim no futuro (RN-67) responde 409 com
+`FIM_DA_ANTERIOR_SERA_MOVIDO`, e a mensagem diz para onde esse fim vai: "O
+cutting iniciado em 01/09/2026 passa a terminar em 09/11/2026.". O segundo
+envio leva `"moverFimDaAnterior": true`.
+
+O motivo é o da substituição de registro: só custa uma ida a mais quando há
+efeito, e não tem a condição de corrida da consulta antes. E saber se a fase
+nova encerra a em aberto, ou se o fim da anterior acompanha a editada, é a
+RN-22 e a RN-67: a tela que deduzisse isso do `GET /fases` teria a regra numa
+segunda casa (ADR-0025).
+
+Apagar não usa o conflito, porque a confirmação da exclusão é pedida sempre
+(UC-07). O efeito vem em cada fase do `GET /fases`, ao lado da contagem de
+registros, no campo `aoApagar`: nulo quando apagar a fase não mexe em outra;
+senão, o identificador da anterior e a data de fim que ela passa a ter, nula
+quando ela volta a ser a fase em aberto.
 
 ### A exclusão de conta é um POST, não um DELETE
 
@@ -204,6 +233,16 @@ cada uma vem nula quando nenhum dia antes de hoje tem peso semanal desde o
 ponto de partida dela (RN-47). Campo ausente e campo nulo são coisas
 diferentes para quem consome.
 
+Em cutting e bulking, enquanto não se completam os 14 dias da RN-39, o
+veredito vem também com a data em que eles se completam, e a tela diz a partir
+de quando o veredito aparece sem conhecer os 14 dias (ADR-0025). A data só vem
+quando é promessa: falta só o mínimo de dias, com os dois pesos semanais
+comparados presentes, e ele se completa até o último dia da fase. Quando falta
+também um dos pesos, ela vem nula, porque não há como prever quando ele vai
+existir; e quando a fase termina antes, com a seguinte já agendada (RN-27),
+também, porque o veredito dela não vai aparecer (RN-40). Nos dois casos, a
+tela mostra só dados insuficientes.
+
 O progresso segue o mesmo princípio, com dois estados além do número, que a
 tela trata de forma diferente: dados insuficientes, quando a base da RN-68 não
 existe (UC-08 5c), e não exibido, quando o peso alvo está do lado errado da
@@ -240,7 +279,7 @@ da taxa real, que tem sinal (RN-37).
 
 A primeira recebe o arquivo e devolve o relatório: linhas válidas, linhas
 recusadas com número de linha e motivo, e datas existentes que serão
-substituídas (RN-58). Nada é gravado.
+substituídas, cada uma com o registro gravado nela (RN-58). Nada é gravado.
 
 A segunda **reenvia o mesmo arquivo** junto com a confirmação. O servidor não
 guarda nada entre as duas chamadas.
@@ -248,6 +287,17 @@ guarda nada entre as duas chamadas.
 Isso evita armazenamento temporário com expiração e limpeza, e garante que o
 que se grava é exatamente o que foi confirmado. O navegador já tem o arquivo em
 memória, então o reenvio não custa nada ao usuário.
+
+A confirmação leva, ao lado do arquivo, um campo `substituir` para cada data
+que a pré-visualização mostrou como substituída, e nenhum quando ela não
+mostrou nenhuma. O servidor refaz a conta e, se o conjunto mudou, em qualquer
+direção, responde **409** com `PREVISUALIZACAO_DESATUALIZADA`, sem gravar
+nada, e a tela refaz a pré-visualização. Sem isso, uma data mostrada como nova
+que ganhasse registro entre as duas chamadas, pelo celular por exemplo, seria
+substituída sem a confirmação explícita da RN-01: é a condição de corrida que
+o registro evita com o conflito. Linha que muda de válida para recusada, ou o
+contrário, entre as duas chamadas não é conferida, porque não substitui nada
+sem aviso.
 
 ### O convite não tem endpoint
 
@@ -299,6 +349,6 @@ tela de entrada.
 | 400 | valor recusado por regra (faixa, data futura no registro, data de fim futura ou anterior ao início, data local ausente ou inválida, arquivo de importação sem as colunas obrigatórias ou com separador desconhecido, e-mail digitado na exclusão de conta que não é o da conta) |
 | 401 | sem token de acesso válido; na renovação, sem token de renovação válido |
 | 404 | registro ou fase que não existe, ou que é de outro usuário, sem distinguir os dois; também rota que não existe e método que a rota não aceita |
-| 409 | conflito de data em registro, sobreposição de fase que a RN-19 recusa, ou encerramento de fase que não é a corrente |
+| 409 | conflito de data em registro, sobreposição de fase que a RN-19 recusa, encerramento de fase que não é a corrente, fase criada ou editada que mudaria outra fase sem a confirmação, ou importação confirmada sobre uma pré-visualização que mudou |
 | 422 | corpo malformado, antes de chegar a regra de negócio |
 | 500 | erro inesperado, sem a mensagem da exceção (RNF-13) |

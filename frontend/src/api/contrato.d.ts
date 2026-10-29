@@ -422,6 +422,8 @@ export interface components {
             /** @enum {string} */
             estado: "ABAIXO" | "NO_RITMO" | "ACIMA" | "DADOS_INSUFICIENTES";
             taxaReal: components["schemas"]["TaxaReal"] | null;
+            /** Format: date */
+            aPartirDe: string | null;
         };
     };
     responses: never;

@@ -28,6 +28,12 @@ export function formatarData(iso: string): string {
   return `${dia}/${mes}/${ano}`
 }
 
+/** O dia e o mês, nas pontas do eixo do gráfico: 07/09. */
+export function formatarDiaEMes(iso: string): string {
+  const [, mes, dia] = partes(iso)
+  return `${dia}/${mes}`
+}
+
 /** O intervalo das variações e da taxa real: (12-09 / 19-09) (RN-47). */
 export function formatarIntervalo(de: string, ate: string): string {
   const [, mesDe, diaDe] = partes(de)

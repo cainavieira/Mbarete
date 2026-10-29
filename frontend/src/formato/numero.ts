@@ -1,5 +1,3 @@
-import { formatarIntervalo } from './data'
-
 /**
  * Número decimal é exibido com vírgula e trafegado com ponto (RN-62). Os
  * números do veredito já chegam arredondados do backend, e aqui só se escreve
@@ -51,9 +49,19 @@ export function formatarTaxa(valor: number, { comSinal }: { comSinal: boolean })
   return (comSinal ? DUAS_CASAS_COM_SINAL : DUAS_CASAS).format(valor)
 }
 
-/** A variação com o intervalo de datas usado: -0,4 kg (12-09 / 19-09) (RN-47). */
-export function formatarVariacao(valor: number, de: string, ate: string): string {
-  return `${UMA_CASA_COM_SINAL.format(valor)} kg ${formatarIntervalo(de, ate)}`
+/**
+ * A diferença de peso ou de cintura, com o sinal e uma casa: -0,4. Na
+ * variação do peso, vai sempre com o intervalo de datas usado (RN-47).
+ */
+export function formatarDiferenca(valor: number): string {
+  return UMA_CASA_COM_SINAL.format(valor)
+}
+
+const INTEIRO = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0, useGrouping: false })
+
+/** A marca do eixo do peso no gráfico, que é sempre um quilo inteiro: 78. */
+export function formatarInteiro(valor: number): string {
+  return INTEIRO.format(valor)
 }
 
 const DIGITADO = /^\d+([.,]\d+)?$/

@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router'
 import { Casca } from '@/componentes/Casca'
 import { Toaster } from '@/componentes/ui/sonner'
+import { Acompanhamento } from '@/paginas/Acompanhamento'
 import { Conta } from '@/paginas/Conta'
 import { Entrada } from '@/paginas/Entrada'
 import { RegistrarPeso } from '@/paginas/RegistrarPeso'
@@ -16,10 +17,11 @@ export function App() {
       <Routes>
         <Route path="/entrar" element={<Entrada />} />
         <Route element={<Casca />}>
-          <Route index element={<TelaPorFazer titulo="Acompanhamento" />} />
+          <Route index element={<Acompanhamento />} />
           <Route path="registrar" element={<RegistrarPeso />} />
           <Route path="historico" element={<TelaPorFazer titulo="Histórico" />} />
           <Route path="fases" element={<TelaPorFazer titulo="Fases" />} />
+          <Route path="importar" element={<TelaPorFazer titulo="Importar e exportar" />} />
           <Route path="conta" element={<Conta />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

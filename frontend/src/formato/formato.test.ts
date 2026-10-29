@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
-import { formatarData } from './data'
-import { formatarPeso, formatarTaxa, formatarVariacao, lerNumero } from './numero'
+import { formatarData, formatarIntervalo } from './data'
+import { formatarDiferenca, formatarPeso, formatarTaxa, lerNumero } from './numero'
 
 // Pega a data lida como Date: AAAA-MM-DD vira meia-noite no UTC, e no fuso
 // dos testes, atrás do UTC, o dia exibido seria o anterior (RN-63)
@@ -22,9 +22,12 @@ test('a taxa leva o sinal só quando pedido', () => {
   expect(formatarTaxa(0.5, { comSinal: false })).toBe('0,50')
 })
 
-// Pega a variação sem o intervalo, ou com o intervalo fora do formato da RN-47
-test('a variação vem com o intervalo de datas usado', () => {
-  expect(formatarVariacao(-0.4, '2026-09-12', '2026-09-19')).toBe('-0,4 kg (12-09 / 19-09)')
+// Pega a diferença sem o sinal de ganho, que a faria parecer perda ou nada, e
+// o intervalo fora do formato da RN-47
+test('a variação leva o sinal, e o intervalo vem no formato da RN-47', () => {
+  expect(formatarDiferenca(-0.4)).toBe('-0,4')
+  expect(formatarDiferenca(0.3)).toBe('+0,3')
+  expect(formatarIntervalo('2026-09-12', '2026-09-19')).toBe('(12-09 / 19-09)')
 })
 
 // Pega o número digitado com vírgula lido até a vírgula, como o parseFloat

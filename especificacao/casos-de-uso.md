@@ -358,6 +358,9 @@ aí o caminho é o da RN-70. (RN-70)
   linha e motivo, e as válidas seguem disponíveis para gravação. (RN-60)
 - **2b** Nenhuma linha é válida: a confirmação fica indisponível.
 - **3a** O usuário abandona: nada é gravado. (RF-41)
+- **3b** Entre a pré-visualização e a confirmação, uma data passou a ter
+  registro, ou perdeu o que tinha: nada é gravado, e o sistema refaz a
+  pré-visualização para o usuário confirmar de novo. (RN-01, RN-58)
 - **4a** A gravação falha no meio: nada é gravado, e o histórico continua como
   estava antes do envio. (RN-59)
 - **4b** Depois de importar, o usuário quer classificar o período: cria fase

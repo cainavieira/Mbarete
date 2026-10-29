@@ -109,6 +109,7 @@ Derivado das regras. Todo código novo entra aqui junto com a regra que o gera.
 | `CSV_COLUNA_AUSENTE` | falta coluna obrigatória | RN-53 |
 | `CSV_SEPARADOR_DESCONHECIDO` | separador não reconhecido | RN-54 |
 | `CSV_LINHA_INVALIDA` | linha recusada na pré-visualização | RN-60 |
+| `PREVISUALIZACAO_DESATUALIZADA` | as datas que a confirmação da importação traz em `substituir` não são mais as que o arquivo substituiria | RN-01 |
 | `EMAIL_NAO_CONFERE` | o e-mail digitado para apagar a conta não é o da conta; a comparação ignora maiúsculas e espaço em volta | UC-12 |
 | `CORPO_MALFORMADO` | corpo que não vira o DTO (JSON quebrado ou valor sem o tipo do campo), anotação do Bean Validation sem código, parâmetro de consulta com tipo errado, ou outro pedido que o Spring recusa sozinho; responde 422 | sem regra |
 | `ERRO_INTERNO` | erro inesperado; a resposta e o log não levam a mensagem da exceção, que pode trazer peso ou cintura; responde 500 | RNF-13 |
@@ -116,7 +117,9 @@ Derivado das regras. Todo código novo entra aqui junto com a regra que o gera.
 `REGISTRO_JA_EXISTE`, `FASE_EM_ABERTO_SERA_ENCERRADA` e
 `FIM_DA_ANTERIOR_SERA_MOVIDO` não são recusa final: alimentam a confirmação do
 UC-02, do UC-05 e do UC-06, e o segundo envio, com a confirmação, grava. O
-mecanismo, a resposta de conflito, está em `endpoints.md`.
+mecanismo, a resposta de conflito, está em `endpoints.md`. O
+`PREVISUALIZACAO_DESATUALIZADA` também não é: a tela refaz a pré-visualização
+(UC-10 3b).
 
 ## Onde mora o quê
 

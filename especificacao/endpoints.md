@@ -45,7 +45,7 @@ documento está datado.
 | `GET` | `/niveis` | a taxa alvo padrão de cada nível, para cutting e bulking | RF-16 |
 | `GET` | `/acompanhamento` | tudo da tela principal, numa resposta | UC-08 |
 | `POST` | `/importacao/previsualizacao` | valida o arquivo e relata, sem gravar | RF-37, RF-38 |
-| `POST` | `/importacao` | grava o arquivo inteiro ou nada | RF-40 |
+| `POST` | `/importacao` | grava o arquivo inteiro ou nada, conferindo as datas a substituir que a pessoa viu | RF-40 |
 | `GET` | `/saude` | responde se a api está no ar; o script de deploy confere por ela | ADR-0037 |
 
 ## As decisões que não se leem na lista
@@ -287,6 +287,17 @@ Isso evita armazenamento temporário com expiração e limpeza, e garante que o
 que se grava é exatamente o que foi confirmado. O navegador já tem o arquivo em
 memória, então o reenvio não custa nada ao usuário.
 
+A confirmação leva, ao lado do arquivo, um campo `substituir` para cada data
+que a pré-visualização mostrou como substituída, e nenhum quando ela não
+mostrou nenhuma. O servidor refaz a conta e, se o conjunto mudou, em qualquer
+direção, responde **409** com `PREVISUALIZACAO_DESATUALIZADA`, sem gravar
+nada, e a tela refaz a pré-visualização. Sem isso, uma data mostrada como nova
+que ganhasse registro entre as duas chamadas, pelo celular por exemplo, seria
+substituída sem a confirmação explícita da RN-01: é a condição de corrida que
+o registro evita com o conflito. Linha que muda de válida para recusada, ou o
+contrário, entre as duas chamadas não é conferida, porque não substitui nada
+sem aviso.
+
 ### O convite não tem endpoint
 
 Convidar é ação do AT-02, que não tem interface no sistema (`atores.md`). É
@@ -337,6 +348,6 @@ tela de entrada.
 | 400 | valor recusado por regra (faixa, data futura no registro, data de fim futura ou anterior ao início, data local ausente ou inválida, arquivo de importação sem as colunas obrigatórias ou com separador desconhecido, e-mail digitado na exclusão de conta que não é o da conta) |
 | 401 | sem token de acesso válido; na renovação, sem token de renovação válido |
 | 404 | registro ou fase que não existe, ou que é de outro usuário, sem distinguir os dois; também rota que não existe e método que a rota não aceita |
-| 409 | conflito de data em registro, sobreposição de fase que a RN-19 recusa, encerramento de fase que não é a corrente, ou fase criada ou editada que mudaria outra fase sem a confirmação |
+| 409 | conflito de data em registro, sobreposição de fase que a RN-19 recusa, encerramento de fase que não é a corrente, fase criada ou editada que mudaria outra fase sem a confirmação, ou importação confirmada sobre uma pré-visualização que mudou |
 | 422 | corpo malformado, antes de chegar a regra de negócio |
 | 500 | erro inesperado, sem a mensagem da exceção (RNF-13) |

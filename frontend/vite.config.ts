@@ -21,6 +21,7 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    setupFiles: ['src/testes/preparar.ts'],
     // Um fuso atrás do UTC, para a data do dispositivo diferir da do UTC à noite
     env: { TZ: 'America/Sao_Paulo' },
   },

@@ -1,47 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CalendarDays, ChevronDown } from 'lucide-react'
-import { useState, type ReactNode } from 'react'
-import { ptBR } from 'react-day-picker/locale'
+import type { ReactNode } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { dataDoDispositivo, ErroDaApi } from '@/api/cliente'
+import { ErroDaApi } from '@/api/cliente'
+import { CampoData } from '@/componentes/CampoData'
 import { Alert, AlertDescription } from '@/componentes/ui/alert'
 import { Button } from '@/componentes/ui/button'
-import { Calendar } from '@/componentes/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/componentes/ui/popover'
-import { diaDoIso, formatarData, isoDoDia } from '@/formato/data'
-import { lerNumero } from '@/formato/numero'
 import type { RegistroEnviado } from '@/hooks/useRegistros'
+import { numeroDeForma, opcional, SEM_RESPOSTA } from '@/lib/forma'
 import { cn } from '@/lib/utils'
-
-const UMA_CASA = /^\d+([.,]\d)?$/
-
-/**
- * A forma do número (ADR-0025): é número, com no máximo uma casa decimal
- * (RN-62). A faixa é regra, e a recusa dela vem do backend.
- */
-function numeroComUmaCasa(exemplo: string) {
-  return (texto: string, ctx: z.RefinementCtx): number => {
-    const valor = lerNumero(texto)
-    if (valor === null) {
-      ctx.addIssue({ code: 'custom', message: `Digite um número, como ${exemplo}.` })
-      return z.NEVER
-    }
-    if (!UMA_CASA.test(texto)) {
-      ctx.addIssue({ code: 'custom', message: `Use uma casa decimal, como ${exemplo}.` })
-      return z.NEVER
-    }
-    return valor
-  }
-}
 
 const esquema = z.object({
   data: z.string(),
-  peso: z.string().trim().min(1, 'Informe o peso.').transform(numeroComUmaCasa('78,4')),
-  cintura: z
-    .string()
-    .trim()
-    .transform((texto, ctx) => (texto === '' ? null : numeroComUmaCasa('88,5')(texto, ctx))),
+  peso: z.string().trim().min(1, 'Informe o peso.').transform(numeroDeForma(1, '78,4')),
+  cintura: opcional(1, '88,5'),
 })
 
 export type ValoresDoRegistro = z.input<typeof esquema>
@@ -83,10 +55,7 @@ export function FormularioRegistro({ inicial, rotuloEnviar, aoEnviar, children }
         setError(erro.campo, { type: 'api', message: erro.message }, { shouldFocus: true })
       } else {
         setError('root.envio', {
-          message:
-            erro instanceof ErroDaApi
-              ? erro.message
-              : 'Sem resposta do servidor. Confira a conexão e tente de novo.',
+          message: erro instanceof ErroDaApi ? erro.message : SEM_RESPOSTA,
         })
       }
     }
@@ -98,7 +67,13 @@ export function FormularioRegistro({ inicial, rotuloEnviar, aoEnviar, children }
         control={control}
         name="data"
         render={({ field }) => (
-          <CampoData valor={field.value} aoEscolher={field.onChange} erro={errors.data?.message} />
+          <CampoData
+            id="data"
+            rotulo="Data"
+            valor={field.value}
+            aoEscolher={field.onChange}
+            erro={errors.data?.message}
+          />
         )}
       />
 
@@ -173,61 +148,5 @@ export function FormularioRegistro({ inicial, rotuloEnviar, aoEnviar, children }
         {children}
       </div>
     </form>
-  )
-}
-
-interface PropsDaData {
-  valor: string
-  aoEscolher: (iso: string) => void
-  erro: string | undefined
-}
-
-function CampoData({ valor, aoEscolher, erro }: PropsDaData) {
-  const [aberto, setAberto] = useState(false)
-  const hoje = dataDoDispositivo()
-
-  return (
-    <div className="flex flex-col gap-1.5">
-      <span id="rotulo-data" className="text-sm font-semibold">
-        Data
-      </span>
-      <Popover open={aberto} onOpenChange={setAberto}>
-        <PopoverTrigger asChild>
-          <Button
-            type="button"
-            variant="outline"
-            aria-labelledby="rotulo-data valor-data"
-            aria-invalid={erro ? true : undefined}
-            aria-describedby={erro ? 'erro-data' : undefined}
-            className="w-full justify-start border-input bg-card px-3 font-normal dark:bg-card"
-          >
-            <CalendarDays aria-hidden="true" className="text-muted-foreground" />
-            <span id="valor-data" className="tabular-nums">
-              {formatarData(valor)}
-            </span>
-            {valor === hoje && <span className="text-sm text-muted-foreground">hoje</span>}
-            <ChevronDown aria-hidden="true" className="ml-auto text-muted-foreground" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent align="start" className="w-auto rounded-xl p-2">
-          <Calendar
-            mode="single"
-            locale={ptBR}
-            required
-            selected={diaDoIso(valor)}
-            defaultMonth={diaDoIso(valor)}
-            onSelect={(dia) => {
-              aoEscolher(isoDoDia(dia))
-              setAberto(false)
-            }}
-          />
-        </PopoverContent>
-      </Popover>
-      {erro && (
-        <span id="erro-data" className="text-sm text-destructive">
-          {erro}
-        </span>
-      )}
-    </div>
   )
 }

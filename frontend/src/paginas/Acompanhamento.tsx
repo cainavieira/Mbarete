@@ -8,7 +8,7 @@ import { Simbolo } from '@/componentes/Logotipo'
 import { Alert, AlertDescription, AlertTitle } from '@/componentes/ui/alert'
 import { Button } from '@/componentes/ui/button'
 import { formatarData, formatarIntervalo } from '@/formato/data'
-import { formatarTipo, formatarTipoComArtigo } from '@/formato/fase'
+import { formatarDoTipo, formatarTipo } from '@/formato/fase'
 import {
   formatarCintura,
   formatarDiferenca,
@@ -330,7 +330,7 @@ function Cintura({ cintura, fase }: { cintura: Esquema<'ResumoCintura'>; fase: F
           )}
           {desdeOInicioDaFase !== null && fase !== null && (
             <Linha
-              rotulo={`desde a primeira medição ${formatarTipoComArtigo(fase.tipo)}`}
+              rotulo={`desde a primeira medição ${formatarDoTipo(fase.tipo)}`}
               valor={`${formatarDiferenca(desdeOInicioDaFase)} cm`}
             />
           )}

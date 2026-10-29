@@ -4,6 +4,8 @@ import { Toaster } from '@/componentes/ui/sonner'
 import { Acompanhamento } from '@/paginas/Acompanhamento'
 import { Conta } from '@/paginas/Conta'
 import { Entrada } from '@/paginas/Entrada'
+import { Fases } from '@/paginas/Fases'
+import { NovaFase } from '@/paginas/NovaFase'
 import { RegistrarPeso } from '@/paginas/RegistrarPeso'
 import { TelaPorFazer } from '@/paginas/TelaPorFazer'
 
@@ -20,7 +22,9 @@ export function App() {
           <Route index element={<Acompanhamento />} />
           <Route path="registrar" element={<RegistrarPeso />} />
           <Route path="historico" element={<TelaPorFazer titulo="Histórico" />} />
-          <Route path="fases" element={<TelaPorFazer titulo="Fases" />} />
+          <Route path="fases" element={<Fases />} />
+          <Route path="fases/nova" element={<NovaFase />} />
+          <Route path="fases/:id" element={<TelaPorFazer titulo="Fase" />} />
           <Route path="importar" element={<TelaPorFazer titulo="Importar e exportar" />} />
           <Route path="conta" element={<Conta />} />
         </Route>

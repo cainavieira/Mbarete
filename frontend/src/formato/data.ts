@@ -22,6 +22,13 @@ export function diaDoIso(iso: string): Date {
   return new Date(Number(ano), Number(mes) - 1, Number(dia))
 }
 
+/** O dia tantos dias depois, ou antes, com o número negativo, em AAAA-MM-DD. */
+export function somarDias(iso: string, dias: number): string {
+  const dia = diaDoIso(iso)
+  dia.setDate(dia.getDate() + dias)
+  return isoDoDia(dia)
+}
+
 /** 07/09/2026. */
 export function formatarData(iso: string): string {
   const [ano, mes, dia] = partes(iso)

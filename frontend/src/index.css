@@ -1,0 +1,142 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/figtree";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Os tokens do identidade-visual.md, com os nomes do shadcn/ui
+ * (convencoes-frontend.md): o modo claro no :root, o escuro no .dark, que o
+ * seletor de tema põe ou tira do <html> (RF-51).
+ */
+:root {
+  --background: #ffffff;
+  --foreground: #121212;
+  --card: #ffffff;
+  --card-foreground: #121212;
+  --popover: #ffffff;
+  --popover-foreground: #121212;
+  --border: #e4e8e1;
+  --input: #8a9086;
+  --muted: #f1f3ef;
+  --muted-foreground: #5c625a;
+  --primary: #3e5f46;
+  --primary-foreground: #ffffff;
+  --ring: #3e5f46;
+  --secondary: #e6eee2;
+  --secondary-foreground: #3e5f46;
+  --accent: #e6eee2;
+  --accent-foreground: #3e5f46;
+  --destructive: #b42318;
+  --destructive-foreground: #ffffff;
+  --destaque: #fff3b0;
+  --destaque-foreground: #121212;
+  --destaque-suave: #5c625a;
+  --grafico-linha: #6b8e5e;
+  --grafico-ponto: #788e6f;
+  --grafico-area: #eef3ea;
+  --trilho: #eef1ec;
+  --ritmo: #1f4e79;
+  --ritmo-fundo: #e3edf7;
+  --faixa-borda: #4f81ae;
+  --fora: #8a3b22;
+  --fora-fundo: #f8e3da;
+  --insuficiente-borda: #7c8378;
+  --sobreposicao: rgb(18 18 18 / 0.5);
+  --radius: 0.75rem;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #131512;
+  --foreground: #eef1ea;
+  --card: #1b1e1a;
+  --card-foreground: #eef1ea;
+  --popover: #1b1e1a;
+  --popover-foreground: #eef1ea;
+  --border: #2e332c;
+  --input: #6e746a;
+  --muted: #1f231e;
+  --muted-foreground: #a0a69c;
+  --primary: #a7b89f;
+  --primary-foreground: #131512;
+  --ring: #a7b89f;
+  --secondary: #263024;
+  --secondary-foreground: #cfe0c4;
+  --accent: #263024;
+  --accent-foreground: #cfe0c4;
+  --destructive: #f08c7d;
+  --destructive-foreground: #131512;
+  --destaque: #2a2716;
+  --destaque-foreground: #fff3b0;
+  --destaque-suave: #b9b49a;
+  --grafico-linha: #a7b89f;
+  --grafico-ponto: #7d8a77;
+  --grafico-area: #222a20;
+  --trilho: #2e332c;
+  --ritmo: #a9c8e8;
+  --ritmo-fundo: #1c2a38;
+  --faixa-borda: #6f9cc6;
+  --fora: #f0b49c;
+  --fora-fundo: #3a2620;
+  --insuficiente-borda: #6e746a;
+  --sobreposicao: rgb(19 21 18 / 0.8);
+  color-scheme: dark;
+}
+
+/* As cores viram classe do Tailwind (bg-destaque, text-ritmo), e o canto sai da --radius */
+@theme inline {
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-ring: var(--ring);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destaque: var(--destaque);
+  --color-destaque-foreground: var(--destaque-foreground);
+  --color-destaque-suave: var(--destaque-suave);
+  --color-grafico-linha: var(--grafico-linha);
+  --color-grafico-ponto: var(--grafico-ponto);
+  --color-grafico-area: var(--grafico-area);
+  --color-trilho: var(--trilho);
+  --color-ritmo: var(--ritmo);
+  --color-ritmo-fundo: var(--ritmo-fundo);
+  --color-faixa-borda: var(--faixa-borda);
+  --color-fora: var(--fora);
+  --color-fora-fundo: var(--fora-fundo);
+  --color-insuficiente-borda: var(--insuficiente-borda);
+  --color-sobreposicao: var(--sobreposicao);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: 1rem;
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

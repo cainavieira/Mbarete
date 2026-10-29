@@ -32,7 +32,7 @@ public record FaseEncerrada(
     NAO_ATINGIDO,
     /** Do lado errado da base, ou igual a ela (RN-44). */
     LADO_ERRADO,
-    /** Sem a base não há com que comparar (RN-68). */
+    /** Sem a base, ou com menos de dois registros na fase, não há com que comparar (RN-40). */
     SEM_AVALIACAO
   }
 
@@ -40,7 +40,9 @@ public record FaseEncerrada(
    * A variação vai da base ao peso semanal do último dia da fase que o tiver, e o alvo conta como
    * atingido quando o peso semanal o alcançou em algum dia dela: a variação diz onde a fase
    * terminou, e o alvo, o que ela alcançou no caminho. Sem a base, a variação vai do primeiro ao
-   * último registro, e o alvo fica sem avaliação (RN-40, RN-68).
+   * último registro, e o alvo fica sem avaliação (RN-40, RN-68). Com menos de dois registros na
+   * fase, com a base ou sem ela, não há variação nem avaliação: a janela do dia da base alcança
+   * dias antes da fase, e as duas sairiam de pesagens de fora dela.
    */
   public static FaseEncerrada resumirFaseEncerrada(
       TipoDeFase tipo,
@@ -50,14 +52,19 @@ public record FaseEncerrada(
       @Nullable LocalDate diaDaBase,
       List<Pesagem> pesagens) {
     long duracao = ChronoUnit.DAYS.between(inicio, fim) + 1;
+    @Nullable Alvo semAvaliacao = pesoAlvo == null ? null : Alvo.SEM_AVALIACAO;
+    List<Pesagem> naFase =
+        pesagens.stream()
+            .filter(pesagem -> !pesagem.data().isBefore(inicio) && !pesagem.data().isAfter(fim))
+            .sorted(Comparator.comparing(Pesagem::data))
+            .toList();
+    if (naFase.size() < 2) {
+      return new FaseEncerrada(duracao, null, semAvaliacao, null);
+    }
     Optional<BigDecimal> base =
         diaDaBase == null ? Optional.empty() : calcularPesoSemanal(pesagens, diaDaBase);
     if (diaDaBase == null || base.isEmpty()) {
-      return new FaseEncerrada(
-          duracao,
-          doPrimeiroAoUltimo(pesagens, inicio, fim),
-          pesoAlvo == null ? null : Alvo.SEM_AVALIACAO,
-          null);
+      return new FaseEncerrada(duracao, doPrimeiroAoUltimo(naFase), semAvaliacao, null);
     }
     VariacaoTotal variacao = daBase(pesagens, diaDaBase, base.get(), fim);
     if (pesoAlvo == null) {
@@ -89,16 +96,8 @@ public record FaseEncerrada(
         .orElseThrow();
   }
 
-  private static @Nullable VariacaoTotal doPrimeiroAoUltimo(
-      List<Pesagem> pesagens, LocalDate inicio, LocalDate fim) {
-    List<Pesagem> naFase =
-        pesagens.stream()
-            .filter(pesagem -> !pesagem.data().isBefore(inicio) && !pesagem.data().isAfter(fim))
-            .sorted(Comparator.comparing(Pesagem::data))
-            .toList();
-    if (naFase.size() < 2) {
-      return null;
-    }
+  /** As pesagens da fase em ordem de data, pelo menos duas. */
+  private static VariacaoTotal doPrimeiroAoUltimo(List<Pesagem> naFase) {
     Pesagem primeira = naFase.getFirst();
     Pesagem ultima = naFase.getLast();
     return new VariacaoTotal(

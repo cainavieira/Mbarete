@@ -610,12 +610,14 @@ class FaseControllerTest {
 
   // Pega o dia da base que já existe e não foi fixado: a fase agendada começou
   // e terminou sem nenhuma gravação, e o peso semanal do início veio dos
-  // registros de antes dela (RN-68)
+  // registros de antes dela (RN-68). Os dois registros dentro dela são os que
+  // a variação pede (RN-40)
   @Test
   void aListaFixaODiaDaBaseQueFalta() throws Exception {
     int fulana = usuario("fulana@exemplo.com");
     fase(fulana, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30), null);
     pesagens(fulana, LocalDate.of(2026, 8, 28), "80.0", "80.0", "80.0", "80.0");
+    pesagens(fulana, LocalDate.of(2026, 9, 2), "79.0", "79.0");
 
     listar(fulana, hoje)
         .andExpect(status().isOk())

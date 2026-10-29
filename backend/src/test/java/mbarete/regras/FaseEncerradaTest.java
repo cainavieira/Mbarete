@@ -120,6 +120,19 @@ class FaseEncerradaTest {
     assertThat(manutencao(null, pesagens).variacaoTotal()).isNull();
   }
 
+  // Pega a variação e o alvo feitos só de pesagens de antes da fase, quando a
+  // janela do dia da base as alcança (RN-40, UC-09 2d)
+  @Test
+  void comBaseEUmRegistroNaFaseNaoHaVariacaoNemAvaliacao() {
+    var pesagens = new ArrayList<Pesagem>(ate(INICIO.minusDays(1), "80.0", "80.0", "80.0", "80.0"));
+    pesagens.add(pesagem("2026-09-02", "79.0"));
+
+    var encerrada = cutting("78.0", INICIO, pesagens);
+
+    assertThat(encerrada.variacaoTotal()).isNull();
+    assertThat(encerrada.alvo()).isEqualTo(Alvo.SEM_AVALIACAO);
+  }
+
   // Pega o alvo avaliado só no fim, quando o peso já voltou, e o último dia no
   // alvo no lugar do primeiro (RN-40)
   @Test

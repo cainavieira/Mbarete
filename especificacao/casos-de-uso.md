@@ -12,13 +12,15 @@ Atores em `atores.md`, requisitos em `requisitos-funcionais.md`, regras em
 ## UC-01 Entrar no sistema
 
 **Ator:** AT-01
-**Pré-condição:** o e-mail consta na lista de convidados.
+**Pré-condição:** o e-mail consta na lista de convidados, e o Google o dá como
+verificado.
 
 **Fluxo principal**
 
 1. A pessoa abre o endereço do sistema e escolhe entrar com a conta Google.
 2. O AT-03 autentica e devolve nome, e-mail e foto. (RF-01)
-3. O sistema confere o e-mail na lista de convidados. (RF-02, RN-48)
+3. O sistema confere que o Google deu o e-mail como verificado e que ele está
+   na lista de convidados. (RF-02, RN-48)
 4. Existindo conta, o sistema abre a sessão e apresenta a tela de
    acompanhamento.
 5. Não existindo conta, o sistema a cria. A conta nasce **sem fase alguma**, e
@@ -27,9 +29,10 @@ Atores em `atores.md`, requisitos em `requisitos-funcionais.md`, regras em
 
 **Fluxos alternativos**
 
-- **1a** O e-mail não está na lista de convidados: o sistema volta para a
-  tela de entrada dizendo que o acesso é por convite, sem informar se aquele
-  e-mail existe no sistema. (RF-02, RNF-23)
+- **1a** O e-mail não está na lista de convidados, ou o Google não o deu como
+  verificado: o sistema volta para a tela de entrada dizendo que o acesso é
+  por convite, sem informar se aquele e-mail existe no sistema. (RF-02,
+  RNF-23)
 - **1c** O AT-03 está indisponível: nenhum login novo acontece. Sessão já
   aberta continua válida.
 - **1d** O login não se completa no retorno do Google: a pessoa cancelou na

@@ -11,7 +11,7 @@ aposentados estão listados no fim.
 
 - **RF-01** O sistema deve autenticar o AT-01 por meio do AT-03. (RN-49)
 - **RF-02** O sistema deve recusar o acesso de quem não consta na lista de
-  convidados. (RN-48)
+  convidados, ou cujo e-mail o Google não deu como verificado. (RN-48)
 - **RF-03** O sistema deve criar a conta do AT-01 no primeiro acesso
   bem-sucedido. A conta nasce sem fase alguma. (RN-20)
 - **RF-04** O sistema deve permitir que o AT-01 encerre a própria sessão.

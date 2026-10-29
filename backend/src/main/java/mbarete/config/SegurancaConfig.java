@@ -47,6 +47,10 @@ public class SegurancaConfig {
   private static final RequestMatcher ROTAS_DE_AUTH =
       PathPatternRequestMatcher.pathPattern("/auth/**");
 
+  /** O contrato em OpenAPI, que só existe no perfil dev (ADR-0027). */
+  private static final RequestMatcher CONTRATO =
+      PathPatternRequestMatcher.pathPattern("/v3/api-docs/**");
+
   private static final String GOOGLE = "google";
 
   @Bean
@@ -63,7 +67,12 @@ public class SegurancaConfig {
         .csrf(csrf -> csrf.disable())
         .sessionManagement(sessao -> sessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
-            rotas -> rotas.requestMatchers(ROTAS_DE_AUTH).permitAll().anyRequest().authenticated())
+            rotas ->
+                rotas
+                    .requestMatchers(ROTAS_DE_AUTH, CONTRATO)
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
         // O Spring Security cuida do state, do nonce, da troca do código e da assinatura do
         // id_token, os quatro pontos que erram em silêncio (ADR-0041)
         .oauth2Login(

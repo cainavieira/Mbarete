@@ -1,5 +1,5 @@
 import { ChevronLeft } from 'lucide-react'
-import { Link, useNavigate } from 'react-router'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import { toast } from 'sonner'
 import { dataDoDispositivo, ErroDaApi } from '@/api/cliente'
 import { DialogoConfirmacao } from '@/componentes/DialogoConfirmacao'
@@ -28,6 +28,9 @@ export function NovaFase() {
   const criar = useCriarFase()
   const confirmacao = useConfirmacao<Encerramento>()
   const navegar = useNavigate()
+  // Vindo da importação, o período importado já preenche as datas (UC-10 4b)
+  const [parametros] = useSearchParams()
+  const fim = parametros.get('fim')
 
   async function aoEnviar(nova: FaseEnviada) {
     try {
@@ -77,9 +80,9 @@ export function NovaFase() {
             niveis={niveis.data}
             inicial={{
               tipo: 'CUTTING',
-              dataInicio: dataDoDispositivo(),
-              terminou: false,
-              dataFim: dataDoDispositivo(),
+              dataInicio: parametros.get('inicio') ?? dataDoDispositivo(),
+              terminou: fim !== null,
+              dataFim: fim ?? dataDoDispositivo(),
               nivel: moderado === undefined ? null : 'MODERADO',
               taxaAlvoValor:
                 moderado === undefined ? '' : formatarTaxa(moderado.valor, { comSinal: false }),

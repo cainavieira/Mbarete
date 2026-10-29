@@ -8,9 +8,9 @@ import { EditarRegistro } from '@/paginas/EditarRegistro'
 import { Entrada } from '@/paginas/Entrada'
 import { Fases } from '@/paginas/Fases'
 import { Historico } from '@/paginas/Historico'
+import { Importar } from '@/paginas/Importar'
 import { NovaFase } from '@/paginas/NovaFase'
 import { RegistrarPeso } from '@/paginas/RegistrarPeso'
-import { TelaPorFazer } from '@/paginas/TelaPorFazer'
 
 /**
  * As rotas, declaradas (ADR-0024). O servidor entrega o index.html para
@@ -29,7 +29,7 @@ export function App() {
           <Route path="fases" element={<Fases />} />
           <Route path="fases/nova" element={<NovaFase />} />
           <Route path="fases/:id" element={<EditarFase />} />
-          <Route path="importar" element={<TelaPorFazer titulo="Importar e exportar" />} />
+          <Route path="importar" element={<Importar />} />
           <Route path="conta" element={<Conta />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

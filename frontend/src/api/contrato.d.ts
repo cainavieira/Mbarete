@@ -257,11 +257,15 @@ export interface components {
             data: string;
             peso: number;
             cintura: number | null;
-            substitui: boolean;
+            substitui: components["schemas"]["RegistroGravado"] | null;
         };
         PrevisualizacaoDto: {
             validas: components["schemas"]["LinhaValida"][];
             recusadas: components["schemas"]["LinhaRecusada"][];
+        };
+        RegistroGravado: {
+            peso: number;
+            cintura: number | null;
         };
         FaseEnviadaDto: {
             /** @enum {string} */

@@ -37,7 +37,7 @@ const EM_ABERTO = {
   historico: null,
 }
 
-function abrir(criar: Resposta[]) {
+function abrir(criar: Resposta[], endereco = '/fases/nova') {
   const fetch = apiFalsa({
     'GET /niveis': [NIVEIS],
     'GET /fases': [[200, [EM_ABERTO]]],
@@ -45,7 +45,7 @@ function abrir(criar: Resposta[]) {
   })
   render(
     <QueryClientProvider client={new QueryClient()}>
-      <MemoryRouter initialEntries={['/fases/nova']}>
+      <MemoryRouter initialEntries={[endereco]}>
         <Routes>
           <Route path="/fases/nova" element={<NovaFase />} />
           <Route path="/fases" element={<p>Lista de fases</p>} />
@@ -164,4 +164,18 @@ test('sem fim, a recusa que cai no fim aparece no interruptor', async () => {
 
   expect(await screen.findByText('As datas invadem a manutenção de 03/11/2026 em diante.')).toBeTruthy()
   expect(descricao(screen.getByRole('switch'))).toContain('As datas invadem a manutenção')
+})
+
+// Pega o período da importação perdido no caminho para a fase nova, que a
+// pessoa teria de digitar de novo (UC-10 4b)
+test('vinda da importação, a fase nova já tem as datas do período', async () => {
+  const { fetch, pessoa } = abrir([CRIADA], '/fases/nova?inicio=2025-11-10&fim=2026-03-09')
+
+  await pessoa.type(await screen.findByLabelText('Peso alvo'), '75,0')
+  await pessoa.click(screen.getByRole('button', { name: 'Criar fase' }))
+
+  expect(corpos(fetch, 'POST /fases')[0]).toMatchObject({
+    dataInicio: '2025-11-10',
+    dataFim: '2026-03-09',
+  })
 })

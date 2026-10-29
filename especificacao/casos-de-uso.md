@@ -275,8 +275,8 @@ aí o caminho é o da RN-70. (RN-70)
   base, ou o peso semanal com que o de hoje se compara, o de 28 dias atrás ou
   o da base, não existe: dados insuficientes no lugar do veredito, mas o peso
   semanal e as variações continuam sendo exibidos. Quando faltam só os dias, e
-  eles se completam antes do fim da fase, a tela informa também a data a
-  partir da qual o veredito aparece. Sem peso semanal hoje, vale o 1a.
+  eles se completam dentro da fase, a tela informa também a data a partir da
+  qual o veredito aparece. Sem peso semanal hoje, vale o 1a.
   (RF-31, RN-36, RN-39)
 - **4b** A fase corrente é manutenção: o veredito diz se o peso semanal de
   hoje está abaixo, dentro ou acima da faixa de tolerância, que vai de 1%

@@ -14,3 +14,19 @@ export function useExportar() {
     mutationFn: async () => salvarArquivo(await baixar('/conta/exportar'), 'historico.csv'),
   })
 }
+
+/** Encerra a sessão: o backend apaga o token de renovação e expira os dois cookies (RF-04). */
+export function useSair() {
+  return useMutation({ mutationFn: () => chamar<void>('/auth/logout', { metodo: 'POST' }) })
+}
+
+/**
+ * Apaga a conta e tudo dela, com o e-mail digitado como confirmação; o que
+ * não confere volta recusado, no campo (UC-12, RN-51).
+ */
+export function useApagarConta() {
+  return useMutation({
+    mutationFn: (email: string) =>
+      chamar<void>('/conta/exclusao', { metodo: 'POST', corpo: { email } }),
+  })
+}

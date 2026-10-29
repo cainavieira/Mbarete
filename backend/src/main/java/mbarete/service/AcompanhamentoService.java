@@ -78,6 +78,7 @@ public class AcompanhamentoService {
                         hoje))
             .orElse(null),
         resumoCintura(medicoes, periodos, hoje).orElse(null),
-        montarSerie(pesagens, periodos, hoje));
+        montarSerie(pesagens, periodos, hoje),
+        fasesDaPessoa);
   }
 }

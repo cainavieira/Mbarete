@@ -135,6 +135,32 @@ class AcompanhamentoControllerTest {
         .andExpect(jsonPath("$.variacoes.semana.valor").value(0.0));
   }
 
+  // Pega o tipo da fase corrente dado a todos os dias com fase, e o tipo dado
+  // ao dia sem fase (RF-47). Registros desde 25 dias atrás, um cutting de 20 a
+  // 11 dias atrás e a manutenção depois dele
+  @Test
+  void cadaDiaDaSerieTrazOTipoDaFaseQueOCobre() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    fase(
+        fulana,
+        "'cutting', ?, ?, 'moderado', 0.50, 'kg_semana', 70.0",
+        dia.minusDays(20),
+        dia.minusDays(11),
+        null);
+    fase(fulana, "'manutencao', ?, ?, null, null, null, null", dia.minusDays(10), null, null);
+    for (int dias = 0; dias <= 25; dias++) {
+      registro(fulana, dia.minusDays(dias), new BigDecimal("80.0"));
+    }
+
+    acompanhar(fulana)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.serie[4].faseTipo").value(nullValue()))
+        .andExpect(jsonPath("$.serie[5].faseTipo").value("CUTTING"))
+        .andExpect(jsonPath("$.serie[14].faseTipo").value("CUTTING"))
+        .andExpect(jsonPath("$.serie[15].faseTipo").value("MANUTENCAO"))
+        .andExpect(jsonPath("$.serie[25].faseTipo").value("MANUTENCAO"));
+  }
+
   // Pega a faixa perdida e a taxa real ao lado do veredito de posição (RN-33)
   @Test
   void aManutencaoTrazAFaixa() throws Exception {

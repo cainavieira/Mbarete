@@ -1,12 +1,15 @@
 package mbarete.mapper;
 
+import static java.util.stream.Collectors.toMap;
 import static mbarete.regras.Arredondamento.arredondarPercentual;
 import static mbarete.regras.Arredondamento.arredondarPeso;
 import static mbarete.regras.Arredondamento.arredondarTaxa;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import mbarete.dto.AcompanhamentoDto;
+import mbarete.dto.PontoDaSerieDto;
 import mbarete.dto.ProgressoDto;
 import mbarete.dto.VereditoDto;
 import mbarete.entity.Fase;
@@ -16,6 +19,7 @@ import mbarete.regras.Progresso;
 import mbarete.regras.ResumoCintura;
 import mbarete.regras.Ritmo;
 import mbarete.regras.TaxaReal;
+import mbarete.regras.TipoDeFase;
 import mbarete.regras.Variacao;
 import mbarete.regras.Variacoes;
 import org.jspecify.annotations.Nullable;
@@ -35,7 +39,9 @@ public final class AcompanhamentoMapper {
       @Nullable Fase corrente,
       @Nullable AcompanhamentoDaFase daFase,
       @Nullable ResumoCintura cintura,
-      List<PontoDaSerie> serie) {
+      List<PontoDaSerie> serie,
+      List<Fase> fases) {
+    Map<Integer, TipoDeFase> tipos = fases.stream().collect(toMap(Fase::id, Fase::tipo));
     return new AcompanhamentoDto(
         pesoSemanal == null ? null : arredondarPeso(pesoSemanal),
         registrosNaJanela,
@@ -49,7 +55,7 @@ public final class AcompanhamentoMapper {
         daFase == null ? null : daFase.faixa(),
         daFase == null ? null : progresso(daFase),
         cintura,
-        serie.stream().map(AcompanhamentoMapper::arredondado).toList());
+        serie.stream().map(ponto -> paraDto(ponto, tipos)).toList());
   }
 
   private static @Nullable Variacao arredondada(@Nullable Variacao variacao) {
@@ -96,12 +102,15 @@ public final class AcompanhamentoMapper {
     };
   }
 
-  private static PontoDaSerie arredondado(PontoDaSerie ponto) {
+  /** O peso semanal com uma casa, e o tipo da fase do dia, que a série da regra não carrega. */
+  private static PontoDaSerieDto paraDto(PontoDaSerie ponto, Map<Integer, TipoDeFase> tipos) {
     BigDecimal semanal = ponto.pesoSemanal();
-    return new PontoDaSerie(
+    Integer faseId = ponto.faseId();
+    return new PontoDaSerieDto(
         ponto.data(),
         ponto.peso(),
         semanal == null ? null : arredondarPeso(semanal),
-        ponto.faseId());
+        faseId,
+        faseId == null ? null : tipos.get(faseId));
   }
 }

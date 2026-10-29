@@ -3,7 +3,6 @@ package mbarete.dto;
 import java.math.BigDecimal;
 import java.util.List;
 import mbarete.regras.FaixaDeTolerancia;
-import mbarete.regras.PontoDaSerie;
 import mbarete.regras.ResumoCintura;
 import mbarete.regras.Variacoes;
 import org.jspecify.annotations.Nullable;
@@ -23,4 +22,4 @@ public record AcompanhamentoDto(
     @Nullable FaixaDeTolerancia faixa,
     @Nullable ProgressoDto progresso,
     @Nullable ResumoCintura cintura,
-    List<PontoDaSerie> serie) {}
+    List<PontoDaSerieDto> serie) {}

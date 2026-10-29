@@ -215,16 +215,16 @@ Uma resposta significa uma chave de cache e uma invalidação depois de gravar
 
 A série do gráfico é uma entrada por dia, dos últimos 120 dias até hoje, com
 a data, o peso (nulo onde não houve registro), o peso semanal (nulo onde a
-janela não teve os 4 registros) e o identificador da fase que cobre o dia
-(nulo onde não há fase). Se o primeiro registro da conta é mais recente que
+janela não teve os 4 registros) e o identificador e o tipo da fase que cobre o
+dia (nulos onde não há fase). Se o primeiro registro da conta é mais recente que
 isso, a série começa nele (RF-49). Os botões de período recortam a série na
 tela, sem nova chamada.
 
 Uma entrada por dia, inclusive o dia sem dado, porque a linha só se
 interrompe onde existe ponto nulo: dia omitido faria o gráfico ligar os
 vizinhos e desenhar uma trajetória que não aconteceu (RN-09, ADR-0029). E a
-fase vem em cada ponto, em vez de vir do `GET /fases`, para a tela continuar
-montada por uma chamada só.
+fase vem em cada ponto, com o tipo, que o gráfico escreve no bloco dela, em vez
+de vir do `GET /fases`, para a tela continuar montada por uma chamada só.
 
 Onde a janela não tem os 4 registros mínimos, o peso semanal vem nulo e o
 veredito vem com estado de dados insuficientes, em vez de o campo desaparecer

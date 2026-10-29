@@ -272,10 +272,12 @@ aí o caminho é o da RN-70. (RN-70)
   começa no primeiro registro e se alarga conforme os dias passam, em vez de
   mostrar trecho em branco. (RF-49)
 - **4a** Em cutting ou bulking, ainda não se passaram 14 dias desde o dia da
-  base, ou um dos dois pesos semanais comparados não existe: dados
-  insuficientes no lugar do veredito, mas o peso semanal e as variações
-  continuam sendo exibidos. Enquanto faltam os dias, a tela informa também a
-  data a partir da qual o veredito aparece. (RF-31, RN-36, RN-39)
+  base, ou o peso semanal com que o de hoje se compara, o de 28 dias atrás ou
+  o da base, não existe: dados insuficientes no lugar do veredito, mas o peso
+  semanal e as variações continuam sendo exibidos. Quando faltam só os dias, e
+  eles se completam antes do fim da fase, a tela informa também a data a
+  partir da qual o veredito aparece. Sem peso semanal hoje, vale o 1a.
+  (RF-31, RN-36, RN-39)
 - **4b** A fase corrente é manutenção: o veredito diz se o peso semanal de
   hoje está abaixo, dentro ou acima da faixa de tolerância, que vai de 1%
   abaixo a 1% acima da base. A faixa aparece no gráfico, do início da fase até

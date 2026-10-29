@@ -235,9 +235,13 @@ diferentes para quem consome.
 
 Em cutting e bulking, enquanto não se completam os 14 dias da RN-39, o
 veredito vem também com a data em que eles se completam, e a tela diz a partir
-de quando o veredito aparece sem conhecer os 14 dias (ADR-0025). Quando o que
-falta é um dos dois pesos semanais comparados, a data vem nula, porque não há
-como prever quando ele vai existir.
+de quando o veredito aparece sem conhecer os 14 dias (ADR-0025). A data só vem
+quando é promessa: falta só o mínimo de dias, com os dois pesos semanais
+comparados presentes, e ele se completa até o último dia da fase. Quando falta
+também um dos pesos, ela vem nula, porque não há como prever quando ele vai
+existir; e quando a fase termina antes, com a seguinte já agendada (RN-27),
+também, porque o veredito dela não vai aparecer (RN-40). Nos dois casos, a
+tela mostra só dados insuficientes.
 
 O progresso segue o mesmo princípio, com dois estados além do número, que a
 tela trata de forma diferente: dados insuficientes, quando a base da RN-68 não

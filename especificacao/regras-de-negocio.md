@@ -205,7 +205,10 @@ motivo.
   primeiro ao último registro da fase e é exibida com indicação de poucos
   pontos, em vez de omitida, e o alvo fica sem avaliação: variação sobre
   poucos pontos informa mais que variação ausente, desde que a pessoa saiba
-  qual das duas está olhando. Com menos de dois registros, não há variação.
+  qual das duas está olhando. Com menos de dois registros dentro da fase, com a
+  base ou sem ela, não há variação, e o alvo fica sem avaliação: a janela do
+  dia da base alcança dias antes da fase (RN-15), e os dois sairiam de
+  pesagens de fora dela.
 
 ## Peso alvo e progresso
 

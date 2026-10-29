@@ -110,7 +110,7 @@ async function erroDe(resposta: Response): Promise<ErroDaApi> {
   }
 }
 
-export async function chamar<T>(caminho: string, opcoes: Opcoes = {}): Promise<T> {
+async function pedir(caminho: string, opcoes: Opcoes): Promise<Response> {
   let resposta = await enviar(caminho, opcoes)
   if (resposta.status === 401) {
     if (await renovar()) {
@@ -124,8 +124,18 @@ export async function chamar<T>(caminho: string, opcoes: Opcoes = {}): Promise<T
   if (!resposta.ok) {
     throw await erroDe(resposta)
   }
+  return resposta
+}
+
+export async function chamar<T>(caminho: string, opcoes: Opcoes = {}): Promise<T> {
+  const resposta = await pedir(caminho, opcoes)
   if (resposta.status === 204) {
     return undefined as T
   }
   return (await resposta.json()) as T
+}
+
+/** O arquivo que a api devolve, como o CSV da exportação, com a mesma renovação da sessão. */
+export async function baixar(caminho: string): Promise<Blob> {
+  return (await pedir(caminho, {})).blob()
 }

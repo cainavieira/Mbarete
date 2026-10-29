@@ -47,3 +47,31 @@ export function formatarIntervalo(de: string, ate: string): string {
   const [, mesAte, diaAte] = partes(ate)
   return `(${diaDe}-${mesDe} / ${diaAte}-${mesAte})`
 }
+
+const DIAS_DA_SEMANA = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado']
+
+const MESES = [
+  'janeiro',
+  'fevereiro',
+  'março',
+  'abril',
+  'maio',
+  'junho',
+  'julho',
+  'agosto',
+  'setembro',
+  'outubro',
+  'novembro',
+  'dezembro',
+]
+
+/** O dia da semana, curto como a lista mostra: segunda. */
+export function formatarDiaDaSemana(iso: string): string {
+  return DIAS_DA_SEMANA[diaDoIso(iso).getDay()]
+}
+
+/** O mês do grupo na lista de registros: outubro de 2026. */
+export function formatarMes(iso: string): string {
+  const [ano, mes] = partes(iso)
+  return `${MESES[Number(mes) - 1]} de ${ano}`
+}

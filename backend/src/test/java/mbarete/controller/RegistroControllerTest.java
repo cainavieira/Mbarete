@@ -458,9 +458,10 @@ class RegistroControllerTest {
   }
 
   // Pega as pontas do intervalo deixadas de fora, a data fora dele que entra,
-  // e a lista fora da ordem de data (RF-14): os registros entram fora de ordem
+  // e a lista em outra ordem que não do mais recente para o mais antigo
+  // (RF-14): os registros entram fora de ordem
   @Test
-  void listaOIntervaloEmOrdemDeData() throws Exception {
+  void listaOIntervaloDoMaisRecenteParaOMaisAntigo() throws Exception {
     int fulana = usuario("fulana@exemplo.com");
     registro(fulana, LocalDate.of(2026, 9, 7), "82.0", null);
     registro(fulana, LocalDate.of(2026, 9, 5), "82.4", null);
@@ -474,7 +475,7 @@ class RegistroControllerTest {
 
     listar(fulana, hoje, "de", "2026-09-05", "ate", "2026-09-07")
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[*].data").value(contains("2026-09-05", "2026-09-06", "2026-09-07")));
+        .andExpect(jsonPath("$[*].data").value(contains("2026-09-07", "2026-09-06", "2026-09-05")));
   }
 
   // Pega a lista sem intervalo com 91 dias, e a contada a partir do dia do
@@ -492,7 +493,7 @@ class RegistroControllerTest {
         .andExpect(status().isOk())
         .andExpect(
             jsonPath("$[*].data")
-                .value(contains(ontem.minusDays(89).toString(), ontem.toString())));
+                .value(contains(ontem.toString(), ontem.minusDays(89).toString())));
   }
 
   // Pega o início contado a partir de hoje quando só o fim vem, que deixaria
@@ -507,7 +508,7 @@ class RegistroControllerTest {
 
     listar(fulana, hoje, "ate", "2026-06-30")
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[*].data").value(contains("2026-04-02", "2026-06-30")));
+        .andExpect(jsonPath("$[*].data").value(contains("2026-06-30", "2026-04-02")));
   }
 
   // Pega o início ignorado quando o fim não vem, que cairia nos últimos 90 dias

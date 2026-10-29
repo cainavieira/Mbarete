@@ -107,16 +107,16 @@ public class RegistroService {
   }
 
   /**
-   * Os registros de {@code de} a {@code ate}, as duas pontas inclusive, em ordem de data (RF-14).
-   * Sem {@code ate}, vai até hoje; sem {@code de}, cobre os 90 dias que terminam no {@code ate}, e
-   * sem nenhum dos dois são os últimos 90 dias (endpoints.md).
+   * Os registros de {@code de} a {@code ate}, as duas pontas inclusive, do mais recente para o mais
+   * antigo (RF-14). Sem {@code ate}, vai até hoje; sem {@code de}, cobre os 90 dias que terminam no
+   * {@code ate}, e sem nenhum dos dois são os últimos 90 dias (endpoints.md).
    */
   @Transactional(readOnly = true)
   public List<RegistroDto> listar(
       int idUsuario, @Nullable LocalDate de, @Nullable LocalDate ate, LocalDate hoje) {
     LocalDate fim = ate == null ? hoje : ate;
     LocalDate inicio = de == null ? fim.minusDays(DIAS_DA_LISTA - 1) : de;
-    return registros.findByUsuarioIdAndDataBetweenOrderByData(idUsuario, inicio, fim).stream()
+    return registros.findByUsuarioIdAndDataBetweenOrderByDataDesc(idUsuario, inicio, fim).stream()
         .map(RegistroMapper::paraDto)
         .toList();
   }

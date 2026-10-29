@@ -7,10 +7,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import mbarete.regras.LeituraDoCsv.LinhaRecusada;
 import mbarete.regras.LeituraDoCsv.LinhaValida;
+import mbarete.regras.LeituraDoCsv.RegistroGravado;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -21,6 +23,8 @@ class LeituraDoCsvTest {
   private static final LocalDate HOJE = LocalDate.of(2026, 10, 20);
 
   private static final LocalDate PRIMEIRO_DE_SETEMBRO = LocalDate.of(2026, 9, 1);
+  private static final RegistroGravado GRAVADO =
+      new RegistroGravado(new BigDecimal("86.0"), new BigDecimal("91.0"));
 
   // Pega a coluna lida pela posição, o nome com maiúscula ou espaço, a marca
   // de ordem dos bytes que a planilha grava no começo e a quebra de linha do
@@ -32,7 +36,7 @@ class LeituraDoCsvTest {
     assertThat(leitura.validas())
         .containsExactly(
             new LinhaValida(
-                2, PRIMEIRO_DE_SETEMBRO, new BigDecimal("85.7"), new BigDecimal("90.0"), false));
+                2, PRIMEIRO_DE_SETEMBRO, new BigDecimal("85.7"), new BigDecimal("90.0"), null));
     assertThat(leitura.recusadas()).isEmpty();
   }
 
@@ -41,7 +45,7 @@ class LeituraDoCsvTest {
   void separaPorVirgulaTambem() {
     assertThat(ler("data,peso\n2026-09-01,85.7").validas())
         .containsExactly(
-            new LinhaValida(2, PRIMEIRO_DE_SETEMBRO, new BigDecimal("85.7"), null, false));
+            new LinhaValida(2, PRIMEIRO_DE_SETEMBRO, new BigDecimal("85.7"), null, null));
   }
 
   // Pega o arquivo sem separador conhecido lido como uma coluna só (UC-10 1b)
@@ -158,13 +162,17 @@ class LeituraDoCsvTest {
     assertThat(leitura.recusadas()).extracting(LinhaRecusada::linha).containsExactly(3);
   }
 
-  // Pega a substituição marcada pela data errada ou não marcada (RN-58)
+  // Pega a substituição marcada pela data errada ou não marcada, e sem o que
+  // está gravado, que a substituição apaga sem mostrar (RN-58, UC-10)
   @Test
   void marcaALinhaQueSubstituiUmRegistro() {
     var leitura =
-        lerCsv("data;peso\n2026-09-01;85.7\n2026-09-02;85.6", Set.of(PRIMEIRO_DE_SETEMBRO), HOJE);
+        lerCsv(
+            "data;peso\n2026-09-01;85.7\n2026-09-02;85.6",
+            Map.of(PRIMEIRO_DE_SETEMBRO, GRAVADO),
+            HOJE);
 
-    assertThat(leitura.validas()).extracting(LinhaValida::substitui).containsExactly(true, false);
+    assertThat(leitura.validas()).extracting(LinhaValida::substitui).containsExactly(GRAVADO, null);
   }
 
   // Pega a confirmação que substitui uma data que a pessoa viu como nova, e a
@@ -174,7 +182,10 @@ class LeituraDoCsvTest {
   @ValueSource(strings = {"", "2026-09-01;2026-09-02"})
   void aConfirmacaoComOutrasDatasDoQueAsSubstituidasERecusada(String confirmada) {
     var leitura =
-        lerCsv("data;peso\n2026-09-01;85.7\n2026-09-02;85.6", Set.of(PRIMEIRO_DE_SETEMBRO), HOJE);
+        lerCsv(
+            "data;peso\n2026-09-01;85.7\n2026-09-02;85.6",
+            Map.of(PRIMEIRO_DE_SETEMBRO, GRAVADO),
+            HOJE);
     var confirmadas =
         Arrays.stream(confirmada.split(";"))
             .filter(data -> !data.isEmpty())
@@ -191,12 +202,15 @@ class LeituraDoCsvTest {
   @Test
   void aConfirmacaoComAsMesmasDatasPassa() {
     var leitura =
-        lerCsv("data;peso\n2026-09-01;85.7\n2026-09-02;85.6", Set.of(PRIMEIRO_DE_SETEMBRO), HOJE);
+        lerCsv(
+            "data;peso\n2026-09-01;85.7\n2026-09-02;85.6",
+            Map.of(PRIMEIRO_DE_SETEMBRO, GRAVADO),
+            HOJE);
 
     leitura.conferirSubstituicoes(Set.of(PRIMEIRO_DE_SETEMBRO));
   }
 
   private static LeituraDoCsv ler(String conteudo) {
-    return lerCsv(conteudo, Set.of(), HOJE);
+    return lerCsv(conteudo, Map.of(), HOJE);
   }
 }

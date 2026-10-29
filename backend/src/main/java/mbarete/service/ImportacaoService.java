@@ -2,7 +2,6 @@ package mbarete.service;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
 import static mbarete.regras.LeituraDoCsv.lerCsv;
 
 import java.time.Clock;
@@ -14,6 +13,7 @@ import mbarete.dto.PrevisualizacaoDto;
 import mbarete.entity.Registro;
 import mbarete.regras.LeituraDoCsv;
 import mbarete.regras.LeituraDoCsv.LinhaValida;
+import mbarete.regras.LeituraDoCsv.RegistroGravado;
 import mbarete.repository.RegistroRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +46,8 @@ public class ImportacaoService {
     LeituraDoCsv leitura =
         lerCsv(
             conteudo,
-            registros.findByUsuarioId(idUsuario).stream().map(Registro::data).collect(toSet()),
+            registros.findByUsuarioId(idUsuario).stream()
+                .collect(toMap(Registro::data, ImportacaoService::gravado)),
             hoje);
     return new PrevisualizacaoDto(leitura.validas(), leitura.recusadas());
   }
@@ -63,7 +64,11 @@ public class ImportacaoService {
       int idUsuario, String conteudo, Set<LocalDate> substituir, LocalDate hoje) {
     Map<LocalDate, Registro> existentes =
         registros.findByUsuarioId(idUsuario).stream().collect(toMap(Registro::data, identity()));
-    LeituraDoCsv leitura = lerCsv(conteudo, existentes.keySet(), hoje);
+    LeituraDoCsv leitura =
+        lerCsv(
+            conteudo,
+            existentes.values().stream().collect(toMap(Registro::data, ImportacaoService::gravado)),
+            hoje);
     leitura.conferirSubstituicoes(substituir);
     Instant agora = Instant.now(relogio);
     for (LinhaValida linha : leitura.validas()) {
@@ -78,5 +83,9 @@ public class ImportacaoService {
     }
     diaDaBase.fixarOndeFalta(idUsuario, hoje);
     return new PrevisualizacaoDto(leitura.validas(), leitura.recusadas());
+  }
+
+  private static RegistroGravado gravado(Registro registro) {
+    return new RegistroGravado(registro.peso(), registro.cintura());
   }
 }

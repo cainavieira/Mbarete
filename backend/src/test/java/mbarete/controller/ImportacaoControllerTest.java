@@ -2,6 +2,7 @@ package mbarete.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,14 +53,16 @@ class ImportacaoControllerTest {
   }
 
   // Pega a substituição marcada pelos registros de outra pessoa ou não
-  // marcada, a data futura contada pelo dia do servidor (o dispositivo ainda
-  // está em ontem), e a pré-visualização que grava (RN-58, RN-60)
+  // marcada, sem o peso e a cintura gravados, que ela apaga (UC-10), a data
+  // futura contada pelo dia do servidor (o dispositivo ainda está em ontem), e
+  // a pré-visualização que grava (RN-58, RN-60)
   @Test
   void previsualizaSemGravar() throws Exception {
     int outra = usuario("outra@exemplo.com");
     registro(outra, LocalDate.of(2026, 9, 2));
     int fulana = usuario("fulana@exemplo.com");
     registro(fulana, LocalDate.of(2026, 9, 1));
+    jdbc.sql("update registro set cintura = 91.0 where usuario_id = ?").param(fulana).update();
     String arquivo =
         """
         data;peso;cintura
@@ -73,11 +76,12 @@ class ImportacaoControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.validas", hasSize(2)))
         .andExpect(jsonPath("$.validas[0].linha").value(2))
-        .andExpect(jsonPath("$.validas[0].substitui").value(true))
+        .andExpect(jsonPath("$.validas[0].substitui.peso").value(80.0))
+        .andExpect(jsonPath("$.validas[0].substitui.cintura").value(91.0))
         .andExpect(jsonPath("$.validas[1].data").value("2026-09-02"))
         .andExpect(jsonPath("$.validas[1].peso").value(85.6))
         .andExpect(jsonPath("$.validas[1].cintura").value(90.0))
-        .andExpect(jsonPath("$.validas[1].substitui").value(false))
+        .andExpect(jsonPath("$.validas[1].substitui").value(nullValue()))
         .andExpect(jsonPath("$.recusadas", hasSize(1)))
         .andExpect(jsonPath("$.recusadas[0].linha").value(4))
         .andExpect(

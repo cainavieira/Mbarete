@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.tuple;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import mbarete.regras.EscritaDoCsv.LinhaDoHistorico;
 import mbarete.regras.LeituraDoCsv.LinhaValida;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class EscritaDoCsvTest {
   // (UC-11)
   @Test
   void aImportacaoLeOQueAExportacaoEscreve() {
-    var lidas = lerCsv(escreverCsv(FORA_DE_ORDEM), Set.of(), LocalDate.of(2026, 10, 20));
+    var lidas = lerCsv(escreverCsv(FORA_DE_ORDEM), Map.of(), LocalDate.of(2026, 10, 20));
 
     assertThat(lidas.recusadas()).isEmpty();
     assertThat(lidas.validas())

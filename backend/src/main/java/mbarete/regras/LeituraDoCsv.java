@@ -26,10 +26,21 @@ public record LeituraDoCsv(List<LinhaValida> validas, List<LinhaRecusada> recusa
   /** A linha lida, numerada como no arquivo, com o cabeçalho na linha 1. */
   public sealed interface LinhaLida permits LinhaValida, LinhaRecusada {}
 
-  /** A linha que pode ser gravada; substitui quando a data já tem registro (RN-58). */
+  /**
+   * A linha que pode ser gravada. Quando a data já tem registro, ela o substitui inteiro, e traz o
+   * que está gravado, para a pré-visualização mostrar o que se perde, como a cintura (RN-58,
+   * UC-10).
+   */
   public record LinhaValida(
-      int linha, LocalDate data, BigDecimal peso, @Nullable BigDecimal cintura, boolean substitui)
+      int linha,
+      LocalDate data,
+      BigDecimal peso,
+      @Nullable BigDecimal cintura,
+      @Nullable RegistroGravado substitui)
       implements LinhaLida {}
+
+  /** O peso e a cintura gravados na data que a importação substitui. */
+  public record RegistroGravado(BigDecimal peso, @Nullable BigDecimal cintura) {}
 
   public record LinhaRecusada(int linha, String motivo) implements LinhaLida {}
 
@@ -65,7 +76,10 @@ public record LeituraDoCsv(List<LinhaValida> validas, List<LinhaRecusada> recusa
    */
   public void conferirSubstituicoes(Set<LocalDate> confirmadas) {
     Set<LocalDate> substituidas =
-        validas.stream().filter(LinhaValida::substitui).map(LinhaValida::data).collect(toSet());
+        validas.stream()
+            .filter(linha -> linha.substitui() != null)
+            .map(LinhaValida::data)
+            .collect(toSet());
     if (!substituidas.equals(confirmadas)) {
       throw new RegraVioladaException(
           Recusa.PREVISUALIZACAO_DESATUALIZADA,
@@ -80,7 +94,8 @@ public record LeituraDoCsv(List<LinhaValida> validas, List<LinhaRecusada> recusa
    * data repetida no arquivo recusa todas as linhas dela (RN-60). Linha em branco não conta como
    * recusada, mas conta na numeração.
    */
-  public static LeituraDoCsv lerCsv(String conteudo, Set<LocalDate> existentes, LocalDate hoje) {
+  public static LeituraDoCsv lerCsv(
+      String conteudo, Map<LocalDate, RegistroGravado> existentes, LocalDate hoje) {
     List<String> linhas = conteudo.lines().toList();
     String cabecalho = linhas.isEmpty() ? "" : semMarcaDeOrdem(linhas.getFirst());
     if (cabecalho.isBlank()) {
@@ -124,7 +139,7 @@ public record LeituraDoCsv(List<LinhaValida> validas, List<LinhaRecusada> recusa
   private static LinhaLida ler(
       Bruta bruta,
       Map<LocalDate, List<Integer>> linhasPorData,
-      Set<LocalDate> existentes,
+      Map<LocalDate, RegistroGravado> existentes,
       LocalDate hoje) {
     if (bruta.data().isEmpty()) {
       return new LinhaRecusada(bruta.linha(), "Falta a data.");
@@ -166,7 +181,7 @@ public record LeituraDoCsv(List<LinhaValida> validas, List<LinhaRecusada> recusa
         data,
         comUmaCasa(bruta.peso()),
         bruta.cintura().isEmpty() ? null : comUmaCasa(bruta.cintura()),
-        existentes.contains(data));
+        existentes.get(data));
   }
 
   private static String separador(String cabecalho) {

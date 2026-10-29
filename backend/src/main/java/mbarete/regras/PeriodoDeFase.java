@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 
 /** O intervalo de uma fase; o fim nulo é a fase em aberto (RN-18). */
-public record PeriodoDeFase(int id, LocalDate inicio, @Nullable LocalDate fim) {
+public record PeriodoDeFase(int id, TipoDeFase tipo, LocalDate inicio, @Nullable LocalDate fim) {
 
   /**
    * A fase que cobre a data, que é de onde o registro tira a fase (RN-23). Data sem fase é estado

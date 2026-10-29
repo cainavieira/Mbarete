@@ -1,13 +1,15 @@
 package mbarete.regras;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 
 public final class EncaixeDeFase {
 
-  private static final String SOBREPOSTA = "As datas invadem outra fase.";
+  private static final DateTimeFormatter DATA_EXIBIDA = DateTimeFormatter.ofPattern("dd/MM/uuuu");
 
   private EncaixeDeFase() {}
 
@@ -23,20 +25,28 @@ public final class EncaixeDeFase {
       List<PeriodoDeFase> fases, LocalDate inicio, @Nullable LocalDate fim, LocalDate hoje) {
     if (fim != null) {
       recusarFim(inicio, fim, null, hoje);
-      recusarSobreposicao(fases, inicio, fim);
+      recusarSobreposicao(fases, inicio, fim, invadida -> caminhoDoPeriodo(invadida, inicio));
       return Optional.empty();
     }
     Optional<PeriodoDeFase> encerrada =
         fases.stream()
             .filter(fase -> fase.fim() == null && fase.inicio().isBefore(inicio))
             .findFirst()
-            .map(aberta -> new PeriodoDeFase(aberta.id(), aberta.inicio(), inicio.minusDays(1)));
+            .map(
+                aberta ->
+                    new PeriodoDeFase(
+                        aberta.id(), aberta.tipo(), aberta.inicio(), inicio.minusDays(1)));
     recusarSobreposicao(
         fases.stream()
             .filter(fase -> encerrada.isEmpty() || fase.id() != encerrada.get().id())
             .toList(),
         inicio,
-        null);
+        null,
+        // UC-05 2g: só a em aberto que começa no mesmo dia ou depois chega aqui
+        invadida ->
+            invadida.fim() == null
+                ? " Para adiantar o início de um ciclo, edite a data de início dessa fase."
+                : "");
     return encerrada;
   }
 
@@ -60,22 +70,42 @@ public final class EncaixeDeFase {
       recusarFim(inicio, fim, antes.fim(), hoje);
     }
     List<PeriodoDeFase> outras = fases.stream().filter(fase -> fase.id() != antes.id()).toList();
-    Optional<PeriodoDeFase> movida =
+    Optional<PeriodoDeFase> queAcompanha =
         outras.stream()
             .filter(fase -> !inicio.equals(antes.inicio()))
             .filter(fase -> acompanha(fase, antes, hoje))
-            .findFirst()
-            .map(
-                anterior ->
-                    new PeriodoDeFase(anterior.id(), anterior.inicio(), inicio.minusDays(1)));
-    if (movida.isPresent() && !inicio.isAfter(movida.get().inicio())) {
-      throw new RegraVioladaException(Recusa.FASE_SOBREPOSTA, "dataInicio", SOBREPOSTA);
+            .findFirst();
+    if (queAcompanha.isPresent() && !inicio.isAfter(queAcompanha.get().inicio())) {
+      throw sobreposta(queAcompanha.get(), "dataInicio", "");
     }
+    Optional<PeriodoDeFase> movida =
+        queAcompanha.map(
+            anterior ->
+                new PeriodoDeFase(
+                    anterior.id(), anterior.tipo(), anterior.inicio(), inicio.minusDays(1)));
     recusarSobreposicao(
         outras.stream().filter(fase -> movida.isEmpty() || fase.id() != movida.get().id()).toList(),
         inicio,
-        fim);
+        fim,
+        // UC-06 2b: o início novo caiu dentro da anterior, que tem fim
+        invadida ->
+            invadida.fim() != null && invadida.inicio().isBefore(inicio)
+                ? " Para adiantar o início, encurte antes essa fase."
+                : "");
     return movida;
+  }
+
+  /**
+   * UC-05 2e: o período dentro do ciclo atual cabe depois de encerrar a fase em aberto; começando
+   * no início dela ou antes, encerrá-la não basta, e o caminho é adiar o início dela.
+   */
+  private static String caminhoDoPeriodo(PeriodoDeFase invadida, LocalDate inicio) {
+    if (invadida.fim() != null) {
+      return "";
+    }
+    return invadida.inicio().isBefore(inicio)
+        ? " Para classificar um período dentro do ciclo atual, encerre antes essa fase."
+        : " Para classificar esse período, adie antes o início dessa fase.";
   }
 
   /**
@@ -90,7 +120,7 @@ public final class EncaixeDeFase {
           Recusa.FASE_NAO_CORRENTE, "Só a fase corrente, a que cobre hoje, pode ser encerrada.");
     }
     recusarFim(fase.inicio(), fim, null, hoje);
-    return new PeriodoDeFase(fase.id(), fase.inicio(), fim);
+    return new PeriodoDeFase(fase.id(), fase.tipo(), fase.inicio(), fim);
   }
 
   /**
@@ -111,7 +141,9 @@ public final class EncaixeDeFase {
     return outras.stream()
         .filter(fase -> acompanha(fase, apagada, hoje))
         .findFirst()
-        .map(anterior -> new PeriodoDeFase(anterior.id(), anterior.inicio(), fimNovo));
+        .map(
+            anterior ->
+                new PeriodoDeFase(anterior.id(), anterior.tipo(), anterior.inicio(), fimNovo));
   }
 
   /**
@@ -144,18 +176,49 @@ public final class EncaixeDeFase {
 
   /**
    * A recusa destaca o início quando ele cai dentro de outra fase; quando o início está livre, é o
-   * fim, ou a falta dele, que invade a seguinte.
+   * fim, ou a falta dele, que invade a seguinte. Ela nomeia a primeira fase invadida e, onde o caso
+   * de uso dá caminho, diz o caminho (UC-05 2e e 2g, UC-06 2b).
    */
   private static void recusarSobreposicao(
-      List<PeriodoDeFase> fases, LocalDate inicio, @Nullable LocalDate fim) {
-    for (PeriodoDeFase fase : fases) {
+      List<PeriodoDeFase> fases, LocalDate inicio, @Nullable LocalDate fim, Caminho caminho) {
+    for (PeriodoDeFase fase :
+        fases.stream().sorted(Comparator.comparing(PeriodoDeFase::inicio)).toList()) {
       LocalDate fimDaOutra = fase.fim();
       boolean comecaAntesDoFim = fim == null || !fase.inicio().isAfter(fim);
       boolean terminaDepoisDoInicio = fimDaOutra == null || !fimDaOutra.isBefore(inicio);
       if (comecaAntesDoFim && terminaDepoisDoInicio) {
-        throw new RegraVioladaException(
-            Recusa.FASE_SOBREPOSTA, fase.cobre(inicio) ? "dataInicio" : "dataFim", SOBREPOSTA);
+        throw sobreposta(fase, fase.cobre(inicio) ? "dataInicio" : "dataFim", caminho.para(fase));
       }
     }
+  }
+
+  /** O que a pessoa faz antes para a fase caber, ou nada, quando o caso de uso não dá caminho. */
+  @FunctionalInterface
+  private interface Caminho {
+    String para(PeriodoDeFase invadida);
+  }
+
+  private static RegraVioladaException sobreposta(
+      PeriodoDeFase invadida, String campo, String caminho) {
+    return new RegraVioladaException(
+        Recusa.FASE_SOBREPOSTA, campo, "As datas invadem " + nomear(invadida) + "." + caminho);
+  }
+
+  /**
+   * A fase como a recusa a nomeia, com as datas como a tela escreve (RN-63): "a manutenção de
+   * 05/05/2026 a 02/08/2026", ou "o cutting de 01/09/2026 em diante", quando está em aberto.
+   */
+  private static String nomear(PeriodoDeFase fase) {
+    String tipo =
+        switch (fase.tipo()) {
+          case CUTTING -> "o cutting";
+          case BULKING -> "o bulking";
+          case MANUTENCAO -> "a manutenção";
+        };
+    LocalDate fim = fase.fim();
+    return tipo
+        + " de "
+        + DATA_EXIBIDA.format(fase.inicio())
+        + (fim == null ? " em diante" : " a " + DATA_EXIBIDA.format(fim));
   }
 }

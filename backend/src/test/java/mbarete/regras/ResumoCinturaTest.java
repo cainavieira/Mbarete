@@ -12,8 +12,10 @@ class ResumoCinturaTest {
 
   private static final LocalDate DIA = LocalDate.of(2026, 10, 1);
   private static final LocalDate HOJE = DIA.plusDays(25);
-  private static final PeriodoDeFase DESDE_O_DIA_10 = new PeriodoDeFase(1, DIA.plusDays(9), null);
-  private static final PeriodoDeFase ATE_O_DIA_22 = new PeriodoDeFase(1, DIA, DIA.plusDays(22));
+  private static final PeriodoDeFase DESDE_O_DIA_10 =
+      new PeriodoDeFase(1, TipoDeFase.CUTTING, DIA.plusDays(9), null);
+  private static final PeriodoDeFase ATE_O_DIA_22 =
+      new PeriodoDeFase(1, TipoDeFase.CUTTING, DIA, DIA.plusDays(22));
 
   // Pega a última da lista tomada pela última data, e a comparação com a
   // primeira medição em vez da anterior
@@ -56,7 +58,7 @@ class ResumoCinturaTest {
   // fora dela
   @Test
   void faseDeHojeSemMedicaoNaoTemVariacaoDaFase() {
-    var desdeODia23 = new PeriodoDeFase(2, DIA.plusDays(23), null);
+    var desdeODia23 = new PeriodoDeFase(2, TipoDeFase.CUTTING, DIA.plusDays(23), null);
     var medicoes = List.of(medicao(0, "90.0"), medicao(20, "88.0"));
 
     assertThat(resumoCintura(medicoes, List.of(ATE_O_DIA_22, desdeODia23), HOJE))

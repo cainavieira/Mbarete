@@ -24,6 +24,7 @@ class SituacaoDaFaseTest {
     "2026-10-21,           , FUTURA",
   })
   void aSituacaoDependeDeHoje(LocalDate inicio, @Nullable LocalDate fim, SituacaoDaFase situacao) {
-    assertThat(situacaoDaFase(new PeriodoDeFase(1, inicio, fim), HOJE)).isEqualTo(situacao);
+    assertThat(situacaoDaFase(new PeriodoDeFase(1, TipoDeFase.CUTTING, inicio, fim), HOJE))
+        .isEqualTo(situacao);
   }
 }

@@ -103,7 +103,7 @@ public class Fase {
   }
 
   public PeriodoDeFase periodo() {
-    return new PeriodoDeFase(id, dataInicio, dataFim);
+    return new PeriodoDeFase(id, tipo, dataInicio, dataFim);
   }
 
   public LocalDate diaDaBase() {

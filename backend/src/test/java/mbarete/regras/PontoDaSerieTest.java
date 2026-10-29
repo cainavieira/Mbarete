@@ -31,7 +31,7 @@ class PontoDaSerieTest {
   void comecaNoPrimeiroRegistroComUmPontoPorDia() {
     var pesagens = new ArrayList<Pesagem>(diarias(HOJE.minusDays(10), HOJE.minusDays(7), "80.0"));
     pesagens.add(new Pesagem(HOJE.minusDays(3), new BigDecimal("79.0")));
-    var fase = new PeriodoDeFase(7, HOJE.minusDays(5), null);
+    var fase = new PeriodoDeFase(7, TipoDeFase.CUTTING, HOJE.minusDays(5), null);
 
     var serie = montarSerie(pesagens, List.of(fase), HOJE);
 

@@ -16,7 +16,9 @@ class DiaDaBaseTest {
   void inicioComPesoSemanalEODiaDaBase() {
     var pesagens = diarias(INICIO.minusDays(6), HOJE, "80.0");
 
-    assertThat(determinarDiaDaBase(pesagens, new PeriodoDeFase(1, INICIO, null), HOJE))
+    assertThat(
+            determinarDiaDaBase(
+                pesagens, new PeriodoDeFase(1, TipoDeFase.CUTTING, INICIO, null), HOJE))
         .contains(INICIO);
   }
 
@@ -26,7 +28,9 @@ class DiaDaBaseTest {
   void semPesoSemanalNoInicioEOPrimeiroDiaDaFaseQueTem() {
     var pesagens = diarias(INICIO.minusDays(1), HOJE, "80.0");
 
-    assertThat(determinarDiaDaBase(pesagens, new PeriodoDeFase(1, INICIO, null), HOJE))
+    assertThat(
+            determinarDiaDaBase(
+                pesagens, new PeriodoDeFase(1, TipoDeFase.CUTTING, INICIO, null), HOJE))
         .contains(INICIO.plusDays(2));
   }
 
@@ -36,7 +40,9 @@ class DiaDaBaseTest {
   void faseQueComecaDepoisDeHojeNaoTemBase() {
     var pesagens = diarias(HOJE.minusDays(6), HOJE, "80.0");
 
-    assertThat(determinarDiaDaBase(pesagens, new PeriodoDeFase(1, HOJE.plusDays(2), null), HOJE))
+    assertThat(
+            determinarDiaDaBase(
+                pesagens, new PeriodoDeFase(1, TipoDeFase.CUTTING, HOJE.plusDays(2), null), HOJE))
         .isEmpty();
   }
 
@@ -47,6 +53,9 @@ class DiaDaBaseTest {
     var fim = INICIO.plusDays(3);
     var pesagens = diarias(fim.minusDays(2), HOJE, "80.0");
 
-    assertThat(determinarDiaDaBase(pesagens, new PeriodoDeFase(1, INICIO, fim), HOJE)).isEmpty();
+    assertThat(
+            determinarDiaDaBase(
+                pesagens, new PeriodoDeFase(1, TipoDeFase.CUTTING, INICIO, fim), HOJE))
+        .isEmpty();
   }
 }

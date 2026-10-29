@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test;
 class PeriodoDeFaseTest {
 
   private static final PeriodoDeFase JANEIRO =
-      new PeriodoDeFase(1, LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 31));
+      new PeriodoDeFase(1, TipoDeFase.CUTTING, LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 31));
   private static final PeriodoDeFase DESDE_MARCO =
-      new PeriodoDeFase(2, LocalDate.of(2026, 3, 1), null);
+      new PeriodoDeFase(2, TipoDeFase.CUTTING, LocalDate.of(2026, 3, 1), null);
 
   // Pega a fase em aberto cobrindo também o passado, e a anterior esticada até
   // a seguinte: o vão entre elas não tem fase (RN-20)
@@ -26,7 +26,9 @@ class PeriodoDeFaseTest {
   // anterior (RN-22)
   @Test
   void oDiaDoInicioEDaFaseNovaEAVesperaDaAnterior() {
-    var fevereiro = new PeriodoDeFase(3, LocalDate.of(2026, 2, 1), LocalDate.of(2026, 2, 28));
+    var fevereiro =
+        new PeriodoDeFase(
+            3, TipoDeFase.CUTTING, LocalDate.of(2026, 2, 1), LocalDate.of(2026, 2, 28));
     var fases = List.of(JANEIRO, fevereiro);
 
     assertThat(faseDaData(fases, LocalDate.of(2026, 2, 1))).contains(fevereiro);

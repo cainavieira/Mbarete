@@ -1,11 +1,12 @@
 import type { Esquema } from '@/api/tipos'
+import type { TipoDeFase } from '@/formato/fase'
 
 /**
  * As contas de tela do gráfico (ADR-0025): o trecho do período, os blocos de
  * fase e a escala. A série chega pronta do backend, um ponto por dia até hoje.
  */
 
-export type Ponto = Esquema<'PontoDaSerie'>
+export type Ponto = Esquema<'PontoDaSerieDto'>
 
 export const PERIODOS = [30, 60, 90, 120] as const
 
@@ -23,6 +24,7 @@ export function recortar(serie: Ponto[], dias: Periodo): Ponto[] {
 
 export interface TrechoDeFase {
   faseId: number
+  tipo: TipoDeFase
   /** Posição do primeiro e do último dia do trecho no recorte. */
   de: number
   ate: number
@@ -34,15 +36,15 @@ export interface TrechoDeFase {
  */
 export function trechosDeFase(pontos: Ponto[]): TrechoDeFase[] {
   const trechos: TrechoDeFase[] = []
-  pontos.forEach(({ faseId }, indice) => {
-    if (faseId === null) {
+  pontos.forEach(({ faseId, faseTipo }, indice) => {
+    if (faseId === null || faseTipo === null) {
       return
     }
     const ultimo = trechos.at(-1)
     if (ultimo !== undefined && ultimo.faseId === faseId && ultimo.ate === indice - 1) {
       ultimo.ate = indice
     } else {
-      trechos.push({ faseId, de: indice, ate: indice })
+      trechos.push({ faseId, tipo: faseTipo, de: indice, ate: indice })
     }
   })
   return trechos

@@ -51,10 +51,6 @@ export function GraficoEvolucao({ serie, faseCorrente, faixa, className }: Props
     .flatMap(({ peso, pesoSemanal }) => [peso, pesoSemanal])
     .filter((valor) => valor !== null)
 
-  // A fase passada vem só com o identificador na série; o nome se sabe da corrente
-  const nomeDoTrecho = (faseId: number) =>
-    faseCorrente !== null && faseCorrente.id === faseId ? formatarTipo(faseCorrente.tipo) : null
-
   const faixaNoGrafico =
     faixa !== null && faseCorrente !== null
       ? { ...faixa, de: pontos.findIndex(({ data }) => data >= faseCorrente.dataInicio) }
@@ -76,8 +72,8 @@ export function GraficoEvolucao({ serie, faseCorrente, faixa, className }: Props
     ...(trechos.length === 0
       ? ['sem fase no período']
       : trechos.map(
-          ({ faseId, de, ate }) =>
-            `${nomeDoTrecho(faseId) ?? 'fase'} de ${formatarDiaEMes(pontos[de].data)} a ${formatarDiaEMes(pontos[ate].data)}`,
+          ({ tipo, de, ate }) =>
+            `${formatarTipo(tipo)} de ${formatarDiaEMes(pontos[de].data)} a ${formatarDiaEMes(pontos[ate].data)}`,
         )),
     ...(faixaNoGrafico === null
       ? []
@@ -136,24 +132,20 @@ export function GraficoEvolucao({ serie, faseCorrente, faixa, className }: Props
             margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
             className="aspect-[326/210] w-full lg:aspect-[680/320]"
           >
-            {trechos.map(({ faseId, de, ate }) => {
-              const nome = nomeDoTrecho(faseId)
-              return (
-                <ReferenceArea
-                  key={`fase-${de}`}
-                  x1={dentro(de - 0.5)}
-                  x2={dentro(ate + 0.5)}
-                  fill="var(--muted)"
-                  fillOpacity={1}
-                  zIndex={-300}
-                  label={
-                    nome === null
-                      ? undefined
-                      : { content: (props: LabelProps) => rotuloDaFase(props, nome), zIndex: -250 }
-                  }
-                />
-              )
-            })}
+            {trechos.map(({ tipo, de, ate }) => (
+              <ReferenceArea
+                key={`fase-${de}`}
+                x1={dentro(de - 0.5)}
+                x2={dentro(ate + 0.5)}
+                fill="var(--muted)"
+                fillOpacity={1}
+                zIndex={-300}
+                label={{
+                  content: (props: LabelProps) => rotuloDaFase(props, formatarTipo(tipo)),
+                  zIndex: -250,
+                }}
+              />
+            ))}
             {trechos
               .filter(({ de }) => de > 0)
               .map(({ de }) => (

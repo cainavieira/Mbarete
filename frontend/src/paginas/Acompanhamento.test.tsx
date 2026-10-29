@@ -17,12 +17,13 @@ function dia(antes: number): string {
   return new Date(Date.UTC(2026, 9, 28 - antes)).toISOString().slice(0, 10)
 }
 
-function serie(dias: number): Esquema<'PontoDaSerie'>[] {
+function serie(dias: number): Esquema<'PontoDaSerieDto'>[] {
   return Array.from({ length: dias }, (_, indice) => ({
     data: dia(dias - 1 - indice),
     peso: 80,
     pesoSemanal: 80,
     faseId: null,
+    faseTipo: null,
   }))
 }
 
@@ -140,6 +141,21 @@ test('a série mais curta que o período diz desde quando começa', async () => 
   abrir(acompanhamento({ serie: serie(11) }))
 
   expect(await screen.findByRole('heading', { name: 'Peso desde 18/10/2026' })).toBeTruthy()
+})
+
+// Pega o nome da fase corrente dado a todos os blocos, ou só a ela, deixando
+// a fase passada sem nome (RF-47)
+test('o gráfico nomeia cada fase, inclusive a passada', async () => {
+  const comFases = serie(120).map((ponto, indice) =>
+    indice < 60
+      ? { ...ponto, faseId: 1, faseTipo: 'CUTTING' as const }
+      : { ...ponto, faseId: 2, faseTipo: 'MANUTENCAO' as const },
+  )
+  abrir(acompanhamento({ serie: comFases }))
+
+  expect((await screen.findByRole('img')).getAttribute('aria-label')).toContain(
+    'cutting de 01/07 a 29/08; manutenção de 30/08 a 28/10',
+  )
 })
 
 // Pega a estrutura vazia, com dados insuficientes em tudo, mostrada a quem

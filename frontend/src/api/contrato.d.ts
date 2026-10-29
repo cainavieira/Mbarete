@@ -372,19 +372,21 @@ export interface components {
             faixa: components["schemas"]["FaixaDeTolerancia"] | null;
             progresso: components["schemas"]["ProgressoDto"] | null;
             cintura: components["schemas"]["ResumoCintura"] | null;
-            serie: components["schemas"]["PontoDaSerie"][];
+            serie: components["schemas"]["PontoDaSerieDto"][];
         };
         FaixaDeTolerancia: {
             minimo: number;
             maximo: number;
         };
-        PontoDaSerie: {
+        PontoDaSerieDto: {
             /** Format: date */
             data: string;
             peso: number | null;
             pesoSemanal: number | null;
             /** Format: int32 */
             faseId: number | null;
+            /** @enum {string|null} */
+            faseTipo: "CUTTING" | "BULKING" | "MANUTENCAO" | null;
         };
         ProgressoDto: {
             /** @enum {string} */

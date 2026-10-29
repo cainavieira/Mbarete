@@ -73,6 +73,7 @@ public class AcompanhamentoService {
                         fase.taxaAlvo(),
                         fase.pesoAlvo(),
                         fase.diaDaBase(),
+                        fase.periodo().fim(),
                         pesagens,
                         hoje))
             .orElse(null),

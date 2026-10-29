@@ -73,7 +73,8 @@ public final class AcompanhamentoMapper {
         estado,
         taxaReal == null
             ? null
-            : new TaxaReal(arredondarTaxa(taxaReal.valor()), taxaReal.de(), taxaReal.ate()));
+            : new TaxaReal(arredondarTaxa(taxaReal.valor()), taxaReal.de(), taxaReal.ate()),
+        daFase.vereditoAPartirDe());
   }
 
   private static @Nullable BigDecimal taxaAlvo(AcompanhamentoDaFase daFase) {

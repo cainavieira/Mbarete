@@ -57,6 +57,29 @@ public enum Ritmo {
   }
 
   /**
+   * O dia em que o veredito de cutting ou bulking aparece, quando os dados insuficientes são só a
+   * espera dos 14 dias (RF-31). Só vem quando é promessa: os dois pesos semanais que a RN-36 vai
+   * comparar, o de hoje e o da base, já existem, e a espera termina até o último dia da fase,
+   * porque depois dele não há veredito (RN-40). A manutenção não espera (RN-39).
+   */
+  public static Optional<LocalDate> dataDoVeredito(
+      TipoDeFase tipo,
+      List<Pesagem> pesagens,
+      LocalDate diaDaBase,
+      @Nullable LocalDate fimDaFase,
+      LocalDate hoje) {
+    LocalDate data = diaDaBase.plusDays(DIAS_MINIMOS);
+    if (tipo == TipoDeFase.MANUTENCAO
+        || !data.isAfter(hoje)
+        || (fimDaFase != null && data.isAfter(fimDaFase))
+        || calcularPesoSemanal(pesagens, hoje).isEmpty()
+        || calcularPesoSemanal(pesagens, diaDaBase).isEmpty()) {
+      return Optional.empty();
+    }
+    return Optional.of(data);
+  }
+
+  /**
    * Ritmo é velocidade na direção do tipo: no cutting, perder mais rápido que o alvo é estar acima,
    * e ganhar peso é estar abaixo (RN-37).
    */

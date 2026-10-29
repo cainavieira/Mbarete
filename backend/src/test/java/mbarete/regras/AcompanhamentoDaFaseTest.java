@@ -53,19 +53,20 @@ class AcompanhamentoDaFaseTest {
   }
 
   // Pega a taxa real mostrada antes do veredito, quando ainda é mais água do
-  // que ritmo (RN-39, UC-08 4a)
+  // que ritmo, e o dia em que ele aparece perdido (RN-39, UC-08 4a)
   @Test
   void antesDos14DiasNaoHaVereditoNemTaxaReal() {
     var daFase = cutting(HOJE.minusDays(10));
 
     assertThat(daFase.ritmo()).isNull();
     assertThat(daFase.taxaReal()).isNull();
+    assertThat(daFase.vereditoAPartirDe()).isEqualTo(HOJE.plusDays(4));
     assertThat(daFase.taxaAlvoKg()).isNotNull();
     assertThat(daFase.progresso()).isInstanceOf(Progresso.Barra.class);
   }
 
   // Pega a barra sem base sumindo em vez de dizer dados insuficientes, e a
-  // taxa alvo levada junto (UC-08 5c)
+  // taxa alvo levada junto (UC-08 1a)
   @Test
   void semDiaDaBaseABarraTemDadosInsuficientes() {
     var daFase = cutting(null);
@@ -102,7 +103,7 @@ class AcompanhamentoDaFaseTest {
 
   private static AcompanhamentoDaFase cutting(@Nullable LocalDate diaDaBase) {
     return acompanharFase(
-        TipoDeFase.CUTTING, UM_POR_CENTO, new BigDecimal("71.0"), diaDaBase, PERDENDO, HOJE);
+        TipoDeFase.CUTTING, UM_POR_CENTO, new BigDecimal("71.0"), diaDaBase, null, PERDENDO, HOJE);
   }
 
   private static AcompanhamentoDaFase manutencao(@Nullable LocalDate diaDaBase) {
@@ -111,6 +112,7 @@ class AcompanhamentoDaFaseTest {
         null,
         null,
         diaDaBase,
+        null,
         diarias(HOJE.minusDays(20), HOJE, "80.0"),
         HOJE);
   }

@@ -19,6 +19,8 @@ import mbarete.ChaveDeTeste;
 import mbarete.TestcontainersConfiguration;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -154,6 +156,38 @@ class AcompanhamentoControllerTest {
         .andExpect(jsonPath("$.veredito.estado").value("NO_RITMO"))
         .andExpect(jsonPath("$.veredito.taxaReal").value(nullValue()))
         .andExpect(jsonPath("$.progresso").value(nullValue()));
+  }
+
+  // Pega a data do veredito perdida entre a regra e a resposta, e a promessa
+  // feita quando a fase termina antes dela, com a seguinte já agendada (RF-31,
+  // UC-08 4a)
+  @ParameterizedTest
+  @ValueSource(booleans = {false, true})
+  void enquantoFaltaSoAEsperaOVereditoDizQuandoAparece(boolean terminaAntes) throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    fase(
+        fulana,
+        "'cutting', ?, ?, 'moderado', 0.50, 'kg_semana', 70.0",
+        dia.minusDays(10),
+        terminaAntes ? dia.plusDays(1) : null,
+        dia.minusDays(10));
+    if (terminaAntes) {
+      fase(fulana, "'manutencao', ?, ?, null, null, null, null", dia.plusDays(2), null, null);
+    }
+    for (int dias = 0; dias <= 16; dias++) {
+      registro(fulana, dia.minusDays(dias), new BigDecimal("80.0"));
+    }
+
+    ResultActions resposta =
+        acompanhar(fulana)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.veredito.estado").value("DADOS_INSUFICIENTES"))
+            .andExpect(jsonPath("$.veredito.taxaReal").value(nullValue()));
+    if (terminaAntes) {
+      resposta.andExpect(jsonPath("$.veredito.aPartirDe").value(nullValue()));
+    } else {
+      resposta.andExpect(jsonPath("$.veredito.aPartirDe").value(dia.plusDays(4).toString()));
+    }
   }
 
   // Pega o dia da base que já existe e não foi fixado: a fase agendada começou

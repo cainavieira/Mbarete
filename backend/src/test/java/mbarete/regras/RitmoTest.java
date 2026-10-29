@@ -3,12 +3,15 @@ package mbarete.regras;
 import static mbarete.regras.FaixaDeTolerancia.calcularFaixa;
 import static mbarete.regras.Pesagens.ate;
 import static mbarete.regras.Ritmo.avaliarRitmo;
+import static mbarete.regras.Ritmo.dataDoVeredito;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -82,6 +85,53 @@ class RitmoTest {
     var veredito = avaliarRitmo(TipoDeFase.CUTTING, QUATROCENTOS_GRAMAS, pesagens, base, HOJE);
 
     assertThat(veredito.isPresent()).isEqualTo(temVeredito);
+  }
+
+  // Pega a data contada do início da fase, ou com a borda da espera trocada, e
+  // a data dada quando os 14 dias já se cumpriram (RF-31, RN-39)
+  @ParameterizedTest
+  @CsvSource({"10, 2026-10-24", "13, 2026-10-21", "14,"})
+  void aDataDoVereditoEODiaDaBaseMais14(int dias, @Nullable LocalDate esperada) {
+    var base = HOJE.minusDays(dias);
+    var pesagens = new ArrayList<Pesagem>(ate(base, "80.0", "80.0", "80.0", "80.0"));
+    pesagens.addAll(ate(HOJE, "79.6", "79.6", "79.6", "79.6"));
+
+    assertThat(dataDoVeredito(TipoDeFase.CUTTING, pesagens, base, null, HOJE))
+        .isEqualTo(Optional.ofNullable(esperada));
+  }
+
+  // Pega a promessa feita sem um dos pesos semanais comparados, que não há
+  // como prever quando vai existir (RF-31, UC-08 4a)
+  @ParameterizedTest
+  @CsvSource({"'79.6 79.6 79.6 79.6', '80.0 80.0 80.0'", "'79.6 79.6 79.6', '80.0 80.0 80.0 80.0'"})
+  void semUmDosPesosSemanaisComparadosNaoHaData(String pesosDeHoje, String pesosDaBase) {
+    var base = HOJE.minusDays(10);
+    var pesagens = new ArrayList<Pesagem>(ate(base, pesosDaBase.split(" ")));
+    pesagens.addAll(ate(HOJE, pesosDeHoje.split(" ")));
+
+    assertThat(dataDoVeredito(TipoDeFase.BULKING, pesagens, base, null, HOJE)).isEmpty();
+  }
+
+  // Pega a data prometida depois do último dia da fase, quando o veredito dela
+  // não vai aparecer, com a borda do último dia dentro (RN-40, UC-08 4a)
+  @ParameterizedTest
+  @CsvSource({"2026-10-24, true", "2026-10-23, false"})
+  void aDataSoVemSeCouberNaFase(LocalDate fim, boolean temData) {
+    var base = HOJE.minusDays(10);
+    var pesagens = new ArrayList<Pesagem>(ate(base, "80.0", "80.0", "80.0", "80.0"));
+    pesagens.addAll(ate(HOJE, "79.6", "79.6", "79.6", "79.6"));
+
+    assertThat(dataDoVeredito(TipoDeFase.CUTTING, pesagens, base, fim, HOJE).isPresent())
+        .isEqualTo(temData);
+  }
+
+  // Pega a data dada à manutenção, que não espera os 14 dias (RN-39)
+  @Test
+  void aManutencaoNaoTemDataDoVeredito() {
+    var base = HOJE.minusDays(3);
+    var pesagens = ate(HOJE, "80.0", "80.0", "80.0", "80.0", "80.0", "80.0", "80.0");
+
+    assertThat(dataDoVeredito(TipoDeFase.MANUTENCAO, pesagens, base, null, HOJE)).isEmpty();
   }
 
   // Pega a espera de 14 dias aplicada também à manutenção (RN-39)

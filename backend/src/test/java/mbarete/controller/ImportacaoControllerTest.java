@@ -135,7 +135,7 @@ class ImportacaoControllerTest {
         """
             .formatted(hoje);
 
-    enviar("/importacao", fulana, "arquivo", arquivo)
+    confirmar(fulana, arquivo, "2026-09-01")
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.validas", hasSize(2)))
         .andExpect(jsonPath("$.recusadas", hasSize(2)));
@@ -145,6 +145,23 @@ class ImportacaoControllerTest {
             new Gravado(LocalDate.of(2026, 9, 2), new BigDecimal("85.6"), new BigDecimal("90.0")));
     assertThat(registros(outra))
         .containsExactly(new Gravado(LocalDate.of(2026, 9, 2), new BigDecimal("80.0"), null));
+  }
+
+  // Pega a data que ganhou registro depois da pré-visualização substituída sem
+  // a confirmação, e o campo da confirmação que não chega ao serviço (RN-01,
+  // UC-10 3b)
+  @Test
+  void aDataQueGanhouRegistroDepoisDaPreviaNaoESubstituida() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    registro(fulana, LocalDate.of(2026, 9, 1));
+    String arquivo = "data;peso\n2026-09-01;85.7\n2026-09-02;85.6\n";
+
+    confirmar(fulana, arquivo)
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.erro.codigo").value("PREVISUALIZACAO_DESATUALIZADA"))
+        .andExpect(jsonPath("$.erro.regra").value("RN-01"));
+    assertThat(registros(fulana))
+        .containsExactly(new Gravado(LocalDate.of(2026, 9, 1), new BigDecimal("80.0"), null));
   }
 
   // Pega o dia da base que o registro importado dá à fase e não é fixado
@@ -203,15 +220,26 @@ class ImportacaoControllerTest {
     return enviar("/importacao/previsualizacao", idUsuario, campo, conteudo);
   }
 
-  private ResultActions enviar(String caminho, int idUsuario, String campo, String conteudo)
+  /** A segunda chamada, com as datas que a pré-visualização mostrou como substituídas. */
+  private ResultActions confirmar(int idUsuario, String conteudo, String... substituir)
       throws Exception {
-    return mvc.perform(
+    return enviar("/importacao", idUsuario, "arquivo", conteudo, substituir);
+  }
+
+  private ResultActions enviar(
+      String caminho, int idUsuario, String campo, String conteudo, String... substituir)
+      throws Exception {
+    var pedido =
         multipart(caminho)
             .file(
                 new MockMultipartFile(
                     campo, "historico.csv", "text/csv", conteudo.getBytes(StandardCharsets.UTF_8)))
             .cookie(acesso(idUsuario))
-            .header("Data-Local", hoje.minusDays(1).toString()));
+            .header("Data-Local", hoje.minusDays(1).toString());
+    if (substituir.length > 0) {
+      pedido.param("substituir", substituir);
+    }
+    return mvc.perform(pedido);
   }
 
   private int usuario(String email) {

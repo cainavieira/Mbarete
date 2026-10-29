@@ -3,6 +3,7 @@ package mbarete.regras;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -55,6 +56,22 @@ public record LeituraDoCsv(List<LinhaValida> validas, List<LinhaRecusada> recusa
           FaixaDoRegistro.CINTURA_MINIMA,
           FaixaDoRegistro.CINTURA_MAXIMA,
           FaixaDoRegistro.CINTURA_FORA_DE_FAIXA);
+
+  /**
+   * Confere as datas que a pessoa viu substituídas na pré-visualização contra as que esta leitura
+   * substitui. Se o histórico mudou entre as duas chamadas, em qualquer direção, nada é gravado, e
+   * a tela refaz a pré-visualização: a data mostrada como nova não é substituída sem a confirmação
+   * da RN-01 (UC-10 3b).
+   */
+  public void conferirSubstituicoes(Set<LocalDate> confirmadas) {
+    Set<LocalDate> substituidas =
+        validas.stream().filter(LinhaValida::substitui).map(LinhaValida::data).collect(toSet());
+    if (!substituidas.equals(confirmadas)) {
+      throw new RegraVioladaException(
+          Recusa.PREVISUALIZACAO_DESATUALIZADA,
+          "O histórico mudou desde a pré-visualização: nada foi gravado.");
+    }
+  }
 
   /**
    * O separador sai do cabeçalho, e as colunas são achadas pelo nome, em qualquer ordem (RN-53,

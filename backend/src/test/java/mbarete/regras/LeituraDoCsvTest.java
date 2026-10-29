@@ -6,7 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 import mbarete.regras.LeituraDoCsv.LinhaRecusada;
 import mbarete.regras.LeituraDoCsv.LinhaValida;
 import org.junit.jupiter.api.Test;
@@ -163,6 +165,35 @@ class LeituraDoCsvTest {
         lerCsv("data;peso\n2026-09-01;85.7\n2026-09-02;85.6", Set.of(PRIMEIRO_DE_SETEMBRO), HOJE);
 
     assertThat(leitura.validas()).extracting(LinhaValida::substitui).containsExactly(true, false);
+  }
+
+  // Pega a confirmação que substitui uma data que a pessoa viu como nova, e a
+  // conferência que só olha um dos lados: a data listada que perdeu o registro
+  // também recusa (RN-01, UC-10 3b)
+  @ParameterizedTest
+  @ValueSource(strings = {"", "2026-09-01;2026-09-02"})
+  void aConfirmacaoComOutrasDatasDoQueAsSubstituidasERecusada(String confirmada) {
+    var leitura =
+        lerCsv("data;peso\n2026-09-01;85.7\n2026-09-02;85.6", Set.of(PRIMEIRO_DE_SETEMBRO), HOJE);
+    var confirmadas =
+        Arrays.stream(confirmada.split(";"))
+            .filter(data -> !data.isEmpty())
+            .map(LocalDate::parse)
+            .collect(Collectors.toSet());
+
+    assertThatThrownBy(() -> leitura.conferirSubstituicoes(confirmadas))
+        .isInstanceOfSatisfying(
+            RegraVioladaException.class,
+            recusa -> assertThat(recusa.recusa()).isEqualTo(Recusa.PREVISUALIZACAO_DESATUALIZADA));
+  }
+
+  // Pega a conferência que recusa a confirmação certa
+  @Test
+  void aConfirmacaoComAsMesmasDatasPassa() {
+    var leitura =
+        lerCsv("data;peso\n2026-09-01;85.7\n2026-09-02;85.6", Set.of(PRIMEIRO_DE_SETEMBRO), HOJE);
+
+    leitura.conferirSubstituicoes(Set.of(PRIMEIRO_DE_SETEMBRO));
   }
 
   private static LeituraDoCsv ler(String conteudo) {

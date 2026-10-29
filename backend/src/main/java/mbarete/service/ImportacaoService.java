@@ -9,6 +9,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Set;
 import mbarete.dto.PrevisualizacaoDto;
 import mbarete.entity.Registro;
 import mbarete.regras.LeituraDoCsv;
@@ -52,15 +53,18 @@ public class ImportacaoService {
 
   /**
    * Grava as linhas válidas do mesmo arquivo, lido de novo, numa transação só: tudo ou nada
-   * (RN-59). A data que já tem registro é substituída inteira, cintura inclusive, como na
+   * (RN-59). As datas que ele substitui têm de ser as que a pessoa confirmou na pré-visualização
+   * (UC-10 3b). A data que já tem registro é substituída inteira, cintura inclusive, como na
    * substituição do registro (RN-01), e nenhuma fase é criada (RN-57). O registro importado pode
    * dar o primeiro peso semanal a uma fase, e por isso o dia da base é fixado depois (RN-68).
    */
   @Transactional
-  public PrevisualizacaoDto importar(int idUsuario, String conteudo, LocalDate hoje) {
+  public PrevisualizacaoDto importar(
+      int idUsuario, String conteudo, Set<LocalDate> substituir, LocalDate hoje) {
     Map<LocalDate, Registro> existentes =
         registros.findByUsuarioId(idUsuario).stream().collect(toMap(Registro::data, identity()));
     LeituraDoCsv leitura = lerCsv(conteudo, existentes.keySet(), hoje);
+    leitura.conferirSubstituicoes(substituir);
     Instant agora = Instant.now(relogio);
     for (LinhaValida linha : leitura.validas()) {
       Registro existente = existentes.get(linha.data());

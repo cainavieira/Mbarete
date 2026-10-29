@@ -3,9 +3,12 @@ package mbarete.controller;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 import mbarete.config.Hoje;
 import mbarete.dto.PrevisualizacaoDto;
 import mbarete.service.ImportacaoService;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -39,14 +42,21 @@ public class ImportacaoController {
   }
 
   /**
-   * A confirmação: o mesmo arquivo de novo, e as linhas válidas são gravadas (RN-59). Responde o
-   * mesmo relatório, agora do que foi gravado.
+   * A confirmação: o mesmo arquivo de novo, com um campo {@code substituir} para cada data que a
+   * pré-visualização mostrou como substituída, e as linhas válidas são gravadas (RN-59, UC-10 3b).
+   * Responde o mesmo relatório, agora do que foi gravado.
    */
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public PrevisualizacaoDto importar(
-      @AuthenticationPrincipal Jwt token, @Hoje LocalDate hoje, @RequestParam MultipartFile arquivo)
+      @AuthenticationPrincipal Jwt token,
+      @Hoje LocalDate hoje,
+      @RequestParam MultipartFile arquivo,
+      @RequestParam(required = false) @Nullable List<LocalDate> substituir)
       throws IOException {
     return importacao.importar(
-        ContaDoToken.id(token), new String(arquivo.getBytes(), StandardCharsets.UTF_8), hoje);
+        ContaDoToken.id(token),
+        new String(arquivo.getBytes(), StandardCharsets.UTF_8),
+        substituir == null ? Set.of() : Set.copyOf(substituir),
+        hoje);
   }
 }

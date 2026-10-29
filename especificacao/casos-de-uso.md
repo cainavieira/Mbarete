@@ -330,7 +330,8 @@ aí o caminho é o da RN-70. (RN-70)
   como atingida, e a lista indica que o alvo estava do lado errado. (RN-40,
   RN-44)
 - **2d** A fase encerrada tem menos de dois registros: não há variação total,
-  e a lista diz isso em vez de omiti-la. (RN-40)
+  com a base ou sem ela, e a lista diz isso em vez de omiti-la; o alvo fica
+  sem avaliação. (RN-40)
 
 ## UC-10 Importar histórico em CSV
 

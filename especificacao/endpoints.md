@@ -213,9 +213,10 @@ ela, a faixa vem com os dois limites já calculados em quilogramas, e a tela
 desenha e escreve esses números sem conhecer o 1% da RN-33 (ADR-0025).
 
 **A fase corrente pode não existir** (RN-27), e nesse caso ela vem nula, e vêm
-nulos com ela o veredito, a taxa alvo, o progresso e a faixa de tolerância.
-Peso semanal, variações e cintura continuam preenchidos, porque nenhum dos três
-depende de fase (RN-66). Isso não é estado de erro: é o que acontece em conta
+nulos com ela o veredito, a taxa alvo, o progresso, a faixa de tolerância e a
+variação da cintura desde a primeira medição na fase (RN-12). Peso semanal,
+variações e cintura, com a variação desde a medição anterior, continuam
+preenchidos, porque não dependem de fase (RN-66). Isso não é estado de erro: é o que acontece em conta
 nova, depois de encerrar uma fase, e em todo o passado importado.
 
 Fase futura cadastrada não aparece aqui, apenas em `/fases` (RN-69).

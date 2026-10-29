@@ -28,3 +28,20 @@ jobs:
           name: relatorios-de-teste
           path: backend/target/surefire-reports/
           retention-days: 2
+
+  frontend:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      # O vitest dos componentes que decidem, e o build, que confere os tipos antes
+      - run: npm test
+      - run: npm run build

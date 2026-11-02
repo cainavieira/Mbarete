@@ -30,7 +30,8 @@ caminho vai para o nginx do frontend, que só entrega arquivo estático, com
 lado do cliente (ADR-0024) funcionarem ao recarregar a página. O conector
 `cloudflared` roda dentro do cluster e entrega ao Traefik.
 
-A api só é alcançável de dentro do cluster.
+A api só é alcançável de dentro do cluster. O Traefik também: ele não ocupa
+porta da VM, e só o `cloudflared` chega a ele.
 
 ## Consequências
 
@@ -74,3 +75,12 @@ Cloudflare Pages ou equivalente daria distribuição global aos arquivos. O ganh
 custo é reintroduzir duas origens, com CORS, cookie entre sites, dois lugares
 de deploy e duas entradas no Google. Além disso, o Cloudflare Tunnel já põe a
 borda da Cloudflare na frente da aplicação, com cache do estático.
+
+## Alternativa recusada: o Traefik nas portas da VM, pelo ServiceLB
+
+É o padrão do k3s: o ServiceLB publica o Traefik nas portas 80 e 443 da
+máquina, e deixaria abrir o site pelo endereço da VM antes de o túnel existir.
+Recusado porque seria uma entrada por fora do túnel, alcançável de qualquer
+aparelho da casa. Desligar o ServiceLB não basta: um Service do tipo
+`LoadBalancer` abre ainda uma porta alta em todo nó, e por isso o Service do
+Traefik é `ClusterIP`. Testar antes do túnel é pelo `kubectl port-forward`.

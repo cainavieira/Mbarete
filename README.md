@@ -53,7 +53,7 @@ flowchart LR
 | Backend | Java 25, Spring Boot 4.1, Spring Data JPA, Flyway | [0035](especificacao/adr/ADR-0035-backend-spring-boot.md), [0036](especificacao/adr/ADR-0036-spring-data-jpa.md), [0040](especificacao/adr/ADR-0040-flyway-antes-da-api.md) |
 | Banco | PostgreSQL | [0004](especificacao/adr/ADR-0004-postgres.md), [0039](especificacao/adr/ADR-0039-postgres-com-cloudnativepg.md) |
 | Identidade | Google, entrada por convite, JWT em cookie | [0008](especificacao/adr/ADR-0008-identidade-google.md), [0011](especificacao/adr/ADR-0011-entrada-por-convite.md), [0041](especificacao/adr/ADR-0041-jwt-em-cookie.md) |
-| Produção (próxima etapa) | k3s numa VM do Proxmox, Traefik, Cloudflare Tunnel, CloudNativePG | [0006](especificacao/adr/ADR-0006-hospedagem-servidor-proprio.md), [0037](especificacao/adr/ADR-0037-kubernetes-com-k3s.md), [0038](especificacao/adr/ADR-0038-entrada-pelo-traefik.md) |
+| Produção (em montagem) | k3s numa VM do Proxmox, Traefik, Cloudflare Tunnel, CloudNativePG | [0006](especificacao/adr/ADR-0006-hospedagem-servidor-proprio.md), [0037](especificacao/adr/ADR-0037-kubernetes-com-k3s.md), [0038](especificacao/adr/ADR-0038-entrada-pelo-traefik.md) |
 | Qualidade | Spotless, Error Prone com NullAway, JUnit com Testcontainers e ArchUnit, Vitest, GitHub Actions | [0020](especificacao/adr/ADR-0020-teste-em-tres-camadas.md), [0042](especificacao/adr/ADR-0042-spotless-error-prone-nullaway.md) |
 
 ## Como foi feito
@@ -114,8 +114,9 @@ Docker) e `npm test` no frontend.
 
 ## Estado
 
-As telas e a api estão prontas e em uso. A produção, com o k3s no servidor, o
-túnel, o backup e o deploy com ensaio, é a próxima etapa.
+As telas e a api estão prontas e em uso. A produção está em montagem: o k3s já
+roda na VM do servidor, e faltam o banco, as imagens, o túnel, o backup e o
+deploy com ensaio.
 
 ## Documentação
 

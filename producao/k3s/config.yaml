@@ -1,0 +1,5 @@
+# Configuração do k3s (ADR-0037), lida na subida do serviço.
+# Sem ServiceLB: o Traefik é alcançado pelo cloudflared de dentro do cluster
+# (ADR-0038), e o ServiceLB abriria as portas 80 e 443 da VM na rede de casa.
+disable:
+  - servicelb

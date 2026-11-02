@@ -1,0 +1,18 @@
+# Valores do Traefik que vem com o k3s. O traefik.yaml original é reescrito
+# pelo k3s a cada subida; os ajustes ficam neste arquivo à parte.
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    # Roteamento pela Gateway API (ADR-0038)
+    providers:
+      kubernetesGateway:
+        enabled: true
+    # Sem porta na VM: só o cloudflared, de dentro do cluster, chega ao Traefik
+    service:
+      spec:
+        type: ClusterIP

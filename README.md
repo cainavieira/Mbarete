@@ -53,7 +53,7 @@ flowchart LR
 | Backend | Java 25, Spring Boot 4.1, Spring Data JPA, Flyway | [0035](especificacao/adr/ADR-0035-backend-spring-boot.md), [0036](especificacao/adr/ADR-0036-spring-data-jpa.md), [0040](especificacao/adr/ADR-0040-flyway-antes-da-api.md) |
 | Banco | PostgreSQL | [0004](especificacao/adr/ADR-0004-postgres.md), [0039](especificacao/adr/ADR-0039-postgres-com-cloudnativepg.md) |
 | Identidade | Google, entrada por convite, JWT em cookie | [0008](especificacao/adr/ADR-0008-identidade-google.md), [0011](especificacao/adr/ADR-0011-entrada-por-convite.md), [0041](especificacao/adr/ADR-0041-jwt-em-cookie.md) |
-| Produção (em montagem) | k3s numa VM do Proxmox, Traefik, Cloudflare Tunnel, CloudNativePG | [0006](especificacao/adr/ADR-0006-hospedagem-servidor-proprio.md), [0037](especificacao/adr/ADR-0037-kubernetes-com-k3s.md), [0038](especificacao/adr/ADR-0038-entrada-pelo-traefik.md) |
+| Produção (em montagem) | k3s numa VM do Proxmox, Traefik, Cloudflare Tunnel, CloudNativePG | [0006](especificacao/adr/ADR-0006-hospedagem-servidor-proprio.md), [0037](especificacao/adr/ADR-0037-kubernetes-com-k3s.md), [0038](especificacao/adr/ADR-0038-entrada-pelo-traefik.md), [0043](especificacao/adr/ADR-0043-traefik-sem-porta-na-vm.md) |
 | Qualidade | Spotless, Error Prone com NullAway, JUnit com Testcontainers e ArchUnit, Vitest, GitHub Actions | [0020](especificacao/adr/ADR-0020-teste-em-tres-camadas.md), [0042](especificacao/adr/ADR-0042-spotless-error-prone-nullaway.md) |
 
 ## Como foi feito
@@ -63,7 +63,7 @@ flowchart LR
   identificador estável, citado entre documentos. Dezesseis defeitos de
   coerência foram achados nela, e nenhum lendo um documento sozinho: todos
   apareceram com dois documentos lado a lado.
-- **42 decisões registradas, cada uma com a alternativa recusada.** Onze foram
+- **43 decisões registradas, cada uma com a alternativa recusada.** Onze foram
   superadas e continuam no repositório, com o motivo da troca: o backend
   começou em FastAPI e foi para Spring Boot.
 - **Regra de negócio sem framework.** O peso semanal, o ritmo e o progresso

@@ -1,0 +1,26 @@
+# O Postgres da aplicação, cuidado pelo CloudNativePG (ADR-0039).
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: banco
+spec:
+  instances: 1
+  # Versão fixa, com a mesma major do desenvolvimento (compose.dev.yml)
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.6-minimal-trixie
+  bootstrap:
+    initdb:
+      database: mbarete
+      owner: mbarete
+      # Criado por comando antes do banco (ADR-0037); nunca no git
+      secret:
+        name: banco-app
+  storage:
+    size: 5Gi
+  # Requests iguais aos limits: classe Guaranteed, a recomendada para Postgres
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 500m
+    limits:
+      memory: 512Mi
+      cpu: 500m

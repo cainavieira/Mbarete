@@ -32,3 +32,28 @@ A configuração do cluster e o roteiro para montar a VM de novo.
    `update.k3s.io`, que em 02-11 não respondia da rede de casa.
 3. Conferir: o nó `Ready`, nenhum Pod `svclb-`, e o Service do Traefik em
    `ClusterIP`.
+
+## Postgres
+
+O operador CloudNativePG 1.30.1 (ADR-0039) e o banco em `manifestos/`. Os
+comandos rodam na raiz de um clone do repositório, na VM.
+
+1. Conferir que o `local-path` é o armazenamento padrão:
+   `sudo kubectl get storageclass`.
+2. Instalar o operador pelo manifesto oficial, baixado antes para ver as
+   imagens:
+
+       curl -sSfL -o cnpg-1.30.1.yaml https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.30/releases/cnpg-1.30.1.yaml
+       sudo kubectl apply --server-side -f cnpg-1.30.1.yaml
+       sudo kubectl rollout status deployment -n cnpg-system cnpg-controller-manager
+
+3. Criar o namespace, depois o Secret do banco, depois o banco. O Secret vem
+   antes porque o banco lê a senha ao nascer:
+
+       sudo kubectl apply -f producao/manifestos/namespace.yaml
+       sudo kubectl -n mbarete create secret generic banco-app --type=kubernetes.io/basic-auth --from-literal=username=mbarete --from-literal=password="$(openssl rand -hex 24)"
+       sudo kubectl apply -k producao/manifestos
+
+4. Conferir: o `Cluster banco` em "Cluster in healthy state", o disco `Bound`,
+   e o `psql` respondendo:
+   `sudo kubectl -n mbarete exec banco-1 -- psql -d mbarete -c 'select version();'`.

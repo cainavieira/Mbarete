@@ -20,6 +20,14 @@ A configuração do cluster e o roteiro para montar a VM de novo.
   512 MB que ele reserva.
 - Swap: linha do `/swap.img` comentada no `/etc/fstab`, e o arquivo apagado.
 - `qemu-guest-agent` instalado.
+- AppArmor: `kernel.apparmor_restrict_unprivileged_unconfined = 0`, em
+  `/etc/sysctl.d/99-k3s-apparmor.conf`. Com 1, o padrão do Ubuntu 26.04, o
+  containerd do k3s empilha o perfil dos contêineres
+  (`cri-containerd.apparmor.d//&unconfined`), os processos de um mesmo
+  contêiner não conseguem mandar sinal uns aos outros, e o Postgres trava na
+  primeira conexão. Desfazer quando o k3s trouxer o containerd com a correção
+  (PR #14487 do containerd). As alternativas eram um perfil próprio em cada
+  contêiner com vários processos, ou tirar o AppArmor deles.
 
 ## k3s
 
@@ -53,6 +61,9 @@ comandos rodam na raiz de um clone do repositório, na VM.
        sudo kubectl apply -f producao/manifestos/namespace.yaml
        sudo kubectl -n mbarete create secret generic banco-app --type=kubernetes.io/basic-auth --from-literal=username=mbarete --from-literal=password="$(openssl rand -hex 24)"
        sudo kubectl apply -k producao/manifestos
+
+   Se o operador acabou de ser recriado, esperar o `rollout status` antes do
+   `apply -k`: o webhook dele valida o `Cluster`.
 
 4. Conferir: o `Cluster banco` em "Cluster in healthy state", o disco `Bound`,
    e o `psql` respondendo:

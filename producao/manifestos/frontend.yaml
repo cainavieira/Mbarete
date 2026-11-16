@@ -1,0 +1,55 @@
+# O nginx, que só entrega o estático (ADR-0038).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      # O perfil restricted do Kubernetes, com os dois campos do contêiner
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: frontend
+          # A etiqueta vem do kustomization.yaml
+          image: ghcr.io/cainavieira/mbarete-frontend
+          ports:
+            - name: http
+              containerPort: 8080
+          # Mediu 41 MiB
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 50m
+            limits:
+              memory: 64Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+---
+# O endereço do frontend dentro do cluster, para o Gateway (ADR-0038)
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

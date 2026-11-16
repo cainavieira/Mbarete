@@ -6,3 +6,12 @@ namespace: mbarete
 resources:
   - namespace.yaml
   - banco.yaml
+  - api.yaml
+  - frontend.yaml
+# A versão em produção, num lugar só: o hash curto do commit de onde as
+# imagens saíram
+images:
+  - name: ghcr.io/cainavieira/mbarete-api
+    newTag: 76ff606
+  - name: ghcr.io/cainavieira/mbarete-frontend
+    newTag: 76ff606

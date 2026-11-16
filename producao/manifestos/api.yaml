@@ -1,0 +1,110 @@
+# A api, com as migrações num initContainer que roda antes dela (ADR-0040).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      # O perfil restricted do Kubernetes, com os dois campos de cada contêiner
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      # Se a migração falha, a api não sobe (ADR-0040)
+      initContainers:
+        - name: migrar
+          # A etiqueta vem do kustomization.yaml
+          image: ghcr.io/cainavieira/mbarete-api
+          args: ["migrar"]
+          env:
+            - name: MBARETE_DB_URL
+              value: jdbc:postgresql://banco-rw:5432/mbarete
+            - name: MBARETE_DB_USUARIO
+              valueFrom:
+                secretKeyRef:
+                  name: banco-app
+                  key: username
+            - name: MBARETE_DB_SENHA
+              valueFrom:
+                secretKeyRef:
+                  name: banco-app
+                  key: password
+          # O mesmo limite da api: sem ele, a JVM da migração calcularia o heap
+          # pela memória da VM inteira
+          resources:
+            requests:
+              memory: 768Mi
+              cpu: 250m
+            limits:
+              memory: 768Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+      containers:
+        - name: api
+          image: ghcr.io/cainavieira/mbarete-api
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: MBARETE_DB_URL
+              value: jdbc:postgresql://banco-rw:5432/mbarete
+            - name: MBARETE_DB_USUARIO
+              valueFrom:
+                secretKeyRef:
+                  name: banco-app
+                  key: username
+            - name: MBARETE_DB_SENHA
+              valueFrom:
+                secretKeyRef:
+                  name: banco-app
+                  key: password
+            # Metade do limite para o heap. A outra metade fica com o que não é
+            # heap (classes e código compilado), que passa de 250 MiB nesta api
+            - name: JAVA_TOOL_OPTIONS
+              value: -XX:MaxRAMPercentage=50
+          # O id e o segredo do Google e a chave do token, criados por comando
+          # (ADR-0037)
+          envFrom:
+            - secretRef:
+                name: api
+          # Sem limite de CPU: a JVM usa muito processador ao subir, e o limite
+          # deixaria a subida lenta
+          resources:
+            requests:
+              memory: 768Mi
+              cpu: 250m
+            limits:
+              memory: 768Mi
+          # Porta aberta quer dizer api pronta, porque o Spring só abre a porta
+          # depois de montar o resto. Sem conferência de vida, que reiniciaria
+          # uma api só lenta para subir
+          readinessProbe:
+            tcpSocket:
+              port: http
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+---
+# O endereço da api dentro do cluster, para o Gateway (ADR-0038)
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+spec:
+  selector:
+    app: api
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

@@ -1,0 +1,7 @@
+# Lista do que entra no build; o resto fica de fora. Assim o .env, com senha e
+# token, nunca chega a uma imagem, que é pública (ADR-0037).
+*
+!mvnw
+!pom.xml
+!.mvn/
+!src/main/

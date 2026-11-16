@@ -13,7 +13,7 @@ RUN --mount=type=cache,target=/root/.m2 ./mvnw -B package -Dmaven.test.skip=true
 
 # Estágio 2: só o Java de execução e o .jar
 FROM eclipse-temurin:25.0.5_8-jre-resolute
-# Liga o pacote do GHCR ao repositório
+# O repositório de origem, nos metadados da imagem
 LABEL org.opencontainers.image.source=https://github.com/cainavieira/Mbarete
 WORKDIR /app
 COPY --from=construcao /construcao/target/api-*.jar api.jar

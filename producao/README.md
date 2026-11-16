@@ -68,3 +68,25 @@ comandos rodam na raiz de um clone do repositório, na VM.
 4. Conferir: o `Cluster banco` em "Cluster in healthy state", o disco `Bound`,
    e o `psql` respondendo:
    `sudo kubectl -n mbarete exec banco-1 -- psql -d mbarete -c 'select version();'`.
+
+## Imagens
+
+A api e o frontend têm cada um a sua imagem no GitHub Container Registry:
+`ghcr.io/cainavieira/mbarete-api` e `ghcr.io/cainavieira/mbarete-frontend`. A
+etiqueta de cada versão é o hash curto do commit de onde ela saiu, e nunca
+`latest`: assim se sabe o que está rodando, e voltar à versão anterior é trocar
+a etiqueta.
+
+O build:
+
+- parte da árvore limpa, porque lê a pasta, e não o commit: uma mudança não
+  commitada entraria numa imagem com a etiqueta de um commit que não a tem.
+- não roda os testes, que ficam com a integração contínua.
+
+O envio:
+
+- pede um token clássico do GitHub com o escopo `write:packages`, porque o GHCR
+  não aceita o token fino.
+- na primeira vez, a imagem nasce privada, e a visibilidade muda para pública na
+  página do pacote no GitHub.
+- a prova de que deu certo é a VM baixar as duas imagens sem login.

@@ -1,6 +1,8 @@
 # Produção
 
-A configuração do cluster e o roteiro para montar a VM de novo.
+O que a produção tem e nenhum arquivo do repositório mostra: a VM, os ajustes
+feitos nela à mão e o que cada peça pede para subir. A configuração está nos
+arquivos desta pasta, e as decisões, na especificação.
 
 ## A VM
 
@@ -14,60 +16,46 @@ A configuração do cluster e o roteiro para montar a VM de novo.
 
 ## Depois de instalar
 
-- IPv6: `accept-ra: false` na interface, no arquivo do netplan, aplicado com
-  `sudo netplan try`.
-- kdump: `sudo apt purge kdump-tools`, `sudo update-grub` e reboot. Devolve os
-  512 MB que ele reserva.
-- Swap: linha do `/swap.img` comentada no `/etc/fstab`, e o arquivo apagado.
+Ajustes feitos à mão no Ubuntu:
+
+- IPv6 desligado no netplan, com `accept-ra: false` na interface.
+- kdump removido, o que devolve os 512 MB que ele reserva.
+- Swap desligada.
 - `qemu-guest-agent` instalado.
-- AppArmor: `kernel.apparmor_restrict_unprivileged_unconfined = 0`, em
-  `/etc/sysctl.d/99-k3s-apparmor.conf`. Com 1, o padrão do Ubuntu 26.04, o
-  containerd do k3s empilha o perfil dos contêineres
-  (`cri-containerd.apparmor.d//&unconfined`), os processos de um mesmo
-  contêiner não conseguem mandar sinal uns aos outros, e o Postgres trava na
-  primeira conexão. Desfazer quando o k3s trouxer o containerd com a correção
-  (PR #14487 do containerd). As alternativas eram um perfil próprio em cada
-  contêiner com vários processos, ou tirar o AppArmor deles.
+
+### AppArmor
+
+`kernel.apparmor_restrict_unprivileged_unconfined = 0`, em
+`/etc/sysctl.d/99-k3s-apparmor.conf`. Com 1, o padrão do Ubuntu 26.04, o
+containerd do k3s empilha o perfil dos contêineres
+(`cri-containerd.apparmor.d//&unconfined`), os processos de um mesmo contêiner
+não conseguem mandar sinal uns aos outros, e o Postgres trava na primeira
+conexão.
+
+- Desfazer quando o k3s trouxer o containerd com a correção.
+- As alternativas eram um perfil próprio em cada contêiner com vários
+  processos, ou tirar o AppArmor deles.
 
 ## k3s
 
-1. Copiar `k3s/config.yaml` para `/etc/rancher/k3s/` e
-   `k3s/k3s-traefik-config.yaml` para `/var/lib/rancher/k3s/server/manifests/`,
-   antes de instalar.
-2. `curl -sfL https://get.k3s.io -o install-k3s.sh`, ler, e
-   `sudo INSTALL_K3S_VERSION='v1.36.5+k3s1' sh install-k3s.sh`. A versão é fixa
-   para registrar o que está em produção. Sem ela, o instalador consulta o
-   `update.k3s.io`, que em 02-11 não respondia da rede de casa.
-3. Conferir: o nó `Ready`, nenhum Pod `svclb-`, e o Service do Traefik em
-   `ClusterIP`.
+O k3s v1.36.5+k3s1, com a versão fixa na instalação para registrar o que está
+em produção. Os dois arquivos de `k3s/` vão para o lugar antes de instalar: o
+`config.yaml` em `/etc/rancher/k3s/`, e o `k3s-traefik-config.yaml` em
+`/var/lib/rancher/k3s/server/manifests/`.
 
 ## Postgres
 
-O operador CloudNativePG 1.30.1 (ADR-0039) e o banco em `manifestos/`. Os
-comandos rodam na raiz de um clone do repositório, na VM.
+O banco roda pelo operador CloudNativePG 1.30.1, e o `Cluster` está em
+`manifestos/`.
 
-1. Conferir que o `local-path` é o armazenamento padrão:
-   `sudo kubectl get storageclass`.
-2. Instalar o operador pelo manifesto oficial, baixado antes para ver as
-   imagens:
+- A ordem é o namespace, o Secret e o banco, porque o banco lê a senha ao
+  nascer.
+- Depois de recriar o operador, o banco só se aplica quando ele fica pronto:
+  antes disso, o webhook dele não responde, e o Kubernetes recusa o `Cluster`.
 
-       curl -sSfL -o cnpg-1.30.1.yaml https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.30/releases/cnpg-1.30.1.yaml
-       sudo kubectl apply --server-side -f cnpg-1.30.1.yaml
-       sudo kubectl rollout status deployment -n cnpg-system cnpg-controller-manager
+O Secret do banco é criado por comando:
 
-3. Criar o namespace, depois o Secret do banco, depois o banco. O Secret vem
-   antes porque o banco lê a senha ao nascer:
-
-       sudo kubectl apply -f producao/manifestos/namespace.yaml
-       sudo kubectl -n mbarete create secret generic banco-app --type=kubernetes.io/basic-auth --from-literal=username=mbarete --from-literal=password="$(openssl rand -hex 24)"
-       sudo kubectl apply -k producao/manifestos
-
-   Se o operador acabou de ser recriado, esperar o `rollout status` antes do
-   `apply -k`: o webhook dele valida o `Cluster`.
-
-4. Conferir: o `Cluster banco` em "Cluster in healthy state", o disco `Bound`,
-   e o `psql` respondendo:
-   `sudo kubectl -n mbarete exec banco-1 -- psql -d mbarete -c 'select version();'`.
+    sudo kubectl -n mbarete create secret generic banco-app --type=kubernetes.io/basic-auth --from-literal=username=mbarete --from-literal=password="$(openssl rand -hex 24)"
 
 ## Imagens
 

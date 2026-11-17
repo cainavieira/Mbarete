@@ -78,3 +78,12 @@ O envio:
 - na primeira vez, a imagem nasce privada, e a visibilidade muda para pública na
   página do pacote no GitHub.
 - a prova de que deu certo é a VM baixar as duas imagens sem login.
+
+## A api
+
+O Secret `api` é criado por comando na VM, como o do banco, com três chaves:
+
+- `MBARETE_GOOGLE_ID` e `MBARETE_GOOGLE_SEGREDO`, do cliente do projeto no
+  console do Google.
+- `MBARETE_JWT_CHAVE`, a chave do token, gerada na própria VM: quem tivesse a de
+  desenvolvimento conseguiria forjar sessão em produção.

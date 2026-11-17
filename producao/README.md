@@ -53,9 +53,11 @@ O banco roda pelo operador CloudNativePG 1.30.1, e o `Cluster` está em
 - Depois de recriar o operador, o banco só se aplica quando ele fica pronto:
   antes disso, o webhook dele não responde, e o Kubernetes recusa o `Cluster`.
 
-O Secret do banco é criado por comando:
+O Secret `banco-app` é criado por comando na VM, do tipo
+`kubernetes.io/basic-auth`, com duas chaves:
 
-    sudo kubectl -n mbarete create secret generic banco-app --type=kubernetes.io/basic-auth --from-literal=username=mbarete --from-literal=password="$(openssl rand -hex 24)"
+- `username`: `mbarete`, o mesmo dono do banco no `banco.yaml`.
+- `password`: gerada na própria VM.
 
 ## Imagens
 

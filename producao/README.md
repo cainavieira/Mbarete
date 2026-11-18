@@ -39,9 +39,9 @@ conexão.
 ## k3s
 
 O k3s v1.36.5+k3s1, com a versão fixa na instalação para registrar o que está
-em produção. Os dois arquivos de `k3s/` vão para o lugar antes de instalar: o
-`config.yaml` em `/etc/rancher/k3s/`, e o `k3s-traefik-config.yaml` em
-`/var/lib/rancher/k3s/server/manifests/`.
+em produção. Os dois arquivos de `k3s/` vão para o lugar antes de instalar, e
+de novo a cada mudança: o `config.yaml` em `/etc/rancher/k3s/`, e o
+`k3s-traefik-config.yaml` em `/var/lib/rancher/k3s/server/manifests/`.
 
 ## Postgres
 

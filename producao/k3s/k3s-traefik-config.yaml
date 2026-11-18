@@ -16,6 +16,15 @@ spec:
     service:
       spec:
         type: ClusterIP
+    # Os cabeçalhos X-Forwarded que vêm da rede dos pods, onde está o
+    # cloudflared, passam adiante. Sem isso, o Traefik troca o https da
+    # Cloudflare pelo http dele, e a api monta com http o endereço de volta do
+    # login
+    ports:
+      web:
+        forwardedHeaders:
+          trustedIPs:
+            - 10.42.0.0/16
     # O Gateway que o chart cria aceita rotas só do namespace da aplicação
     gateway:
       listeners:

@@ -85,7 +85,24 @@ O envio:
 
 O Secret `api` é criado por comando na VM, como o do banco, com três chaves:
 
-- `MBARETE_GOOGLE_ID` e `MBARETE_GOOGLE_SEGREDO`, do cliente do projeto no
-  console do Google.
+- `MBARETE_GOOGLE_ID` e `MBARETE_GOOGLE_SEGREDO`, do cliente de produção no
+  console do Google, separado do de desenvolvimento: o segredo daquele fica no
+  `.env` de quem desenvolve. O endereço de volta registrado nele é
+  `https://mbarete.com.br/api/v1/auth/callback`.
 - `MBARETE_JWT_CHAVE`, a chave do token, gerada na própria VM: quem tivesse a de
   desenvolvimento conseguiria forjar sessão em produção.
+
+## O domínio e o túnel
+
+O `mbarete.com.br` está registrado no Registro.br, com o DNS na Cloudflare e sem
+DNSSEC. Além do site, a zona tem os registros que avisam que o domínio não manda
+nem recebe e-mail: o MX nulo, o SPF `-all` e o DMARC `reject`.
+
+O túnel `mbarete` é configurado no painel da Cloudflare, e não em arquivo:
+
+- A rota pública leva `mbarete.com.br` para `http://traefik.kube-system:80`.
+- O Always Use HTTPS manda quem chega por `http://` para `https://`.
+
+O Secret `cloudflared` é criado por comando na VM, com uma chave,
+`TUNNEL_TOKEN`: o token do túnel, que aparece no comando de instalação, na
+página dele no painel.

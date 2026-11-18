@@ -39,12 +39,13 @@ spec:
           ports:
             - name: metricas
               containerPort: 2000
+          # Mediu 17 MiB, sem tráfego
           resources:
             requests:
-              memory: 128Mi
+              memory: 64Mi
               cpu: 50m
             limits:
-              memory: 128Mi
+              memory: 64Mi
           # Pronto quer dizer conectado à Cloudflare. Sem conferência de vida:
           # com a internet de casa fora, ela reiniciaria o pod em sequência, e a
           # espera entre as tentativas atrasaria a volta do túnel

@@ -8,6 +8,7 @@ resources:
   - banco.yaml
   - api.yaml
   - frontend.yaml
+  - rota.yaml
 # A versão em produção, num lugar só: o hash curto do commit de onde as
 # imagens saíram
 images:

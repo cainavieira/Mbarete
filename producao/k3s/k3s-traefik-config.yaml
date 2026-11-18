@@ -16,3 +16,12 @@ spec:
     service:
       spec:
         type: ClusterIP
+    # O Gateway que o chart cria aceita rotas só do namespace da aplicação
+    gateway:
+      listeners:
+        web:
+          namespacePolicy:
+            from: Selector
+            selector:
+              matchLabels:
+                kubernetes.io/metadata.name: mbarete

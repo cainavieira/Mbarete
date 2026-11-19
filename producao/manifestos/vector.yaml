@@ -51,6 +51,20 @@ spec:
         runAsUser: 0
         seccompProfile:
           type: RuntimeDefault
+      # Fecha a pasta dos arquivos como o kubelet fecha a dele: o Kubernetes a
+      # cria aberta para qualquer usuário da VM
+      initContainers:
+        - name: fechar-pasta
+          image: busybox:1.37
+          command: ["chmod", "0750", "/var/log/mbarete"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: saida
+              mountPath: /var/log/mbarete
       containers:
         - name: vector
           # Sem shell nem gerenciador de pacotes

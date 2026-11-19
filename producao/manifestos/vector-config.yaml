@@ -1,0 +1,31 @@
+# A configuração do Vector, o coletor dos logs (ADR-0044). Vira o ConfigMap
+# pelo kustomization.yaml
+data_dir: /var/lib/vector
+
+sources:
+  # A saída de todo contêiner do nó, como o kubelet grava em /var/log/pods
+  pods:
+    type: kubernetes_logs
+
+transforms:
+  # Os dois contêineres do pod da api, e do Traefik só o log de acesso, que
+  # sai em JSON. O log do próprio Traefik sai em texto e fica de fora
+  escolhidas:
+    type: filter
+    inputs: [pods]
+    condition: >-
+      (.kubernetes.pod_namespace == "mbarete" && .kubernetes.pod_labels.app == "api") ||
+      (.kubernetes.pod_namespace == "kube-system" && .kubernetes.container_name == "traefik" &&
+      starts_with(string!(.message), "{"))
+
+sinks:
+  # Um arquivo por dia e por contêiner: 2026-11-18-api.log, -migrar.log e
+  # -traefik.log. O dia é o de Brasília, pela hora em que a linha foi escrita
+  arquivos:
+    type: file
+    inputs: [escolhidas]
+    path: "/var/log/mbarete/%Y-%m-%d-{{ kubernetes.container_name }}.log"
+    timezone: America/Sao_Paulo
+    # A linha como o programa escreveu, sem os campos do Vector
+    encoding:
+      codec: text

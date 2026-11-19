@@ -1,0 +1,111 @@
+# O coletor dos logs: copia o log da api e o de acesso do Traefik para o disco
+# da VM, onde eles ficam quando o pod é trocado (ADR-0044, RNF-18).
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vector
+---
+# Leitura de nomes e etiquetas, para saber de que contêiner veio cada linha.
+# Sem acesso a Secret
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vector
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces", "nodes", "pods"]
+    verbs: ["list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: vector
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: vector
+subjects:
+  - kind: ServiceAccount
+    name: vector
+    namespace: mbarete
+---
+# Um por nó. Na troca, o velho sai antes de o novo entrar: dois ao mesmo tempo
+# gravariam a mesma linha duas vezes
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: vector
+spec:
+  selector:
+    matchLabels:
+      app: vector
+  template:
+    metadata:
+      labels:
+        app: vector
+    spec:
+      serviceAccountName: vector
+      # Root, porque os arquivos do kubelet são do root e só ele e o grupo root
+      # os leem
+      securityContext:
+        runAsUser: 0
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: vector
+          # Sem shell nem gerenciador de pacotes
+          image: timberio/vector:0.62.0-distroless-libc
+          args: ["--config", "/etc/vector/vector.yaml"]
+          # O nó deste pod: a fonte lê só os contêineres dele
+          env:
+            - name: VECTOR_SELF_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          # Ponto de partida, a ajustar ao medido
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 50m
+            limits:
+              memory: 128Mi
+          # Sem nenhuma capacidade do Linux: root só no que é do root, e só nas
+          # três pastas montadas
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: config
+              mountPath: /etc/vector
+              readOnly: true
+            - name: pods
+              mountPath: /var/log/pods
+              readOnly: true
+            - name: posicao
+              mountPath: /var/lib/vector
+            - name: saida
+              mountPath: /var/log/mbarete
+      volumes:
+        # Gerado pelo kustomization.yaml, com um sufixo que muda a cada mudança
+        # da configuração e troca o pod
+        - name: config
+          configMap:
+            name: vector
+        # O que o kubelet grava de cada contêiner
+        - name: pods
+          hostPath:
+            path: /var/log/pods
+            type: Directory
+        # Até onde já leu cada arquivo, no disco da VM: a troca do pod não relê
+        # nem pula linha
+        - name: posicao
+          hostPath:
+            path: /var/lib/vector
+            type: DirectoryOrCreate
+        # Os arquivos de cada dia
+        - name: saida
+          hostPath:
+            path: /var/log/mbarete
+            type: DirectoryOrCreate

@@ -10,6 +10,13 @@ resources:
   - frontend.yaml
   - rota.yaml
   - cloudflared.yaml
+  - vector.yaml
+# A configuração do Vector vira um ConfigMap com o nome seguido de um resumo
+# do conteúdo: mudar a configuração muda o nome e troca o pod
+configMapGenerator:
+  - name: vector
+    files:
+      - vector.yaml=vector-config.yaml
 # A versão em produção, num lugar só: o hash curto do commit de onde as
 # imagens saíram
 images:

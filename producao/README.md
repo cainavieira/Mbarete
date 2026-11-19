@@ -106,3 +106,16 @@ O túnel `mbarete` é configurado no painel da Cloudflare, e não em arquivo:
 O Secret `cloudflared` é criado por comando na VM, com uma chave,
 `TUNNEL_TOKEN`: o token do túnel, que aparece no comando de instalação, na
 página dele no painel.
+
+## Os logs
+
+O log da api e o de acesso do Traefik são copiados pelo Vector para
+`/var/log/mbarete/`, no disco da VM, com um arquivo por dia de Brasília e por
+contêiner. A pasta só abre para o root. O log do banco, o do `cloudflared` e o
+do próprio Traefik ficam só com o kubelet, enquanto o pod existe.
+
+- No log de acesso, o IP de quem acessa é o `request_Cf-Connecting-Ip`. O
+  `ClientHost` traz o `X-Forwarded-For` inteiro, cujo começo o visitante pode
+  inventar.
+- O painel do túnel na Cloudflare mostra ao vivo, no Live logs, os pedidos que
+  passam por ele, sem entrar na VM.

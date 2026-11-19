@@ -11,6 +11,7 @@ resources:
   - rota.yaml
   - cloudflared.yaml
   - vector.yaml
+  - limpar-logs.yaml
 # A configuração do Vector vira um ConfigMap com o nome seguido de um resumo
 # do conteúdo: mudar a configuração muda o nome e troca o pod
 configMapGenerator:

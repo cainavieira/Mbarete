@@ -1,0 +1,40 @@
+# A limpeza dos logs: apaga o que passou dos 7 dias de retenção (ADR-0044,
+# RNF-18).
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: limpar-logs
+spec:
+  schedule: "0 3 * * *"
+  timeZone: America/Sao_Paulo
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          # Root, como o Vector: a pasta e os arquivos são do root
+          securityContext:
+            runAsUser: 0
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: limpar
+              image: busybox:1.37
+              # Apaga o arquivo cuja última escrita tem 7 dias ou mais. A última
+              # linha é a mais nova do arquivo, então toda linha fica pelo menos
+              # 7 dias. O -print deixa no log do Job o que saiu
+              command: ["find", "/var/log/mbarete", "-name", "*.log", "-mtime", "+6", "-print", "-delete"]
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: saida
+                  mountPath: /var/log/mbarete
+          volumes:
+            # A pasta que o Vector cria
+            - name: saida
+              hostPath:
+                path: /var/log/mbarete
+                type: Directory

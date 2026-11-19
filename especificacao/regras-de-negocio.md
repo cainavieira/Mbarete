@@ -90,7 +90,7 @@ motivo.
   (RN-18): as duas costumam ser a mesma, e deixam de ser quando a próxima fase
   já está agendada. Aí a corrente tem data de fim, posta pela RN-22, e a em
   aberto é a futura (RN-69).
-- **RN-66** Data sem fase exibe peso semanal, as três variações e a cintura
+- **RN-66** Data sem fase exibe peso semanal, as quatro variações e a cintura
   medida, e nada além disso. Não há taxa alvo, veredito de ritmo, barra de
   progresso nem faixa de tolerância, porque os quatro dependem de um plano
   declarado, e sem fase não há plano.
@@ -255,11 +255,19 @@ motivo.
 
 ## Variações exibidas
 
-- **RN-46** O sistema exibe três variações, todas calculadas sobre peso
-  semanal e nunca sobre peso bruto de um dia: 7 dias, 30 dias, e desde o
-  primeiro peso semanal disponível.
+- **RN-46** O sistema exibe quatro variações, todas calculadas sobre peso
+  semanal e nunca sobre peso bruto de um dia: 7 dias, 14 dias, 4 semanas e
+  desde o início. As quatro aparecem juntas, e não por escolha de período:
+  lado a lado, a de 7 dias mostra quanto a água e o sal movem o número, e as
+  mais longas, o ritmo que se acumula. São 4 semanas, e não 30 dias, porque é
+  a distância da taxa real (RN-36), e a tela não mostra dois números quase
+  iguais medidos em janelas diferentes. A variação desde o início parte do
+  dia da base da fase corrente (RN-68), o mesmo da barra de progresso e da
+  variação total da fase encerrada (RN-40), porque a conta atravessa ciclos e
+  a soma de dois deles não descreve nenhum. Sem a base, não há essa variação.
+  Sem fase corrente, ela parte do primeiro peso semanal da conta.
 - **RN-47** Cada variação exibe o intervalo de datas das janelas efetivamente
-  usadas no cálculo, no formato (DD-MM / DD-MM). Quando o dia de 7 ou de 30
+  usadas no cálculo, no formato (DD-MM / DD-MM). Quando o dia de 7, 14 ou 28
   dias atrás não tem peso semanal (RN-16), a variação parte do primeiro dia
   seguinte que tenha, e o intervalo mostra esse dia: avançar, e não recuar,
   porque a variação de 7 dias nunca cobre mais que 7 dias. Sem peso semanal
@@ -338,6 +346,7 @@ Registradas para que não voltem como novidade.
 | Corredor do plano no gráfico de cutting e bulking, saindo da base | Mede a posição acumulada, e o veredito mede o ritmo recente: depois de um começo lento, o gráfico diria fora enquanto o veredito diz no ritmo |
 | Linha do peso alvo no gráfico | Estica o eixo até o alvo e achata a curva do peso semanal. A barra de progresso já mostra a distância (RF-33) |
 | Fechamento por semana ISO | Duplicaria o peso semanal com número diferente para o mesmo período |
+| Variação por semana fechada, começando no dia da semana em que a fase começou | Toda janela de 7 dias já conta um dia de cada da semana, e o número muda porque entra dado novo. O valor fechado carrega a mesma água e o mesmo sal, só que parado, e a mudança real espera a semana fechar. E duplicaria o peso semanal, como o fechamento por semana ISO. O que tira peso da oscilação é o período mais longo da RN-46 |
 | Janela dos últimos 7 registros | Com dias em branco a janela estica e faz a taxa parecer mais lenta do que foi |
 | Taxa real sobre a semana, com tolerância de 20% | A água e o sal movem o peso semanal tanto quanto o ritmo planejado: quem seguia o plano via fora do ritmo na maioria das semanas, e quem estava parado via no ritmo quase com a mesma frequência. Trocado pelo mês da RN-36 e pelos 50% da RN-38 |
 | Tolerância mínima em quilos para alvo pequeno | Troca um erro por outro: quem segue o plano passa a ver no ritmo mais vezes, e quem está parado também |

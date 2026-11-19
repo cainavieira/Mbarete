@@ -192,7 +192,7 @@ pensa "março". Paginação é o desenho errado para série temporal.
 ### O acompanhamento é uma resposta só
 
 `GET /acompanhamento` devolve, de uma vez: peso semanal e a contagem de
-registros da janela, as três variações com o intervalo de datas de cada uma
+registros da janela, as quatro variações com o intervalo de datas de cada uma
 (RN-47), a fase corrente inteira, o veredito de ritmo com a taxa real e o
 intervalo dela (RN-36) e a taxa alvo já convertida em quilogramas da semana
 (RN-35), o progresso até o peso alvo, o
@@ -228,10 +228,11 @@ de vir do `GET /fases`, para a tela continuar montada por uma chamada só.
 
 Onde a janela não tem os 4 registros mínimos, o peso semanal vem nulo e o
 veredito vem com estado de dados insuficientes, em vez de o campo desaparecer
-(RN-16, RN-39). Sem peso semanal hoje, as três variações também vêm nulas, e
-cada uma vem nula quando nenhum dia antes de hoje tem peso semanal desde o
-ponto de partida dela (RN-47). Campo ausente e campo nulo são coisas
-diferentes para quem consome.
+(RN-16, RN-39). Sem peso semanal hoje, as quatro variações também vêm nulas,
+e cada uma vem nula quando nenhum dia antes de hoje tem peso semanal desde o
+ponto de partida dela (RN-47). A variação desde o início vem nula também
+quando a fase corrente não tem a base (RN-46, RN-68). Campo ausente e campo
+nulo são coisas diferentes para quem consome.
 
 Em cutting e bulking, enquanto não se completam os 14 dias da RN-39, o
 veredito vem também com a data em que eles se completam, e a tela diz a partir
@@ -255,7 +256,7 @@ desenha e escreve esses números sem conhecer o 1% da RN-33 (ADR-0025).
 nulos com ela o veredito, a taxa alvo, o progresso, a faixa de tolerância e a
 variação da cintura desde a primeira medição na fase (RN-12). Peso semanal,
 variações e cintura, com a variação desde a medição anterior, continuam
-preenchidos, porque não dependem de fase (RN-66). Isso não é estado de erro: é o que acontece em conta
+preenchidos, porque existem sem fase (RN-66). Isso não é estado de erro: é o que acontece em conta
 nova, depois de encerrar uma fase, e em todo o passado importado.
 
 Fase futura cadastrada não aparece aqui, apenas em `/fases` (RN-69).

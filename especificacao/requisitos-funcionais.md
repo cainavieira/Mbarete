@@ -97,9 +97,9 @@ aposentados estão listados no fim.
 - **RF-50** O sistema deve desenhar no gráfico a faixa de tolerância da fase
   corrente de manutenção, do início da fase até hoje, e apresentá-la também em
   texto, com os dois limites em quilogramas. (RN-33, RN-68)
-- **RF-29** O sistema deve apresentar as três variações de peso, calculadas
+- **RF-29** O sistema deve apresentar as quatro variações de peso, calculadas
   sobre peso semanal, com o intervalo das janelas usadas em cada uma. (RN-46,
-  RN-47)
+  RN-47, RN-68)
 - **RF-30** O sistema deve apresentar o veredito de ritmo da fase corrente,
   quando existir fase corrente, e, em cutting e bulking, a taxa real ao lado,
   com o intervalo de datas usado no formato da RN-47. (RN-27, RN-33, RN-36,

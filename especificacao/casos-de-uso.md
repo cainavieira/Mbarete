@@ -256,8 +256,8 @@ aí o caminho é o da RN-70. (RN-70)
 2. Apresenta o gráfico dos últimos 120 dias, com os pesos diários como pontos,
    o peso semanal como linha, e os trechos com fase distintos dos trechos sem
    fase. (RF-28, RF-47, RF-49)
-3. Apresenta as três variações, cada uma com o intervalo de datas usado.
-   (RF-29, RN-47)
+3. Apresenta as quatro variações juntas, cada uma com o intervalo de datas
+   usado. (RF-29, RN-47)
 4. Apresenta o veredito de ritmo da fase corrente, a taxa real com o
    intervalo de datas usado, e a taxa alvo convertida em quilogramas da
    semana. (RF-30, RF-32)
@@ -274,6 +274,11 @@ aí o caminho é o da RN-70. (RN-70)
 - **2b** O primeiro registro é mais recente que o período escolhido: o gráfico
   começa no primeiro registro e se alarga conforme os dias passam, em vez de
   mostrar trecho em branco. (RF-49)
+- **3a** Não existe fase corrente: a variação desde o início parte do
+  primeiro peso semanal da conta, e o rótulo diz só desde o início, sem
+  falar em fase. (RN-46, RN-66)
+- **3b** A fase corrente não tem a base: dados insuficientes no lugar da
+  variação desde o início, e as outras três continuam. (RN-46, RN-68)
 - **4a** Em cutting ou bulking, ainda não se passaram 14 dias desde o dia da
   base, ou o peso semanal com que o de hoje se compara, o de 28 dias atrás ou
   o da base, não existe: dados insuficientes no lugar do veredito, mas o peso

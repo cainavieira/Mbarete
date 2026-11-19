@@ -166,7 +166,7 @@ Não é lista de boas intenções, são cinco itens verificáveis.
 - Componente interativo vem do shadcn/ui, que traz o comportamento do Radix.
 - O estado nunca é dito só pela cor: o selo do veredito traz a palavra, e o de
   fora do ritmo, a seta.
-- **O gráfico não é a única forma de ler o dado.** As três variações e a lista
-  de registros existem também para quem não consegue ler o gráfico. Isso é
+- **O gráfico não é a única forma de ler o dado.** As quatro variações e a
+  lista de registros existem também para quem não consegue ler o gráfico. Isso é
   requisito de leitura, não enfeite: gráfico é imagem, e imagem não se navega
   por teclado.

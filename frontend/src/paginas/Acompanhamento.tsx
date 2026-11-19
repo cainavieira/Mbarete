@@ -75,7 +75,7 @@ function Conteudo({ dados }: { dados: Dados }) {
         faixa={dados.faixa}
         className="lg:col-start-2 lg:row-span-full lg:row-start-1"
       />
-      {temPeso && <Variacoes variacoes={dados.variacoes} />}
+      {temPeso && <Variacoes variacoes={dados.variacoes} temFase={fase !== null} />}
       {dados.cintura !== null && <Cintura cintura={dados.cintura} fase={fase} />}
     </div>
   )
@@ -286,11 +286,13 @@ function Progresso({ progresso, alvo, faseId }: PropsDoProgresso) {
   )
 }
 
-function Variacoes({ variacoes }: { variacoes: Esquema<'Variacoes'> }) {
+function Variacoes({ variacoes, temFase }: { variacoes: Esquema<'Variacoes'>; temFase: boolean }) {
   const linhas = [
     { rotulo: '7 dias', variacao: variacoes.semana },
-    { rotulo: '30 dias', variacao: variacoes.mes },
-    { rotulo: 'desde o início', variacao: variacoes.desdeOInicio },
+    { rotulo: '14 dias', variacao: variacoes.duasSemanas },
+    { rotulo: '4 semanas', variacao: variacoes.quatroSemanas },
+    // Com fase, parte do início dela, e sem fase, do primeiro registro (UC-08 3a)
+    { rotulo: temFase ? 'desde o início da fase' : 'desde o início', variacao: variacoes.desdeOInicio },
   ]
 
   return (

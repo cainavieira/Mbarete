@@ -42,7 +42,7 @@ function acompanhamento(parcial: Partial<Dados>): Dados {
   return {
     pesoSemanal: 80,
     registrosNaJanela: 7,
-    variacoes: { semana: null, mes: null, desdeOInicio: null },
+    variacoes: { semana: null, duasSemanas: null, quatroSemanas: null, desdeOInicio: null },
     faseCorrente: null,
     veredito: null,
     taxaAlvoKgSemana: null,
@@ -122,6 +122,18 @@ test('antes dos 14 dias, diz quando o veredito aparece', async () => {
 
   expect(await screen.findByText('O veredito aparece a partir de 02/11/2026.')).toBeTruthy()
   expect(screen.getByText('(-1,00%)')).toBeTruthy()
+})
+
+// Pega o rótulo que diz partir da fase quando o número parte do primeiro
+// registro, ou o contrário (UC-08 3a)
+test('a variação desde o início diz de onde parte', async () => {
+  abrir(acompanhamento({ faseCorrente: CUTTING }))
+  expect(await screen.findByText('desde o início da fase')).toBeTruthy()
+
+  cleanup()
+  abrir(acompanhamento({}))
+  expect(await screen.findByText('desde o início')).toBeTruthy()
+  expect(screen.queryByText('desde o início da fase')).toBeNull()
 })
 
 // Pega o período contado com um dia a mais ou a menos, e o botão que não

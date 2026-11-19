@@ -421,7 +421,8 @@ export interface components {
         };
         Variacoes: {
             semana: components["schemas"]["Variacao"] | null;
-            mes: components["schemas"]["Variacao"] | null;
+            duasSemanas: components["schemas"]["Variacao"] | null;
+            quatroSemanas: components["schemas"]["Variacao"] | null;
             desdeOInicio: components["schemas"]["Variacao"] | null;
         };
         VereditoDto: {

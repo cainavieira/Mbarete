@@ -34,3 +34,20 @@ spec:
             selector:
               matchLabels:
                 kubernetes.io/metadata.name: mbarete
+    # O log de acesso: uma linha em JSON por pedido, na saída do Traefik, de
+    # onde o coletor copia (RNF-17)
+    logs:
+      access:
+        enabled: true
+        format: json
+        # Cabeçalho do pedido fica fora, menos os listados. O Cookie, onde
+        # viajam os tokens da sessão, nunca entra
+        fields:
+          headers:
+            defaultmode: drop
+            names:
+              # O IP de quem acessa, como a Cloudflare viu. O ClientHost traz o
+              # X-Forwarded-For, cujo começo o visitante pode inventar
+              CF-Connecting-IP: keep
+              # Mostra quando quem acessa é um robô
+              User-Agent: keep

@@ -87,4 +87,38 @@ class VariacoesTest {
     assertThat(calcularVariacoes(semAJanelaDaBase, true, HOJE.minusDays(20), HOJE).desdeOInicio())
         .isNull();
   }
+
+  // Pega o limite contado um dia antes: sem os registros de 11 a 20 dias
+  // atrás, o primeiro peso semanal desde a partida de 14 dias é o de 7 dias
+  // atrás, o último que a janela de hoje não alcança (RN-47)
+  @Test
+  void aPartidaAvancaAteUmaSemanaAtras() {
+    var variacoes = calcularVariacoes(semOsRegistros(11, 20), false, null, HOJE);
+
+    assertThat(variacoes.duasSemanas())
+        .isNotNull()
+        .extracting(Variacao::de)
+        .isEqualTo(HOJE.minusDays(7));
+  }
+
+  // Pega a partida que passa de 1 semana atrás e compara a semana com ela
+  // mesma: sem os registros de 10 a 20 dias atrás, o primeiro peso semanal
+  // desde as partidas de 7 e de 14 dias é o de 6 dias atrás (RN-47)
+  @Test
+  void aPartidaNaoAvancaAlemDeUmaSemanaAtras() {
+    var variacoes = calcularVariacoes(semOsRegistros(10, 20), false, null, HOJE);
+
+    assertThat(variacoes.semana()).isNull();
+    assertThat(variacoes.duasSemanas()).isNull();
+  }
+
+  /** As pesagens sem as de tantos a tantos dias atrás, os dois inclusive. */
+  private static List<Pesagem> semOsRegistros(int deDiasAtras, int ateDiasAtras) {
+    return PESAGENS.stream()
+        .filter(
+            pesagem ->
+                pesagem.data().isAfter(HOJE.minusDays(deDiasAtras))
+                    || pesagem.data().isBefore(HOJE.minusDays(ateDiasAtras)))
+        .toList();
+  }
 }

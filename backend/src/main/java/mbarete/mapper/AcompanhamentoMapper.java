@@ -47,7 +47,8 @@ public final class AcompanhamentoMapper {
         registrosNaJanela,
         new Variacoes(
             arredondada(variacoes.semana()),
-            arredondada(variacoes.mes()),
+            arredondada(variacoes.duasSemanas()),
+            arredondada(variacoes.quatroSemanas()),
             arredondada(variacoes.desdeOInicio())),
         corrente == null ? null : FaseMapper.paraDto(corrente),
         daFase == null ? null : veredito(daFase),

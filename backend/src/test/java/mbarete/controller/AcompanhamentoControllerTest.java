@@ -89,6 +89,7 @@ class AcompanhamentoControllerTest {
         .andExpect(jsonPath("$.registrosNaJanela").value(7))
         .andExpect(jsonPath("$.variacoes.semana.valor").value(-0.7))
         .andExpect(jsonPath("$.variacoes.semana.de").value(dia.minusDays(7).toString()))
+        .andExpect(jsonPath("$.variacoes.desdeOInicio.de").value(dia.minusDays(30).toString()))
         .andExpect(jsonPath("$.faseCorrente.id").value(cutting))
         .andExpect(jsonPath("$.veredito.estado").value("NO_RITMO"))
         .andExpect(jsonPath("$.veredito.taxaReal.valor").value(-0.7))
@@ -132,7 +133,8 @@ class AcompanhamentoControllerTest {
         .andExpect(jsonPath("$.progresso").value(nullValue()))
         .andExpect(jsonPath("$.pesoSemanal").value(80.0))
         .andExpect(jsonPath("$.registrosNaJanela").value(7))
-        .andExpect(jsonPath("$.variacoes.semana.valor").value(0.0));
+        .andExpect(jsonPath("$.variacoes.semana.valor").value(0.0))
+        .andExpect(jsonPath("$.variacoes.desdeOInicio.de").value(dia.minusDays(7).toString()));
   }
 
   // Pega o tipo da fase corrente dado a todos os dias com fase, e o tipo dado

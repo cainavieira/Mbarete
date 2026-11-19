@@ -63,7 +63,8 @@ public class AcompanhamentoService {
     return AcompanhamentoMapper.paraDto(
         calcularPesoSemanal(pesagens, hoje).orElse(null),
         contarNaJanela(pesagens, hoje),
-        calcularVariacoes(pesagens, hoje),
+        calcularVariacoes(
+            pesagens, corrente.isPresent(), corrente.map(Fase::diaDaBase).orElse(null), hoje),
         corrente.orElse(null),
         corrente
             .map(

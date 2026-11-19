@@ -229,8 +229,8 @@ de vir do `GET /fases`, para a tela continuar montada por uma chamada só.
 Onde a janela não tem os 4 registros mínimos, o peso semanal vem nulo e o
 veredito vem com estado de dados insuficientes, em vez de o campo desaparecer
 (RN-16, RN-39). Sem peso semanal hoje, as quatro variações também vêm nulas,
-e cada uma vem nula quando nenhum dia antes de hoje tem peso semanal desde o
-ponto de partida dela (RN-47). A variação desde o início vem nula também
+e cada uma vem nula quando o ponto de partida dela não acha peso semanal
+dentro do avanço permitido (RN-47). A variação desde o início vem nula também
 quando a fase corrente não tem a base (RN-46, RN-68). Campo ausente e campo
 nulo são coisas diferentes para quem consome.
 

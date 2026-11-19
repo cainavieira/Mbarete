@@ -270,8 +270,12 @@ motivo.
   usadas no cálculo, no formato (DD-MM / DD-MM). Quando o dia de 7, 14 ou 28
   dias atrás não tem peso semanal (RN-16), a variação parte do primeiro dia
   seguinte que tenha, e o intervalo mostra esse dia: avançar, e não recuar,
-  porque a variação de 7 dias nunca cobre mais que 7 dias. Sem peso semanal
-  hoje, ou quando o primeiro dia que tem é o próprio hoje, não há variação.
+  porque a variação de 7 dias nunca cobre mais que 7 dias. O avanço não passa
+  de 7 dias antes de hoje, e sem peso semanal até ali não há variação: dali em
+  diante, a janela da partida e a de hoje teriam dias em comum, e a conta
+  compararia os mesmos registros com eles mesmos. Por isso a variação de 7
+  dias nunca avança. Sem peso semanal hoje, ou quando o primeiro dia que tem é
+  o próprio hoje, não há variação.
 
 ## Conta, acesso e dados
 

@@ -42,6 +42,7 @@ function acompanhamento(parcial: Partial<Dados>): Dados {
   return {
     pesoSemanal: 80,
     registrosNaJanela: 7,
+    ultimoPesoSemanal: { valor: 80, data: dia(0) },
     variacoes: { semana: null, duasSemanas: null, quatroSemanas: null, desdeOInicio: null },
     faseCorrente: null,
     veredito: null,
@@ -73,11 +74,12 @@ function abrir(dados: Dados) {
 
 // Pega a barra de dados insuficientes e o veredito mostrados sem peso semanal
 // hoje: o backend manda os dois com esse estado, e a tela é que os cala (UC-08 1a, 5c)
-test('sem peso semanal hoje, não há veredito, barra nem variações', async () => {
+test('sem nenhum peso semanal, não há veredito, barra nem variações', async () => {
   abrir(
     acompanhamento({
       pesoSemanal: null,
       registrosNaJanela: 2,
+      ultimoPesoSemanal: null,
       faseCorrente: CUTTING,
       veredito: { estado: 'DADOS_INSUFICIENTES', taxaReal: null, aPartirDe: null },
       taxaAlvoKgSemana: null,
@@ -85,10 +87,37 @@ test('sem peso semanal hoje, não há veredito, barra nem variações', async ()
     }),
   )
 
-  expect(await screen.findByText('Só 2 registros nos últimos 7 dias.')).toBeTruthy()
+  expect(
+    await screen.findByText('Só 2 registros nos últimos 7 dias. O peso semanal precisa de 4.'),
+  ).toBeTruthy()
   expect(screen.queryByText(/Progresso até/)).toBeNull()
   expect(screen.queryByText('Variação do peso semanal')).toBeNull()
   expect(screen.getAllByText('dados insuficientes')).toHaveLength(1)
+})
+
+// Pega as variações escondidas sem peso semanal hoje, o título sem a data em
+// que elas terminam, e o último peso semanal que não aparece (RN-71, UC-08 1a)
+test('sem peso semanal hoje, mostra o último e as variações até ele', async () => {
+  abrir(
+    acompanhamento({
+      pesoSemanal: null,
+      registrosNaJanela: 2,
+      ultimoPesoSemanal: { valor: 79.4, data: dia(12) },
+      variacoes: {
+        semana: { valor: -0.3, de: dia(19), ate: dia(12) },
+        duasSemanas: null,
+        quatroSemanas: null,
+        desdeOInicio: null,
+      },
+      faseCorrente: CUTTING,
+      veredito: { estado: 'DADOS_INSUFICIENTES', taxaReal: null, aPartirDe: null },
+      progresso: { estado: 'DADOS_INSUFICIENTES', percentual: null, atingido: false },
+    }),
+  )
+
+  expect(await screen.findByText('O último foi 79,4 kg, em 16/10/2026.')).toBeTruthy()
+  expect(screen.getByRole('heading', { name: 'Variação do peso semanal até 16/10/2026' })).toBeTruthy()
+  expect(screen.queryByText(/Progresso até/)).toBeNull()
 })
 
 // Pega a palavra do ritmo na manutenção e a taxa alvo de zero que o backend

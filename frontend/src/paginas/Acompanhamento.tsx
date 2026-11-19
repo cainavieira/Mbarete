@@ -24,10 +24,14 @@ type Fase = Esquema<'FaseDto'>
 const CARTAO = 'flex flex-col rounded-xl border bg-card p-4 text-card-foreground'
 const LINK = 'font-semibold text-primary underline underline-offset-3'
 
+/** Com menos registros que isso na janela, não existe peso semanal (RN-16). */
+const MINIMO_NA_JANELA = 4
+
 /**
  * Estou no ritmo do meu ciclo? (UC-08). Tudo vem de uma resposta só, e a tela
  * só decide o que mostrar com o que veio: sem peso semanal hoje, não há
- * veredito, barra nem variações (UC-08 1a).
+ * veredito nem barra, e as variações vão até o último peso semanal (UC-08 1a,
+ * RN-71).
  */
 export function Acompanhamento() {
   const consulta = useAcompanhamento()
@@ -58,6 +62,7 @@ function Conteudo({ dados }: { dados: Dados }) {
   }
   const fase = dados.faseCorrente
   const temPeso = dados.pesoSemanal !== null
+  const ultimo = dados.ultimoPesoSemanal
   const progresso = temPeso ? dados.progresso : null
 
   return (
@@ -75,7 +80,9 @@ function Conteudo({ dados }: { dados: Dados }) {
         faixa={dados.faixa}
         className="lg:col-start-2 lg:row-span-full lg:row-start-1"
       />
-      {temPeso && <Variacoes variacoes={dados.variacoes} temFase={fase !== null} />}
+      {ultimo !== null && (
+        <Variacoes variacoes={dados.variacoes} temFase={fase !== null} ate={temPeso ? null : ultimo.data} />
+      )}
       {dados.cintura !== null && <Cintura cintura={dados.cintura} fase={fase} />}
     </div>
   )
@@ -84,6 +91,7 @@ function Conteudo({ dados }: { dados: Dados }) {
 function PesoSemanal({ dados }: { dados: Dados }) {
   const { pesoSemanal, faseCorrente: fase, veredito } = dados
   const janela = dados.registrosNaJanela
+  const ultimo = dados.ultimoPesoSemanal
 
   return (
     <section
@@ -102,8 +110,15 @@ function PesoSemanal({ dados }: { dados: Dados }) {
           <p className="text-sm text-destaque-suave tabular-nums">
             {janela === 0
               ? 'Nenhum registro nos últimos 7 dias.'
-              : `Só ${janela} ${janela === 1 ? 'registro' : 'registros'} nos últimos 7 dias.`}
+              : `Só ${janela} ${janela === 1 ? 'registro' : 'registros'} nos últimos 7 dias.`}{' '}
+            O peso semanal precisa de {MINIMO_NA_JANELA}.
           </p>
+          {/* Texto pequeno, e não o número do cartão: o último nunca aparece como o de hoje (RN-71) */}
+          {ultimo !== null && (
+            <p className="text-sm text-destaque-suave tabular-nums">
+              O último foi {formatarPeso(ultimo.valor)} kg, em {formatarData(ultimo.data)}.
+            </p>
+          )}
         </>
       ) : (
         <p className="text-5xl leading-none font-bold tracking-tight tabular-nums">
@@ -286,7 +301,14 @@ function Progresso({ progresso, alvo, faseId }: PropsDoProgresso) {
   )
 }
 
-function Variacoes({ variacoes, temFase }: { variacoes: Esquema<'Variacoes'>; temFase: boolean }) {
+interface PropsDasVariacoes {
+  variacoes: Esquema<'Variacoes'>
+  temFase: boolean
+  /** O dia em que as variações terminam, quando não é hoje (RN-71). */
+  ate: string | null
+}
+
+function Variacoes({ variacoes, temFase, ate }: PropsDasVariacoes) {
   const linhas = [
     { rotulo: '7 dias', variacao: variacoes.semana },
     { rotulo: '14 dias', variacao: variacoes.duasSemanas },
@@ -298,7 +320,7 @@ function Variacoes({ variacoes, temFase }: { variacoes: Esquema<'Variacoes'>; te
   return (
     <section aria-labelledby="titulo-variacoes" className={cn(CARTAO, 'gap-2.5 lg:col-start-1')}>
       <h2 id="titulo-variacoes" className="text-lg leading-snug font-bold">
-        Variação do peso semanal
+        Variação do peso semanal{ate !== null && ` até ${formatarData(ate)}`}
       </h2>
       <dl>
         {linhas.map(({ rotulo, variacao }) => (

@@ -20,6 +20,7 @@ import mbarete.regras.ResumoCintura;
 import mbarete.regras.Ritmo;
 import mbarete.regras.TaxaReal;
 import mbarete.regras.TipoDeFase;
+import mbarete.regras.UltimoPesoSemanal;
 import mbarete.regras.Variacao;
 import mbarete.regras.Variacoes;
 import org.jspecify.annotations.Nullable;
@@ -35,6 +36,7 @@ public final class AcompanhamentoMapper {
   public static AcompanhamentoDto paraDto(
       @Nullable BigDecimal pesoSemanal,
       int registrosNaJanela,
+      @Nullable UltimoPesoSemanal ultimoPesoSemanal,
       Variacoes variacoes,
       @Nullable Fase corrente,
       @Nullable AcompanhamentoDaFase daFase,
@@ -45,6 +47,10 @@ public final class AcompanhamentoMapper {
     return new AcompanhamentoDto(
         pesoSemanal == null ? null : arredondarPeso(pesoSemanal),
         registrosNaJanela,
+        ultimoPesoSemanal == null
+            ? null
+            : new UltimoPesoSemanal(
+                arredondarPeso(ultimoPesoSemanal.valor()), ultimoPesoSemanal.data()),
         new Variacoes(
             arredondada(variacoes.semana()),
             arredondada(variacoes.duasSemanas()),

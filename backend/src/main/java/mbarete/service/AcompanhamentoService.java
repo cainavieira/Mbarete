@@ -6,6 +6,7 @@ import static mbarete.regras.PesoSemanal.calcularPesoSemanal;
 import static mbarete.regras.PesoSemanal.contarNaJanela;
 import static mbarete.regras.PontoDaSerie.montarSerie;
 import static mbarete.regras.ResumoCintura.resumoCintura;
+import static mbarete.regras.UltimoPesoSemanal.calcularUltimoPesoSemanal;
 import static mbarete.regras.Variacoes.calcularVariacoes;
 
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import mbarete.mapper.AcompanhamentoMapper;
 import mbarete.regras.Medicao;
 import mbarete.regras.PeriodoDeFase;
 import mbarete.regras.Pesagem;
+import mbarete.regras.UltimoPesoSemanal;
 import mbarete.repository.FaseRepository;
 import mbarete.repository.RegistroRepository;
 import org.springframework.stereotype.Service;
@@ -60,11 +62,15 @@ public class AcompanhamentoService {
             .flatMap(
                 periodo ->
                     fasesDaPessoa.stream().filter(fase -> fase.id() == periodo.id()).findFirst());
+    Optional<UltimoPesoSemanal> ultimo = calcularUltimoPesoSemanal(pesagens, hoje);
+    // Sem peso semanal hoje, as variações terminam no último dia que tem (RN-47, RN-71)
+    LocalDate diaFinal = ultimo.map(UltimoPesoSemanal::data).orElse(hoje);
     return AcompanhamentoMapper.paraDto(
         calcularPesoSemanal(pesagens, hoje).orElse(null),
         contarNaJanela(pesagens, hoje),
+        ultimo.orElse(null),
         calcularVariacoes(
-            pesagens, corrente.isPresent(), corrente.map(Fase::diaDaBase).orElse(null), hoje),
+            pesagens, corrente.isPresent(), corrente.map(Fase::diaDaBase).orElse(null), diaFinal),
         corrente.orElse(null),
         corrente
             .map(

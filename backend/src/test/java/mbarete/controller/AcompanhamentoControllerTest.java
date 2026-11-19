@@ -87,6 +87,8 @@ class AcompanhamentoControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.pesoSemanal").value(76.3))
         .andExpect(jsonPath("$.registrosNaJanela").value(7))
+        .andExpect(jsonPath("$.ultimoPesoSemanal.valor").value(76.3))
+        .andExpect(jsonPath("$.ultimoPesoSemanal.data").value(dia.toString()))
         .andExpect(jsonPath("$.variacoes.semana.valor").value(-0.7))
         .andExpect(jsonPath("$.variacoes.semana.de").value(dia.minusDays(7).toString()))
         .andExpect(jsonPath("$.variacoes.desdeOInicio.de").value(dia.minusDays(30).toString()))
@@ -135,6 +137,25 @@ class AcompanhamentoControllerTest {
         .andExpect(jsonPath("$.registrosNaJanela").value(7))
         .andExpect(jsonPath("$.variacoes.semana.valor").value(0.0))
         .andExpect(jsonPath("$.variacoes.desdeOInicio.de").value(dia.minusDays(7).toString()));
+  }
+
+  // Pega as variações que terminam hoje, e não no último peso semanal, e o
+  // último que se perde entre a regra e a resposta (RN-47, RN-71). Um registro
+  // por dia de 30 a 10 dias atrás: hoje não tem peso semanal, e o último é o
+  // de 7 dias atrás
+  @Test
+  void semPesoSemanalHojeAsVariacoesTerminamNoUltimo() throws Exception {
+    int fulana = usuario("fulana@exemplo.com");
+    for (int dias = 10; dias <= 30; dias++) {
+      registro(fulana, dia.minusDays(dias), new BigDecimal("80.0"));
+    }
+
+    acompanhar(fulana)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.pesoSemanal").value(nullValue()))
+        .andExpect(jsonPath("$.ultimoPesoSemanal.data").value(dia.minusDays(7).toString()))
+        .andExpect(jsonPath("$.variacoes.semana.de").value(dia.minusDays(14).toString()))
+        .andExpect(jsonPath("$.variacoes.semana.ate").value(dia.minusDays(7).toString()));
   }
 
   // Pega o tipo da fase corrente dado a todos os dias com fase, e o tipo dado

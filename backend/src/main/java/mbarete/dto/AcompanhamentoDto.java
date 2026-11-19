@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import mbarete.regras.FaixaDeTolerancia;
 import mbarete.regras.ResumoCintura;
+import mbarete.regras.UltimoPesoSemanal;
 import mbarete.regras.Variacoes;
 import org.jspecify.annotations.Nullable;
 
@@ -15,6 +16,7 @@ import org.jspecify.annotations.Nullable;
 public record AcompanhamentoDto(
     @Nullable BigDecimal pesoSemanal,
     int registrosNaJanela,
+    @Nullable UltimoPesoSemanal ultimoPesoSemanal,
     Variacoes variacoes,
     @Nullable FaseDto faseCorrente,
     @Nullable VereditoDto veredito,

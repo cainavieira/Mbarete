@@ -11,21 +11,23 @@ import java.util.Optional;
 public record Variacao(BigDecimal valor, LocalDate de, LocalDate ate) {
 
   /**
-   * Compara o peso semanal de hoje com o do primeiro dia, a partir da partida, que tenha peso
+   * Compara o peso semanal do dia final com o do primeiro dia, a partir da partida, que tenha peso
    * semanal: quando a partida não tem, a variação avança, e não recua (RN-46, RN-47). As variações
    * de 1, 2 e 4 semanas e a desde o primeiro registro são esta com partidas diferentes.
    */
   public static Optional<Variacao> calcularVariacao(
-      List<Pesagem> pesagens, LocalDate partida, LocalDate hoje) {
-    return calcularPesoSemanal(pesagens, hoje)
+      List<Pesagem> pesagens, LocalDate partida, LocalDate diaFinal) {
+    return calcularPesoSemanal(pesagens, diaFinal)
         .flatMap(
-            deHoje ->
+            doDiaFinal ->
                 partida
-                    .datesUntil(hoje)
+                    .datesUntil(diaFinal)
                     .flatMap(
                         dia ->
                             calcularPesoSemanal(pesagens, dia)
-                                .map(doDia -> new Variacao(deHoje.subtract(doDia), dia, hoje))
+                                .map(
+                                    doDia ->
+                                        new Variacao(doDiaFinal.subtract(doDia), dia, diaFinal))
                                 .stream())
                     .findFirst());
   }

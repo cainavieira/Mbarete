@@ -76,7 +76,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-          # Ponto de partida, a ajustar ao medido
+          # Mediu 36 MiB, com pouco tráfego
           resources:
             requests:
               memory: 128Mi

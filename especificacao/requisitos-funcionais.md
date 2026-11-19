@@ -86,7 +86,8 @@ aposentados estão listados no fim.
 - **RF-26** O sistema deve calcular o peso semanal do AT-01 a cada dia.
   (RN-15)
 - **RF-27** O sistema deve informar dados insuficientes quando a janela tiver
-  menos registros que o mínimo. (RN-16)
+  menos registros que o mínimo, e, nesse caso, apresentar o último peso
+  semanal com a data dele. (RN-16, RN-71)
 - **RF-28** O sistema deve apresentar um gráfico com os pesos diários como
   pontos e o peso semanal como linha. (RN-09, RN-17)
 - **RF-47** O sistema deve distinguir no gráfico os períodos cobertos por fase

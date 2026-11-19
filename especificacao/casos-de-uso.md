@@ -267,8 +267,10 @@ aí o caminho é o da RN-70. (RN-70)
 **Fluxos alternativos**
 
 - **1a** A janela tem menos de 4 registros: dados insuficientes no lugar do
-  peso semanal, e sem peso semanal não há variações, veredito nem barra.
-  (RN-16, RN-47)
+  peso semanal, com quantos registros a janela tem e quantos ele precisa.
+  Abaixo, o último peso semanal com a data, e as variações até esse dia, com
+  a data no título. Veredito e barra não aparecem. Sem nenhum peso semanal na
+  conta, só o aviso. (RN-16, RN-47, RN-71)
 - **2a** O usuário escolhe outro período, de 30, 60 ou 90 dias: o gráfico
   passa a mostrar só esse trecho. (RF-49)
 - **2b** O primeiro registro é mais recente que o período escolhido: o gráfico

@@ -51,6 +51,13 @@ motivo.
 - **RN-17** O peso semanal é a unidade de decisão do sistema. Comparação de
   ritmo, recálculo de taxa alvo, variações e progresso até o peso alvo usam o
   peso semanal, nunca o peso bruto de um dia isolado.
+- **RN-71** Sem peso semanal hoje, a tela mostra o último peso semanal que
+  existiu, com a data dele, e as variações terminam nesse dia (RN-47). O
+  veredito e a barra de progresso não aparecem: eles dizem como a pessoa está
+  agora, e uma resposta antiga pareceria atual, enquanto cada variação traz as
+  próprias datas. Não há limite de idade, porque a data já diz quanto o número
+  é antigo. Não contradiz a RN-09: ela proíbe pôr o último peso no lugar do dia
+  que não tem, e aqui ele aparece com a própria data, nunca como o de hoje.
 
 ## Fase
 
@@ -267,15 +274,17 @@ motivo.
   a soma de dois deles não descreve nenhum. Sem a base, não há essa variação.
   Sem fase corrente, ela parte do primeiro peso semanal da conta.
 - **RN-47** Cada variação exibe o intervalo de datas das janelas efetivamente
-  usadas no cálculo, no formato (DD-MM / DD-MM). Quando o dia de 7, 14 ou 28
-  dias atrás não tem peso semanal (RN-16), a variação parte do primeiro dia
-  seguinte que tenha, e o intervalo mostra esse dia: avançar, e não recuar,
-  porque a variação de 7 dias nunca cobre mais que 7 dias. O avanço não passa
-  de 7 dias antes de hoje, e sem peso semanal até ali não há variação: dali em
-  diante, a janela da partida e a de hoje teriam dias em comum, e a conta
-  compararia os mesmos registros com eles mesmos. Por isso a variação de 7
-  dias nunca avança. Sem peso semanal hoje, ou quando o primeiro dia que tem é
-  o próprio hoje, não há variação.
+  usadas no cálculo, no formato (DD-MM / DD-MM). Ela termina no dia final, que
+  é hoje ou, sem peso semanal hoje, o último dia que tem (RN-71). Quando o dia
+  de 7, 14 ou 28 dias antes do dia final não tem peso semanal (RN-16), a
+  variação parte do primeiro dia seguinte que tenha, e o intervalo mostra esse
+  dia: avançar, e não recuar, porque a variação de 7 dias nunca cobre mais que
+  7 dias. O avanço não passa de 7 dias antes do dia final, e sem peso semanal
+  até ali não há variação: dali em diante, a janela da partida e a do dia
+  final teriam dias em comum, e a conta compararia os mesmos registros com
+  eles mesmos. Por isso a variação de 7 dias nunca avança. Sem nenhum peso
+  semanal, ou quando o primeiro dia que tem é o próprio dia final, não há
+  variação.
 
 ## Conta, acesso e dados
 

@@ -149,7 +149,6 @@ function Veredito({ veredito, fase, dados }: PropsDoVeredito) {
     linhas.push({
       rotulo: 'taxa real',
       valor: `${formatarTaxa(taxaReal.valor, { comSinal: true })} kg por semana`,
-      extra: formatarIntervalo(taxaReal.de, taxaReal.ate),
     })
   }
   // A manutenção não tem taxa alvo: o lugar dela é da faixa (UC-08 4b)

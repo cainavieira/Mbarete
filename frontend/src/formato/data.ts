@@ -41,7 +41,7 @@ export function formatarDiaEMes(iso: string): string {
   return `${dia}/${mes}`
 }
 
-/** O intervalo das variações e da taxa real: (12-09 / 19-09) (RN-47). */
+/** O intervalo das variações: (12-09 / 19-09) (RN-47). */
 export function formatarIntervalo(de: string, ate: string): string {
   const [, mesDe, diaDe] = partes(de)
   const [, mesAte, diaAte] = partes(ate)

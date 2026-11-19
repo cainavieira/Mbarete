@@ -258,9 +258,8 @@ aí o caminho é o da RN-70. (RN-70)
    fase. (RF-28, RF-47, RF-49)
 3. Apresenta as quatro variações juntas, cada uma com o intervalo de datas
    usado. (RF-29, RN-47)
-4. Apresenta o veredito de ritmo da fase corrente, a taxa real com o
-   intervalo de datas usado, e a taxa alvo convertida em quilogramas da
-   semana. (RF-30, RF-32)
+4. Apresenta o veredito de ritmo da fase corrente, a taxa real e a taxa alvo
+   convertida em quilogramas da semana. (RF-30, RF-32)
 5. Apresenta a barra de progresso até o peso alvo. (RF-33)
 6. Apresenta a cintura, se houver alguma medição. (RF-35)
 
@@ -303,9 +302,6 @@ aí o caminho é o da RN-70. (RN-70)
   continuam, e é o comportamento esperado, não estado de erro. (RN-27, RN-66)
 - **4d** Existe fase futura cadastrada: ela não entra no acompanhamento, apenas
   na lista de fases. (RN-69)
-- **4e** Em cutting ou bulking, o dia da base é mais recente que 28 dias
-  atrás: a taxa real é medida contra a base, e o intervalo exibido ao lado
-  dela mostra isso. (RN-36, RN-68)
 - **5a** A fase corrente é manutenção: não existe barra de progresso, porque
   não existe peso alvo. (RN-41)
 - **5c** Há peso semanal hoje, mas a janela do dia da base deixou de ter 4

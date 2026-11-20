@@ -42,6 +42,7 @@ function acompanhamento(parcial: Partial<Dados>): Dados {
   return {
     pesoSemanal: 80,
     registrosNaJanela: 7,
+    minimoNaJanela: 4,
     ultimoPesoSemanal: { valor: 80, data: dia(0) },
     variacoes: { semana: null, duasSemanas: null, quatroSemanas: null, desdeOInicio: null },
     faseCorrente: null,
@@ -73,12 +74,15 @@ function abrir(dados: Dados) {
 }
 
 // Pega a barra de dados insuficientes e o veredito mostrados sem peso semanal
-// hoje: o backend manda os dois com esse estado, e a tela é que os cala (UC-08 1a, 5c)
+// hoje: o backend manda os dois com esse estado, e a tela é que os cala (UC-08 1a, 5c).
+// O mínimo é 5, e não o 4 da RN-16, para pegar a tela que escreve o número por
+// conta própria no lugar do que vem da resposta (ADR-0025)
 test('sem nenhum peso semanal, não há veredito, barra nem variações', async () => {
   abrir(
     acompanhamento({
       pesoSemanal: null,
       registrosNaJanela: 2,
+      minimoNaJanela: 5,
       ultimoPesoSemanal: null,
       faseCorrente: CUTTING,
       veredito: { estado: 'DADOS_INSUFICIENTES', taxaReal: null, aPartirDe: null },
@@ -88,7 +92,7 @@ test('sem nenhum peso semanal, não há veredito, barra nem variações', async 
   )
 
   expect(
-    await screen.findByText('Só 2 registros nos últimos 7 dias. O peso semanal precisa de 4.'),
+    await screen.findByText('Só 2 registros nos últimos 7 dias. O peso semanal precisa de 5.'),
   ).toBeTruthy()
   expect(screen.queryByText(/Progresso até/)).toBeNull()
   expect(screen.queryByText('Variação do peso semanal')).toBeNull()

@@ -24,9 +24,6 @@ type Fase = Esquema<'FaseDto'>
 const CARTAO = 'flex flex-col rounded-xl border bg-card p-4 text-card-foreground'
 const LINK = 'font-semibold text-primary underline underline-offset-3'
 
-/** Com menos registros que isso na janela, não existe peso semanal (RN-16). */
-const MINIMO_NA_JANELA = 4
-
 /**
  * Estou no ritmo do meu ciclo? (UC-08). Tudo vem de uma resposta só, e a tela
  * só decide o que mostrar com o que veio: sem peso semanal hoje, não há
@@ -107,11 +104,12 @@ function PesoSemanal({ dados }: { dados: Dados }) {
       {pesoSemanal === null ? (
         <>
           <Selo estado="DADOS_INSUFICIENTES" manutencao={false} />
+          {/* O mínimo vem da resposta, e a tela não conhece o número (ADR-0025) */}
           <p className="text-sm text-destaque-suave tabular-nums">
             {janela === 0
               ? 'Nenhum registro nos últimos 7 dias.'
               : `Só ${janela} ${janela === 1 ? 'registro' : 'registros'} nos últimos 7 dias.`}{' '}
-            O peso semanal precisa de {MINIMO_NA_JANELA}.
+            O peso semanal precisa de {dados.minimoNaJanela}.
           </p>
           {/* Texto pequeno, e não o número do cartão: o último nunca aparece como o de hoje (RN-71) */}
           {ultimo !== null && (

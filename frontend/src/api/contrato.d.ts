@@ -369,6 +369,8 @@ export interface components {
             pesoSemanal: number | null;
             /** Format: int32 */
             registrosNaJanela: number;
+            /** Format: int32 */
+            minimoNaJanela: number;
             ultimoPesoSemanal: components["schemas"]["UltimoPesoSemanal"] | null;
             variacoes: components["schemas"]["Variacoes"];
             faseCorrente: components["schemas"]["FaseDto"] | null;

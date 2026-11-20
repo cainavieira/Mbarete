@@ -125,6 +125,9 @@ fica como isso vira código.
 | tracejado de dados insuficientes | `--insuficiente-borda` |
 | sobreposição | `--sobreposicao` |
 
+A sombra do cartão é o token `--shadow-cartao` do tema do Tailwind, que vira
+a classe `shadow-cartao`, com um valor só para os dois modos.
+
 A barra de progresso usa `--grafico-linha`, e a faixa de tolerância usa
 `--ritmo-fundo`: a mesma cor nos dois lugares é decisão do design, não
 coincidência de valor. O canto arredondado é a variável `--radius`. Nome da

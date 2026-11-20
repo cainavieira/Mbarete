@@ -19,9 +19,9 @@ escolha fica no navegador (RF-51).
 
 | Nome | Claro | Escuro | Papel |
 |:--|:--|:--|:--|
-| fundo | `#FFFFFF` | `#131512` | a página |
-| superfície | `#FFFFFF` | `#1B1E1A` | cartão e campo; no claro, o cartão se separa do fundo pela borda |
-| borda | `#E4E8E1` | `#2E332C` | divisória e borda de cartão |
+| fundo | `#F5F7F3` | `#131512` | a página |
+| superfície | `#FFFFFF` | `#1B1E1A` | cartão e campo; o cartão se separa do fundo pelo tom, pela borda e, no claro, pela sombra |
+| borda | `#CED4CA` | `#2E332C` | divisória e borda de cartão |
 | borda de campo | `#8A9086` | `#6E746A` | contorno de campo e de controle |
 | texto | `#121212` | `#EEF1EA` | texto |
 | texto suave | `#5C625A` | `#A0A69C` | data, legenda, rótulo e o nome da fase no gráfico |
@@ -45,14 +45,20 @@ escolha fica no navegador (RF-51).
 | sobreposição | `#121212` a 50% | `#131512` a 80% | o fundo escurecido atrás do diálogo |
 
 Fundo e texto não são branco e preto puros. O par puro dá contraste de 21 para
-1 e cansa a vista; `#121212` sobre branco dá 18,7 e continua muito acima do
-mínimo.
+1 e cansa a vista. `#121212` dá 18,7 sobre o branco do cartão e 17,4 sobre o
+fundo, muito acima do mínimo.
 
 **Contraste.** Texto comum tem razão de contraste de no mínimo 4,5 contra o
 que está atrás dele; texto grande, borda de campo, foco e marca de gráfico, 3
 (WCAG 2, nível AA). Todo par da tabela passa. Fundo de destaque e fundo de selo
 não têm mínimo contra a página: o que conta é o texto em cima deles. Por isso
 todo tom claro leva texto escuro: branco sobre verde-claro não chega a 3.
+
+**Sombra.** Todo cartão sobre a página tem a mesma sombra discreta: `0 1px
+2px` de `#121212` a 5% e `0 2px 6px` a 6%, nos dois modos. No escuro ela quase
+não aparece, e não precisa: lá o cartão já se separa pelo tom. Campo e
+controle não têm sombra: o grupo de opções do nível e a área de soltar o
+arquivo seguem o desenho de campo.
 
 **O verde é ação e gráfico.** Botão, link, foco e seleção, e a linha e os
 pontos do gráfico. Nunca indica estado: o "no ritmo" não é verde.
@@ -127,7 +133,8 @@ nome, com o nome convertido em curvas) e `simbolo` (sozinho), cada um em `cor`,
 | Recusado | Motivo |
 |:--|:--|
 | Um modo só | O interessado quis claro e escuro desde o início, com a escolha da pessoa |
-| Fundo creme | O interessado preferiu fundo branco e texto quase preto |
+| Fundo branco no claro | Com o cartão também branco, só a borda o separava da página, a 1,24 para 1, e a tela ficava branca demais |
+| Fundo creme | Comparado na tela com o cinza-esverdeado, o interessado preferiu o cinza |
 | Preto puro sobre branco puro | 21 para 1 cansa a vista |
 | Ação em quase preto ou em azul-petróleo | O interessado escolheu o verde |
 | Botão amarelo | Manteiga contra o branco dá 1,1 para 1, e o botão some no modo claro |

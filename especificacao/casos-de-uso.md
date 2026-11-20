@@ -280,9 +280,9 @@ aí o caminho é o da RN-70. (RN-70)
   falar em fase. (RN-46, RN-66)
 - **3b** A fase corrente não tem a base: dados insuficientes no lugar da
   variação desde o início, e as outras três continuam. (RN-46, RN-68)
-- **3c** O dia de 7, 14 ou 28 dias atrás não tem peso semanal, nem os dias
-  seguintes até 7 dias antes de hoje: dados insuficientes no lugar daquela
-  variação, e as outras continuam. (RN-47)
+- **3c** O dia de 7, 14 ou 28 dias antes do dia final não tem peso semanal,
+  nem os dias seguintes até 7 dias antes dele: dados insuficientes no lugar
+  daquela variação, e as outras continuam. (RN-47)
 - **4a** Em cutting ou bulking, ainda não se passaram 14 dias desde o dia da
   base, ou o peso semanal com que o de hoje se compara, o de 28 dias atrás ou
   o da base, não existe: dados insuficientes no lugar do veredito, mas o peso

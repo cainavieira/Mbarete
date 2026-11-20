@@ -191,9 +191,10 @@ pensa "março". Paginação é o desenho errado para série temporal.
 
 ### O acompanhamento é uma resposta só
 
-`GET /acompanhamento` devolve, de uma vez: peso semanal e a contagem de
-registros da janela, o último peso semanal da conta com a data dele, que é o
-de hoje quando existe e vem nulo quando a conta nunca teve um (RN-71), as
+`GET /acompanhamento` devolve, de uma vez: peso semanal, a contagem de
+registros da janela e o mínimo que ela exige (RN-16), o último peso semanal
+da conta com a data dele, que é o de hoje quando existe e vem nulo quando a
+conta nunca teve um (RN-71), as
 quatro variações com o intervalo de datas de cada uma (RN-47), a fase
 corrente inteira, o veredito de ritmo com a taxa real e o
 intervalo dela (RN-36) e a taxa alvo já convertida em quilogramas da semana
@@ -230,11 +231,13 @@ de vir do `GET /fases`, para a tela continuar montada por uma chamada só.
 
 Onde a janela não tem os 4 registros mínimos, o peso semanal vem nulo e o
 veredito vem com estado de dados insuficientes, em vez de o campo desaparecer
-(RN-16, RN-39). Sem peso semanal hoje, as variações terminam no último dia
-que tem (RN-71), e cada uma vem nula quando o ponto de partida dela não acha
-peso semanal dentro do avanço permitido (RN-47). A variação desde o início vem
-nula também quando a fase corrente não tem a base (RN-46, RN-68). Campo
-ausente e campo nulo são coisas diferentes para quem consome.
+(RN-16, RN-39). O mínimo vem na resposta, e a tela diz quantos registros a
+janela precisa sem conhecer o 4 (ADR-0025). Sem peso semanal hoje, as
+variações terminam no último dia que tem (RN-71), e cada uma vem nula quando
+o ponto de partida dela não acha peso semanal dentro do avanço permitido
+(RN-47). A variação desde o início vem nula também quando a fase corrente não
+tem a base (RN-46, RN-68). Campo ausente e campo nulo são coisas diferentes
+para quem consome.
 
 Em cutting e bulking, enquanto não se completam os 14 dias da RN-39, o
 veredito vem também com a data em que eles se completam, e a tela diz a partir

@@ -171,7 +171,7 @@ function Lista({ registros }: { registros: Registro[] }) {
       <p className="text-sm text-muted-foreground tabular-nums md:mb-2">
         {contar(registros.length)}, do mais recente para o mais antigo
       </p>
-      <div className="md:rounded-xl md:border md:bg-card md:py-2">
+      <div className="md:rounded-xl md:border md:bg-card md:py-2 md:shadow-cartao">
         <div
           aria-hidden="true"
           className="hidden grid-cols-[minmax(7rem,1.2fr)_minmax(5rem,1fr)_minmax(5rem,1fr)_minmax(5rem,1fr)] gap-x-4 border-b px-3 pb-2 text-sm font-semibold text-muted-foreground md:grid"
@@ -241,7 +241,7 @@ function Vazio({ de, ate }: { de: string; ate: string }) {
     return (
       <section
         aria-labelledby="titulo-vazio"
-        className="flex flex-col items-start gap-4 rounded-xl border bg-card px-5 py-6 text-card-foreground"
+        className="flex flex-col items-start gap-4 rounded-xl border bg-card px-5 py-6 text-card-foreground shadow-cartao"
       >
         <span aria-hidden="true" className="text-primary">
           <Simbolo className="size-10" />
@@ -267,7 +267,7 @@ function Vazio({ de, ate }: { de: string; ate: string }) {
   return (
     <section
       aria-labelledby="titulo-vazio"
-      className="flex flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground"
+      className="flex flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground shadow-cartao"
     >
       <h2 id="titulo-vazio" className="text-lg leading-snug font-bold">
         Nenhum registro no período

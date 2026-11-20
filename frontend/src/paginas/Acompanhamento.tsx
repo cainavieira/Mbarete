@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils'
 
 type Fase = Esquema<'FaseDto'>
 
-const CARTAO = 'flex flex-col rounded-xl border bg-card p-4 text-card-foreground'
+const CARTAO = 'flex flex-col rounded-xl border bg-card p-4 text-card-foreground shadow-cartao'
 const LINK = 'font-semibold text-primary underline underline-offset-3'
 
 /**
@@ -93,7 +93,7 @@ function PesoSemanal({ dados }: { dados: Dados }) {
   return (
     <section
       aria-labelledby="titulo-semanal"
-      className="flex flex-col gap-1.5 rounded-xl bg-destaque px-4.5 pt-4 pb-4.5 text-destaque-foreground lg:col-start-1"
+      className="flex flex-col gap-1.5 rounded-xl bg-destaque shadow-cartao px-4.5 pt-4 pb-4.5 text-destaque-foreground lg:col-start-1"
     >
       <h2 id="titulo-semanal" className="text-sm font-semibold text-destaque-suave">
         Peso semanal ·{' '}
@@ -234,7 +234,7 @@ function AlvoAtingido({ alvo, faseId }: { alvo: number; faseId: number }) {
   return (
     <div
       role="status"
-      className="flex items-start gap-3 rounded-xl border bg-card px-4 py-3.5 text-card-foreground lg:col-start-1"
+      className="flex items-start gap-3 rounded-xl border bg-card px-4 py-3.5 text-card-foreground shadow-cartao lg:col-start-1"
     >
       <Target aria-hidden="true" className="mt-0.5 size-5 flex-none" />
       <div className="flex flex-col gap-0.5">

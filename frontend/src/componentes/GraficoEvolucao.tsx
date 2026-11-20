@@ -86,7 +86,7 @@ export function GraficoEvolucao({ serie, faseCorrente, faixa, className }: Props
     <section
       aria-labelledby="titulo-grafico"
       className={cn(
-        'flex min-w-0 flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground lg:px-6 lg:py-5',
+        'flex min-w-0 flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground shadow-cartao lg:px-6 lg:py-5',
         className,
       )}
     >

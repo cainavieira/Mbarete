@@ -62,7 +62,7 @@ export function Conta() {
 
       <section
         aria-label="Seus dados"
-        className="flex items-center gap-3.5 rounded-xl border bg-card p-4 text-card-foreground"
+        className="flex items-center gap-3.5 rounded-xl border bg-card p-4 text-card-foreground shadow-cartao"
       >
         {foto === null ? (
           <span

@@ -11,13 +11,13 @@
  * seletor de tema põe ou tira do <html> (RF-51).
  */
 :root {
-  --background: #ffffff;
+  --background: #f5f7f3;
   --foreground: #121212;
   --card: #ffffff;
   --card-foreground: #121212;
   --popover: #ffffff;
   --popover-foreground: #121212;
-  --border: #e4e8e1;
+  --border: #ced4ca;
   --input: #8a9086;
   --muted: #f1f3ef;
   --muted-foreground: #5c625a;
@@ -127,6 +127,8 @@
   --radius-lg: var(--radius);
   --radius-xl: 1rem;
   --radius-2xl: calc(var(--radius) * 1.8);
+  /* Um valor só: no escuro a sombra quase não aparece, e o tom já separa o cartão */
+  --shadow-cartao: 0 1px 2px rgb(18 18 18 / 0.05), 0 2px 6px rgb(18 18 18 / 0.06);
 }
 
 @layer base {

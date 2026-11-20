@@ -77,7 +77,7 @@ export function FormularioRegistro({ inicial, rotuloEnviar, aoEnviar, children }
         )}
       />
 
-      <div className="flex flex-col items-center gap-2 rounded-xl border bg-card px-4 pt-6 pb-5">
+      <div className="flex flex-col items-center gap-2 rounded-xl border bg-card px-4 pt-6 pb-5 shadow-cartao">
         <label htmlFor="peso" className="text-sm font-semibold text-muted-foreground">
           Peso
         </label>

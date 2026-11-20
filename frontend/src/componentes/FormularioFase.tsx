@@ -285,7 +285,7 @@ export function FormularioFase({
       {aviso !== null && (
         <div
           role="status"
-          className="flex items-start gap-3 rounded-xl border bg-card px-4 py-3.5 text-card-foreground"
+          className="flex items-start gap-3 rounded-xl border bg-card px-4 py-3.5 text-card-foreground shadow-cartao"
         >
           <Info aria-hidden="true" className="mt-0.5 size-5 flex-none" />
           <div className="flex flex-col gap-0.5">

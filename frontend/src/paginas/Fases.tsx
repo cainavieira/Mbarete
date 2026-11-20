@@ -131,7 +131,7 @@ function Lista({ fases }: { fases: FaseListada[] }) {
   )
 }
 
-const CARTAO = 'flex flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground'
+const CARTAO = 'flex flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground shadow-cartao'
 
 function Secao({ id, titulo, children }: { id: string; titulo: string; children: ReactNode }) {
   return (
@@ -157,7 +157,7 @@ function CartaoDaFase({ fase, rotulo, contar = true, children }: PropsDoCartao) 
     <Link
       to={`/fases/${fase.id}`}
       aria-label={rotulo}
-      className="flex flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground"
+      className="flex flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground shadow-cartao"
     >
       <div className="flex items-center gap-2">
         <h3 className="text-lg leading-snug font-bold capitalize">{formatarTipo(fase.tipo)}</h3>

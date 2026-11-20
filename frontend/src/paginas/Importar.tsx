@@ -153,7 +153,7 @@ export function Importar() {
         <aside className="flex flex-col gap-4 border-t pt-5 lg:flex-[1_1_18rem] lg:border-t-0 lg:pt-0">
           <section
             aria-labelledby="titulo-formato"
-            className="hidden flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground lg:flex"
+            className="hidden flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground shadow-cartao lg:flex"
           >
             <h2 id="titulo-formato" className="text-lg leading-snug font-bold">
               O formato
@@ -379,7 +379,7 @@ function TabelaDoArquivo({ previa, acoes }: { previa: Previsualizacao; acoes: Re
         </ToggleGroup>
         <div className="flex flex-row-reverse gap-2">{acoes}</div>
       </div>
-      <div className="overflow-hidden rounded-xl border bg-card">
+      <div className="overflow-hidden rounded-xl border bg-card shadow-cartao">
         <table className="w-full text-sm tabular-nums">
           <caption className="sr-only">Linhas do arquivo</caption>
           <thead className="text-left font-semibold text-muted-foreground">
@@ -447,7 +447,7 @@ function Exportar() {
   const exportar = useExportar()
 
   return (
-    <section aria-labelledby="titulo-exportar" className="flex flex-col gap-3 lg:rounded-xl lg:border lg:bg-card lg:p-4">
+    <section aria-labelledby="titulo-exportar" className="flex flex-col gap-3 lg:rounded-xl lg:border lg:bg-card lg:p-4 lg:shadow-cartao">
       <h2 id="titulo-exportar" className="text-lg leading-snug font-bold">
         Exportar CSV
       </h2>
@@ -484,7 +484,7 @@ function Aviso({ titulo, erro = false, children }: PropsDoAviso) {
     <div
       role={erro ? 'alert' : 'status'}
       className={cn(
-        'flex items-start gap-3 rounded-xl border bg-card px-4 py-3.5 text-card-foreground',
+        'flex items-start gap-3 rounded-xl border bg-card px-4 py-3.5 text-card-foreground shadow-cartao',
         erro && 'border-destructive',
       )}
     >
@@ -499,7 +499,7 @@ function Aviso({ titulo, erro = false, children }: PropsDoAviso) {
 
 function Numero({ valor, rotulo }: { valor: number; rotulo: string }) {
   return (
-    <div className="flex flex-col-reverse gap-0.5 rounded-xl border bg-card p-3">
+    <div className="flex flex-col-reverse gap-0.5 rounded-xl border bg-card p-3 shadow-cartao">
       <dt className="text-xs text-muted-foreground">{rotulo}</dt>
       <dd className="text-2xl leading-tight font-bold tabular-nums">{valor}</dd>
     </div>
@@ -508,7 +508,7 @@ function Numero({ valor, rotulo }: { valor: number; rotulo: string }) {
 
 function Lista({ titulo, children }: { titulo: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-2 rounded-xl border bg-card p-4 text-card-foreground">
+    <section className="flex flex-col gap-2 rounded-xl border bg-card p-4 text-card-foreground shadow-cartao">
       <h3 className="text-sm font-bold tabular-nums">{titulo}</h3>
       <div className="flex flex-col">{children}</div>
     </section>

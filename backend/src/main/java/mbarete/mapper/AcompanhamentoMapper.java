@@ -14,6 +14,7 @@ import mbarete.dto.ProgressoDto;
 import mbarete.dto.VereditoDto;
 import mbarete.entity.Fase;
 import mbarete.regras.AcompanhamentoDaFase;
+import mbarete.regras.PesoSemanal;
 import mbarete.regras.PontoDaSerie;
 import mbarete.regras.Progresso;
 import mbarete.regras.ResumoCintura;
@@ -47,6 +48,7 @@ public final class AcompanhamentoMapper {
     return new AcompanhamentoDto(
         pesoSemanal == null ? null : arredondarPeso(pesoSemanal),
         registrosNaJanela,
+        PesoSemanal.MINIMO_NA_JANELA,
         ultimoPesoSemanal == null
             ? null
             : new UltimoPesoSemanal(

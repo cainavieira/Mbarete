@@ -16,6 +16,7 @@ import org.jspecify.annotations.Nullable;
 public record AcompanhamentoDto(
     @Nullable BigDecimal pesoSemanal,
     int registrosNaJanela,
+    int minimoNaJanela,
     @Nullable UltimoPesoSemanal ultimoPesoSemanal,
     Variacoes variacoes,
     @Nullable FaseDto faseCorrente,

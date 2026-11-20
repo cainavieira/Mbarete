@@ -8,8 +8,11 @@ import java.util.Optional;
 
 public final class PesoSemanal {
 
-  /** Com menos registros que isso na janela, não existe peso semanal (RN-16). */
-  private static final int MINIMO_NA_JANELA = 4;
+  /**
+   * Com menos registros que isso na janela, não existe peso semanal (RN-16). A resposta manda o
+   * número, para a tela não o escrever por conta própria (ADR-0025).
+   */
+  public static final int MINIMO_NA_JANELA = 4;
 
   private PesoSemanal() {}
 

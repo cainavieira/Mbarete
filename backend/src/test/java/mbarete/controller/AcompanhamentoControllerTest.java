@@ -153,6 +153,7 @@ class AcompanhamentoControllerTest {
     acompanhar(fulana)
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.pesoSemanal").value(nullValue()))
+        .andExpect(jsonPath("$.minimoNaJanela").value(4))
         .andExpect(jsonPath("$.ultimoPesoSemanal.data").value(dia.minusDays(7).toString()))
         .andExpect(jsonPath("$.variacoes.semana.de").value(dia.minusDays(14).toString()))
         .andExpect(jsonPath("$.variacoes.semana.ate").value(dia.minusDays(7).toString()));

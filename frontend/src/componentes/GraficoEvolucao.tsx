@@ -129,7 +129,7 @@ export function GraficoEvolucao({ serie, faseCorrente, faixa, className }: Props
             responsive
             accessibilityLayer={false}
             data={pontos.map(({ peso, pesoSemanal }, indice) => ({ indice, peso, pesoSemanal }))}
-            margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
+            margin={{ top: 8, right: 8, bottom: 0, left: 0 }}
             className="aspect-[326/210] w-full lg:aspect-[680/320]"
           >
             {trechos.map(({ tipo, de, ate }) => (

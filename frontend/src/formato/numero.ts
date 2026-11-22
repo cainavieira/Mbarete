@@ -59,7 +59,10 @@ export function formatarDiferenca(valor: number): string {
 
 const INTEIRO = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0, useGrouping: false })
 
-/** A marca do eixo do peso no gráfico, que é sempre um quilo inteiro: 78. */
+/**
+ * Número sem casas: a marca do eixo do peso quando o passo é de quilos
+ * inteiros, e a porcentagem do progresso: 78.
+ */
 export function formatarInteiro(valor: number): string {
   return INTEIRO.format(valor)
 }

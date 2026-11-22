@@ -50,21 +50,34 @@ export function trechosDeFase(pontos: Ponto[]): TrechoDeFase[] {
   return trechos
 }
 
-const PASSOS = [1, 2, 4, 5, 10, 20, 50]
+/** De quanto em quanto pulam as marcas, em décimos de quilo: de 0,2 kg a 50 kg. */
+const PASSOS = [2, 5, 10, 20, 40, 50, 100, 200, 500]
+
+/** O respiro abaixo do menor valor e acima do maior, em décimos de quilo. */
+const FOLGA = 3
+
+export interface EscalaDoPeso {
+  dominio: [number, number]
+  marcas: number[]
+  /** Em quilos: abaixo de 1, as marcas levam uma casa. */
+  passo: number
+}
 
 /**
- * O eixo do peso em quilos inteiros, com folga em volta dos valores e no
- * máximo seis intervalos, para as marcas não se encostarem no celular.
+ * O eixo do peso com o menor passo que deixe no máximo seis intervalos, para
+ * as marcas não se encostarem no celular, e as pontas alinhadas ao passo. A
+ * conta é em décimos de quilo: em quilos, somar 0,2 dá 79,60000000000001, e a
+ * última marca passa da ponta e some.
  */
-export function escalaDoPeso(valores: number[]): { dominio: [number, number]; marcas: number[] } {
-  const menor = Math.floor(Math.min(...valores) - 0.3)
-  const maior = Math.ceil(Math.max(...valores) + 0.3)
-  const passo = PASSOS.find((candidato) => (maior - menor) / candidato <= 6) ?? 100
+export function escalaDoPeso(valores: number[]): EscalaDoPeso {
+  const menor = Math.floor(Math.min(...valores) * 10) - FOLGA
+  const maior = Math.ceil(Math.max(...valores) * 10) + FOLGA
+  const passo = PASSOS.find((candidato) => (maior - menor) / candidato <= 6) ?? 1000
   const de = Math.floor(menor / passo) * passo
   const ate = Math.ceil(maior / passo) * passo
   const marcas: number[] = []
   for (let marca = de; marca <= ate; marca += passo) {
-    marcas.push(marca)
+    marcas.push(marca / 10)
   }
-  return { dominio: [de, ate], marcas }
+  return { dominio: [de / 10, ate / 10], marcas, passo: passo / 10 }
 }

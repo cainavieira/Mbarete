@@ -203,10 +203,10 @@ export function GraficoEvolucao({ serie, faseCorrente, faixa, className }: Props
               domain={escala.dominio}
               ticks={escala.marcas}
               interval={0}
-              tickFormatter={formatarInteiro}
+              tickFormatter={escala.passo < 1 ? formatarPeso : formatarInteiro}
               axisLine={false}
               tickLine={false}
-              width={30}
+              width="auto"
               tick={{ className: 'fill-muted-foreground text-xs tabular-nums' }}
             />
             <Area

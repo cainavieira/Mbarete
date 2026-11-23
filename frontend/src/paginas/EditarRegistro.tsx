@@ -1,6 +1,6 @@
 import { ChevronLeft, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import { toast } from 'sonner'
 import { ErroDaApi } from '@/api/cliente'
 import { DialogoConfirmacao } from '@/componentes/DialogoConfirmacao'
@@ -24,6 +24,17 @@ interface Conflito {
   editado: RegistroEnviado
 }
 
+/** O que a lista passa ao abrir a edição: o endereço dela, com o que estava escolhido. */
+export interface EstadoDaEdicao {
+  volta?: string
+}
+
+/** Para onde a edição volta: a lista de onde veio ou, quando se chega direto, a lista padrão. */
+function useVolta(): string {
+  const estado = useLocation().state as EstadoDaEdicao | null
+  return estado?.volta ?? '/historico'
+}
+
 /**
  * Editar e apagar o registro de um dia (UC-03, UC-04). Mover para uma data
  * ocupada responde 409 como no registro, e o sim faz dos dois registros um.
@@ -32,12 +43,13 @@ export function EditarRegistro() {
   const data = useParams().data ?? ''
   // Não há rota de um registro só: o intervalo de um dia o traz
   const lista = useListaDeRegistros(data, data)
+  const volta = useVolta()
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3 px-4 pt-2 pb-5 md:px-0 md:pt-6">
       <div className="flex flex-col items-start gap-1">
         <Button asChild variant="ghost" className="-ml-2 px-2 text-primary">
-          <Link to="/historico">
+          <Link to={volta}>
             <ChevronLeft aria-hidden="true" />
             Histórico
           </Link>
@@ -67,6 +79,7 @@ function Edicao({ registro }: { registro: Registro }) {
   const confirmacao = useConfirmacao<Conflito>()
   const [apagando, setApagando] = useState(false)
   const navegar = useNavigate()
+  const volta = useVolta()
 
   async function aoEnviar(editado: RegistroEnviado) {
     try {
@@ -81,7 +94,7 @@ function Edicao({ registro }: { registro: Registro }) {
       await editar.mutateAsync({ ...editado, substituir: true })
     }
     toast.success(`Registro de ${formatarData(editado.data)} salvo.`)
-    navegar('/historico')
+    navegar(volta)
   }
 
   async function responderApagar(sim: boolean) {
@@ -96,7 +109,7 @@ function Edicao({ registro }: { registro: Registro }) {
       return
     }
     toast.success(`Registro de ${formatarData(registro.data)} apagado.`)
-    navegar('/historico')
+    navegar(volta)
   }
 
   const conflito = confirmacao.pedido

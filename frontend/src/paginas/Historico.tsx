@@ -2,7 +2,7 @@ import { CalendarDays, ChevronDown, ChevronRight, Download, Upload } from 'lucid
 import { useState } from 'react'
 import type { DateRange } from 'react-day-picker'
 import { ptBR } from 'react-day-picker/locale'
-import { Link, useSearchParams } from 'react-router'
+import { Link, useLocation, useSearchParams } from 'react-router'
 import { toast } from 'sonner'
 import { dataDoDispositivo, ErroDaApi } from '@/api/cliente'
 import { Simbolo } from '@/componentes/Logotipo'
@@ -23,6 +23,7 @@ import { useAcompanhamento } from '@/hooks/useAcompanhamento'
 import { useExportar } from '@/hooks/useConta'
 import { useListaDeRegistros, type Registro } from '@/hooks/useRegistros'
 import { SEM_RESPOSTA } from '@/lib/forma'
+import type { EstadoDaEdicao } from '@/paginas/EditarRegistro'
 
 /** Sem período escolhido, os últimos 90 dias, como o backend sem parâmetro (endpoints.md). */
 const DIAS_DO_PERIODO = 90
@@ -209,10 +210,13 @@ function Item({ registro }: { registro: Registro }) {
   const rotulo = `Editar o registro de ${formatarData(data)}, ${formatarPeso(peso)} kg${
     cintura === null ? '' : `, cintura ${formatarCintura(cintura)} cm`
   }`
+  const { search } = useLocation()
+  const volta: EstadoDaEdicao = { volta: `/historico${search}` }
 
   return (
     <Link
       to={`/historico/${data}`}
+      state={volta}
       aria-label={rotulo}
       className="flex min-h-14 items-center gap-3 border-t py-2 text-sm tabular-nums md:grid md:min-h-10 md:grid-cols-[minmax(7rem,1.2fr)_minmax(5rem,1fr)_minmax(5rem,1fr)_minmax(5rem,1fr)] md:gap-x-4 md:px-3 md:py-0 md:hover:bg-muted"
     >

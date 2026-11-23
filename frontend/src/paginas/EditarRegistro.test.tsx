@@ -1,10 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter, Route, Routes } from 'react-router'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import { afterEach, expect, test, vi } from 'vitest'
 import { apiFalsa, corpos, recusa, type Resposta } from '@/testes/apiFalsa'
-import { EditarRegistro } from './EditarRegistro'
+import { EditarRegistro, type EstadoDaEdicao } from './EditarRegistro'
 
 afterEach(() => {
   cleanup()
@@ -13,19 +13,25 @@ afterEach(() => {
 
 const GRAVADO: Resposta = [200, [{ data: '2026-10-26', peso: 78, cintura: 88.1 }]]
 
-function abrir(rotas: Record<string, Resposta[]>) {
+function abrir(rotas: Record<string, Resposta[]>, volta?: string) {
   const fetch = apiFalsa({ 'GET /registros?de=2026-10-26&ate=2026-10-26': [GRAVADO], ...rotas })
+  const estado: EstadoDaEdicao = { volta }
   render(
     <QueryClientProvider client={new QueryClient()}>
-      <MemoryRouter initialEntries={['/historico/2026-10-26']}>
+      <MemoryRouter initialEntries={[{ pathname: '/historico/2026-10-26', state: estado }]}>
         <Routes>
           <Route path="/historico/:data" element={<EditarRegistro />} />
-          <Route path="/historico" element={<p>Lista de registros</p>} />
+          <Route path="/historico" element={<ListaFalsa />} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
   )
   return { fetch, pessoa: userEvent.setup() }
+}
+
+/** A lista no lugar da de verdade, com o endereço que recebeu. */
+function ListaFalsa() {
+  return <p>Lista de registros{useLocation().search}</p>
 }
 
 // Pega a cintura apagada no campo e mandada mesmo assim: o PATCH troca o
@@ -71,4 +77,16 @@ test('apagar mostra o que se perde e só apaga com o sim', async () => {
 
   expect(await screen.findByText('Lista de registros')).toBeTruthy()
   expect(fetch.mock.calls.some(([, init]) => init?.method === 'DELETE')).toBe(true)
+})
+
+// Pega a volta para a lista padrão, que perde o período escolhido
+test('salvar volta para a lista de onde a edição veio', async () => {
+  const { pessoa } = abrir(
+    { 'PATCH /registros/2026-10-26': [[200, {}]] },
+    '/historico?de=2026-03-01&ate=2026-03-31',
+  )
+
+  await pessoa.click(await screen.findByRole('button', { name: 'Salvar' }))
+
+  expect(await screen.findByText('Lista de registros?de=2026-03-01&ate=2026-03-31')).toBeTruthy()
 })

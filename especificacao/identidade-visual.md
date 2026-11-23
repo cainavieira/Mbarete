@@ -113,7 +113,8 @@ vem com hoje (RN-04) e a cintura, opcional, fica abaixo, menor.
 
 A lista de registros e a pré-visualização da importação viram tabela compacta
 em tela larga, porque dois anos de histórico passam de 700 linhas. No celular,
-as duas são lista. As outras telas só ficam mais largas.
+as duas são lista. No histórico, cada mês abre e fecha, e só o mais recente vem
+aberto. As outras telas só ficam mais largas.
 
 ## Logotipo
 
@@ -148,3 +149,4 @@ nome, com o nome convertido em curvas) e `simbolo` (sozinho), cada um em `cor`,
 | Símbolo Bloco, um bloco sólido com o m vazado | O ícone mais forte em 16 px, mas não diz nada do produto |
 | Símbolo Fases, um anel em três arcos | Em 16 px os arcos viram um anel com um ponto, parecido com ícone de "carregando" |
 | Os nomes Jaci, Rastro e TrackerPal | Jaci soa a nome de restaurante; Rastro era o mais fácil de dizer, e o interessado preferiu Mbarete; TrackerPal foi rótulo de trabalho |
+| Só o mês corrente aberto no histórico | No começo do mês, ainda sem registro, e num período escolhido no passado, a tela abriria só com cabeçalhos |

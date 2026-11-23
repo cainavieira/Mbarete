@@ -6,6 +6,12 @@ import { Link, useLocation, useSearchParams } from 'react-router'
 import { toast } from 'sonner'
 import { dataDoDispositivo, ErroDaApi } from '@/api/cliente'
 import { Simbolo } from '@/componentes/Logotipo'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/componentes/ui/accordion'
 import { Alert, AlertDescription, AlertTitle } from '@/componentes/ui/alert'
 import { Button } from '@/componentes/ui/button'
 import { Calendar } from '@/componentes/ui/calendar'
@@ -30,8 +36,8 @@ const DIAS_DO_PERIODO = 90
 
 /**
  * Os registros do período, do mais recente para o mais antigo, agrupados por
- * mês (RF-14). Cada um abre a edição (UC-03). O período fica no endereço, para
- * a volta da edição cair no mesmo lugar.
+ * mês (RF-14). Cada um abre a edição (UC-03). O período e os meses abertos
+ * ficam no endereço, para a volta da edição cair no mesmo lugar.
  */
 export function Historico() {
   const [parametros, setParametros] = useSearchParams()
@@ -39,7 +45,21 @@ export function Historico() {
   const ate = parametros.get('ate') ?? hoje
   const de = parametros.get('de') ?? somarDias(ate, -(DIAS_DO_PERIODO - 1))
   const lista = useListaDeRegistros(de, ate)
+  // Sem a escolha no endereço, vale o padrão da lista. Vazio é nenhum mês aberto
+  const abertos = parametros.get('abertos')?.split(',').filter((mes) => mes !== '') ?? null
   const exportar = useExportar()
+
+  function mudarAbertos(meses: string[]) {
+    // Abrir e fechar troca o endereço sem empilhar: o voltar do navegador sai da tela
+    setParametros(
+      (atuais) => {
+        const novos = new URLSearchParams(atuais)
+        novos.set('abertos', meses.join(','))
+        return novos
+      },
+      { replace: true },
+    )
+  }
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-3 px-4 pt-4 pb-6 md:max-w-3xl md:gap-5 md:px-8 md:pt-7">
@@ -85,7 +105,7 @@ export function Historico() {
             (lista.data.length === 0 ? (
               <Vazio de={de} ate={ate} />
             ) : (
-              <Lista registros={lista.data} />
+              <Lista registros={lista.data} abertos={abertos} mudarAbertos={mudarAbertos} />
             ))}
         </>
       )}
@@ -155,7 +175,14 @@ function CampoPeriodo({ de, ate, escolher }: PropsDoPeriodo) {
   )
 }
 
-function Lista({ registros }: { registros: Registro[] }) {
+interface PropsDaLista {
+  registros: Registro[]
+  /** Os meses abertos ("2026-10"), ou nulo para o padrão: só o mais recente. */
+  abertos: string[] | null
+  mudarAbertos: (meses: string[]) => void
+}
+
+function Lista({ registros, abertos, mudarAbertos }: PropsDaLista) {
   const meses: { chave: string; registros: Registro[] }[] = []
   for (const registro of registros) {
     const chave = registro.data.slice(0, 7)
@@ -182,24 +209,25 @@ function Lista({ registros }: { registros: Registro[] }) {
           <span className="text-right">Peso</span>
           <span className="text-right">Cintura</span>
         </div>
-        {meses.map((mes) => (
-          <section key={mes.chave} aria-labelledby={`mes-${mes.chave}`}>
-            <h2
-              id={`mes-${mes.chave}`}
-              className="flex items-baseline justify-between gap-2 pt-4 pb-1.5 text-sm font-semibold text-muted-foreground md:px-3 md:pt-3.5"
-            >
-              <span>{formatarMes(`${mes.chave}-01`)}</span>
-              <span className="font-normal tabular-nums">{contar(mes.registros.length)}</span>
-            </h2>
-            <ul>
-              {mes.registros.map((registro) => (
-                <li key={registro.data}>
-                  <Item registro={registro} />
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+        <Accordion type="multiple" value={abertos ?? [meses[0].chave]} onValueChange={mudarAbertos}>
+          {meses.map((mes) => (
+            <AccordionItem key={mes.chave} value={mes.chave}>
+              <AccordionTrigger className="min-h-11 items-center gap-2 font-semibold text-muted-foreground hover:no-underline md:px-3 **:data-[slot=accordion-trigger-icon]:ml-0">
+                <span>{formatarMes(`${mes.chave}-01`)}</span>
+                <span className="ml-auto font-normal tabular-nums">{contar(mes.registros.length)}</span>
+              </AccordionTrigger>
+              <AccordionContent className="pb-0 [&_a]:no-underline">
+                <ul>
+                  {mes.registros.map((registro) => (
+                    <li key={registro.data}>
+                      <Item registro={registro} />
+                    </li>
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
     </div>
   )

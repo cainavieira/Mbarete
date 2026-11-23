@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { cleanup, render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import userEvent from '@testing-library/user-event'
+import { MemoryRouter, useLocation } from 'react-router'
 import { afterEach, expect, test, vi } from 'vitest'
 import { dataDoDispositivo } from '@/api/cliente'
 import { somarDias } from '@/formato/data'
@@ -33,10 +34,33 @@ function abrir(endereco: string, rotas: Record<string, Resposta[]>) {
     <QueryClientProvider client={new QueryClient()}>
       <MemoryRouter initialEntries={[endereco]}>
         <Historico />
+        <Endereco />
       </MemoryRouter>
     </QueryClientProvider>,
   )
   return fetch
+}
+
+/** O endereço que a tela deixou, que é o que a volta da edição recebe. */
+function Endereco() {
+  return <p>Endereço {useLocation().search}</p>
+}
+
+const DOIS_MESES: Record<string, Resposta[]> = {
+  'GET /registros?de=2026-09-01&ate=2026-10-31': [
+    [
+      200,
+      [
+        { data: '2026-10-01', peso: 78.2, cintura: null },
+        { data: '2026-09-30', peso: 78.4, cintura: null },
+      ],
+    ],
+  ],
+}
+
+/** O registro do dia está na tela, o que só acontece com o mês dele aberto. */
+function aparece(dia: string): boolean {
+  return screen.queryByRole('link', { name: new RegExp(`registro de ${dia}`) }) !== null
 }
 
 // Pega o período padrão com um dia a mais, e os meses fora da ordem em que
@@ -64,6 +88,35 @@ test('sem período, mostra os últimos 90 dias agrupados por mês', async () => 
   expect(
     screen.getByRole('link', { name: 'Editar o registro de 01/10/2026, 78,2 kg, cintura 88,5 cm' }),
   ).toBeTruthy()
+})
+
+// Pega todos os meses abertos ao chegar, a rolagem longa que motivou a
+// mudança, ou todos fechados, a tela só com cabeçalhos
+test('sem escolha no endereço, só o mês mais recente vem aberto', async () => {
+  abrir('/historico?de=2026-09-01&ate=2026-10-31', DOIS_MESES)
+
+  await screen.findByRole('link', { name: /registro de 01\/10\/2026/ })
+  expect(aparece('30/09/2026')).toBe(false)
+})
+
+// Pega os meses do endereço ignorados, que a volta da edição perderia
+test('os meses abertos vêm do endereço', async () => {
+  abrir('/historico?de=2026-09-01&ate=2026-10-31&abertos=2026-09', DOIS_MESES)
+
+  await screen.findByRole('link', { name: /registro de 30\/09\/2026/ })
+  expect(aparece('01/10/2026')).toBe(false)
+})
+
+// Pega o mês aberto guardado só na tela, fora do endereço, e o nenhum aberto
+// gravado como sem escolha, que reabriria o mais recente
+test('fechar o único mês aberto deixa todos fechados, também no endereço', async () => {
+  abrir('/historico?de=2026-09-01&ate=2026-10-31', DOIS_MESES)
+  const pessoa = userEvent.setup()
+
+  await pessoa.click(await screen.findByRole('button', { name: /^outubro de 2026/ }))
+
+  expect(aparece('01/10/2026')).toBe(false)
+  expect(screen.getByText('Endereço ?de=2026-09-01&ate=2026-10-31&abertos=')).toBeTruthy()
 })
 
 // Pega o período do endereço ignorado, que a volta da edição perderia, e o

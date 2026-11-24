@@ -22,6 +22,6 @@ configMapGenerator:
 # imagens saíram
 images:
   - name: ghcr.io/cainavieira/mbarete-api
-    newTag: 76ff606
+    newTag: 097c2de
   - name: ghcr.io/cainavieira/mbarete-frontend
-    newTag: 76ff606
+    newTag: 097c2de
